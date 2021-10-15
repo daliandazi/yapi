@@ -19,20 +19,21 @@ function connect(callback) {
   mongoose.set('useCreateIndex', true);
 
   let config = yapi.WEBCONFIG;
-  let options = {useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true};
+  let options = { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, poolSize: 10, keepAlive: 120, autoReconnect: true, connectTimeoutMS: 3000 };
 
   if (config.db.user) {
     options.user = config.db.user;
     options.pass = config.db.pass;
   }
+  
 
   options = Object.assign({}, options, config.db.options)
 
   var connectString = '';
 
-  if(config.db.connectString){
+  if (config.db.connectString) {
     connectString = config.db.connectString;
-  }else{
+  } else {
     connectString = `mongodb://${config.db.servername}:${config.db.port}/${config.db.DATABASE}`;
     if (config.db.authSource) {
       connectString = connectString + `?authSource=${config.db.authSource}`;
@@ -42,7 +43,7 @@ function connect(callback) {
   let db = mongoose.connect(
     connectString,
     options,
-    function(err) {
+    function (err) {
       if (err) {
         yapi.commons.log(err + ', mongodb Authentication failed', 'error');
       }
@@ -50,14 +51,14 @@ function connect(callback) {
   );
 
   db.then(
-    function() {
+    function () {
       yapi.commons.log('mongodb load success...');
 
       if (typeof callback === 'function') {
         callback.call(db);
       }
     },
-    function(err) {
+    function (err) {
       yapi.commons.log(err + 'mongodb connect error', 'error');
     }
   );

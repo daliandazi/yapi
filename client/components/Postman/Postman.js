@@ -35,9 +35,9 @@ const {
   checkNameIsExistInArray
 } = require('common/postmanLib.js');
 
-const plugin = require('client/plugin.js');
-
 const createContext = require('common/createContext')
+
+const { TabPane } = Tabs;
 
 const HTTP_METHOD = constants.HTTP_METHOD;
 const InputGroup = Input.Group;
@@ -135,16 +135,8 @@ export default class Run extends Component {
       envModalVisible: false,
       test_res_header: null,
       test_res_body: null,
-      autoPreviewHTML: true,
       ...this.props.data
     };
-  }
-
-  get testResponseBodyIsHTML() {
-    const hd = this.state.test_res_header
-    return hd != null
-      && typeof hd === 'object'
-      && String(hd['Content-Type'] || hd['content-type']).indexOf('text/html') !== -1
   }
 
   checkInterfaceData(data) {
@@ -158,8 +150,8 @@ export default class Run extends Component {
   handleReqHeader = (value, env) => {
     let index = value
       ? env.findIndex(item => {
-          return item.name === value;
-        })
+        return item.name === value;
+      })
       : 0;
     index = index === -1 ? 0 : index;
 
@@ -216,33 +208,12 @@ export default class Run extends Component {
       body = JSON.stringify(result.data);
     }
 
-    let example = {}
-    if(this.props.type === 'inter'){
-      example = ['req_headers', 'req_query', 'req_body_form'].reduce(
-        (res, key) => {
-          res[key] = (data[key] || []).map(item => {
-            if (
-              item.type !== 'file' // 不是文件类型
-                && (item.value == null || item.value === '') // 初始值为空
-                && item.example != null // 有示例值
-            ) {
-              item.value = item.example;
-            }
-            return item;
-          })
-          return res;
-        },
-        {}
-      )
-    }
-
     this.setState(
       {
         ...this.state,
         test_res_header: null,
         test_res_body: null,
         ...data,
-        ...example,
         req_body_other: body,
         resStatusCode: null,
         test_valid_msg: null,
@@ -272,11 +243,12 @@ export default class Run extends Component {
   }
 
   componentWillMount() {
-    this._crossRequestInterval = initCrossRequest(hasPlugin => {
-      this.setState({
-        hasPlugin: hasPlugin
-      });
-    });
+    // 判断是否有安装cross插件
+    // this._crossRequestInterval = initCrossRequest(hasPlugin => {
+    //   this.setState({
+    //     hasPlugin: hasPlugin
+    //   });
+    // });
     this.initState(this.props.data);
   }
 
@@ -334,29 +306,15 @@ export default class Run extends Component {
     let options = handleParams(this.state, this.handleValue),
       result;
 
-
-    await plugin.emitHook('before_request', options, {
-      type: this.props.type,
-      caseId: options.caseId,
-      projectId: this.props.projectId,
-      interfaceId: this.props.interfaceId
-    });
-
     try {
+      console.log(options)
       options.taskId = this.props.curUid;
-      result = await crossRequest(options, options.pre_script || this.state.pre_script, options.after_script || this.state.after_script, createContext(
+      // 调用浏览器插件发起http请求
+      result = await crossRequest(options, this.state.pre_script, this.state.after_script, createContext(
         this.props.curUid,
         this.props.projectId,
         this.props.interfaceId
       ));
-
-      await plugin.emitHook('after_request', result, {
-        type: this.props.type,
-        caseId: options.caseId,
-        projectId: this.props.projectId,
-        interfaceId: this.props.interfaceId
-      });
-
       result = {
         header: result.res.header,
         body: result.res.body,
@@ -364,7 +322,6 @@ export default class Run extends Component {
         statusText: result.res.statusText,
         runTime: result.runTime
       };
-
     } catch (data) {
       result = {
         header: data.header,
@@ -424,7 +381,7 @@ export default class Run extends Component {
   };
 
   changeParam = (name, v, index, key) => {
-    
+
     key = key || 'value';
     const pathParam = deepCopyJson(this.state[name]);
 
@@ -661,7 +618,7 @@ export default class Run extends Component {
               style={{ marginLeft: 10 }}
               icon={loading ? 'loading' : ''}
             >
-              {loading ? '取消' : '发送'}
+              {loading ? '取消' : '发送[通过服务器]'}
             </Button>
           </Tooltip>
 
@@ -677,7 +634,196 @@ export default class Run extends Component {
           </Tooltip>
         </div>
 
-        <Collapse defaultActiveKey={['0', '1', '2', '3']} bordered={true}>
+        <Tabs defaultActiveKey="1" style={{ padding: '10px' }}>
+          {
+            req_query.length > 0 &&
+            <TabPane tab="Params" key="1">
+              <div style={{ marginTop: '10px' }}>
+                {req_query.map((item, index) => {
+                  return (
+                    <div key={index} className="key-value-wrap">
+                      <ParamsNameComponent example={item.example} desc={item.desc} name={item.name} />
+                      &nbsp;
+                      {item.required == 1 ? (
+                        <Checkbox className="params-enable" checked={true} disabled />
+                      ) : (
+                        <Checkbox
+                          className="params-enable"
+                          checked={item.enable}
+                          onChange={e =>
+                            this.changeParam('req_query', e.target.checked, index, 'enable')
+                          }
+                        />
+                      )}
+                      <span className="eq-symbol">=</span>
+                      <Input
+                        value={item.value}
+                        className="value"
+                        onChange={e => this.changeParam('req_query', e.target.value, index)}
+                        placeholder="参数值"
+                        id={`req_query_${index}`}
+                        addonAfter={
+                          <Icon
+                            type="edit"
+                            onClick={() => this.showModal(item.value, index, 'req_query')}
+                          />
+                        }
+                      />
+                    </div>
+                  );
+                })}
+                {/* <Button type="primary" icon="plus" size="small" onClick={this.addQuery}>
+                  添加参数
+                </Button> */}
+              </div>
+            </TabPane>
+          }
+
+          <TabPane tab="Headers" key="2">
+            {req_headers.map((item, index) => {
+              return (
+                <div key={index} className="key-value-wrap">
+                  <ParamsNameComponent example={item.example} desc={item.desc} name={item.name} />
+                  <span className="eq-symbol">=</span>
+                  <Input
+                    value={item.value}
+                    disabled={!!item.abled}
+                    className="value"
+                    onChange={e => this.changeParam('req_headers', e.target.value, index)}
+                    placeholder="参数值"
+                    id={`req_headers_${index}`}
+                    addonAfter={
+                      !item.abled && (
+                        <Icon
+                          type="edit"
+                          onClick={() => this.showModal(item.value, index, 'req_headers')}
+                        />
+                      )
+                    }
+                  />
+                </div>
+              );
+            })}
+            {/* <Button type="primary" icon="plus" onClick={() => {
+              console.log(req_headers)
+              req_headers.push({
+                name:"",
+                abled:"false",
+                value:""
+              })
+            }}>
+              添加Header
+            </Button> */}
+          </TabPane>
+          {
+            (HTTP_METHOD[method].request_body &&
+              ((req_body_type === 'form' && req_body_form.length > 0) || req_body_type !== 'form')) &&
+
+            <TabPane tab="Body" key="3">
+              <div
+                style={{ display: checkRequestBodyIsRaw(method, req_body_type) ? 'block' : 'none' }}
+              >
+                {req_body_type === 'json' && (
+                  <div className="adv-button">
+                    <Button
+                      onClick={() => this.showModal(this.state.req_body_other, 0, 'req_body_other')}
+                    >
+                      高级参数设置
+                    </Button>
+                    <Tooltip title="高级参数设置只在json字段值中生效">
+                      {'  '}
+                      <Icon type="question-circle-o" />
+                    </Tooltip>
+                  </div>
+                )}
+
+                <AceEditor
+                  className="pretty-editor"
+                  ref={editor => (this.aceEditor = editor)}
+                  data={this.state.req_body_other}
+                  mode={req_body_type === 'json' ? null : 'text'}
+                  onChange={this.handleRequestBody}
+                  fullScreen={true}
+                />
+              </div>
+
+              {HTTP_METHOD[method].request_body &&
+                req_body_type === 'form' && (
+                  <div>
+                    {req_body_form.map((item, index) => {
+                      return (
+                        <div key={index} className="key-value-wrap">
+                          {/* <Tooltip
+                          placement="topLeft"
+                          title={<TooltipContent example={item.example} desc={item.desc} />}
+                        >
+                          <Input disabled value={item.name} className="key" />
+                        </Tooltip> */}
+                          <ParamsNameComponent
+                            example={item.example}
+                            desc={item.desc}
+                            name={item.name}
+                          />
+                          &nbsp;
+                          {item.required == 1 ? (
+                            <Checkbox className="params-enable" checked={true} disabled />
+                          ) : (
+                            <Checkbox
+                              className="params-enable"
+                              checked={item.enable}
+                              onChange={e => this.changeBody(e.target.checked, index, 'enable')}
+                            />
+                          )}
+                          <span className="eq-symbol">=</span>
+                          {item.type === 'file' ? (
+                            '因Chrome最新版安全策略限制，不再支持文件上传'
+                            // <Input
+                            //   type="file"
+                            //   id={'file_' + index}
+                            //   onChange={e => this.changeBody(e.target.value, index, 'value')}
+                            //   multiple
+                            //   className="value"
+                            // />
+                          ) : (
+                            <Input
+                              value={item.value}
+                              className="value"
+                              onChange={e => this.changeBody(e.target.value, index)}
+                              placeholder="参数值"
+                              id={`req_body_form_${index}`}
+                              addonAfter={
+                                <Icon
+                                  type="edit"
+                                  onClick={() => this.showModal(item.value, index, 'req_body_form')}
+                                />
+                              }
+                            />
+                          )}
+                        </div>
+                      );
+                    })}
+                    <Button
+                      style={{ display: 'none' }}
+                      type="primary"
+                      icon="plus"
+                      onClick={this.addBody}
+                    >
+                      添加Form参数
+                    </Button>
+                  </div>
+                )}
+              {HTTP_METHOD[method].request_body &&
+                req_body_type === 'file' && (
+                  <div>
+                    <Input type="file" id="single-file" />
+                  </div>
+                )}
+
+            </TabPane>
+          }
+        </Tabs>
+
+        <Collapse defaultActiveKey={['0', '1', '2', '3']} bordered={true} style={{ display: 'none' }}>
           <Panel
             header="PATH PARAMETERS"
             key="0"
@@ -811,7 +957,7 @@ export default class Run extends Component {
             key="3"
             className={
               HTTP_METHOD[method].request_body &&
-              ((req_body_type === 'form' && req_body_form.length > 0) || req_body_type !== 'form')
+                ((req_body_type === 'form' && req_body_form.length > 0) || req_body_type !== 'form')
                 ? 'POST'
                 : 'hidden'
             }
@@ -925,8 +1071,8 @@ export default class Run extends Component {
                 className={
                   'res-code ' +
                   (this.state.resStatusCode >= 200 &&
-                  this.state.resStatusCode < 400 &&
-                  !this.state.loading
+                    this.state.resStatusCode < 400 &&
+                    !this.state.loading
                     ? 'success'
                     : 'fail')
                 }
@@ -934,7 +1080,7 @@ export default class Run extends Component {
                 {this.state.resStatusCode + '  ' + this.state.resStatusText}
               </h2>
               <div>
-                <a rel="noopener noreferrer"  target="_blank" href="https://juejin.im/post/5c888a3e5188257dee0322af">YApi 新版如何查看 http 请求数据</a>
+                <a rel="noopener noreferrer" target="_blank" href="https://juejin.im/post/5c888a3e5188257dee0322af">YApi 新版如何查看 http 请求数据</a>
               </div>
               {this.state.test_valid_msg && (
                 <Alert
@@ -975,25 +1121,14 @@ export default class Run extends Component {
                 <div className="body">
                   <div className="container-title">
                     <h4>Body</h4>
-                    <Checkbox
-                      checked={this.state.autoPreviewHTML}
-                      onChange={e => this.setState({ autoPreviewHTML: e.target.checked })}>
-                      <span>自动预览HTML</span>
-                    </Checkbox>
                   </div>
-                  {
-                    this.state.autoPreviewHTML && this.testResponseBodyIsHTML
-                      ? <iframe
-                          className="pretty-editor-body"
-                          srcDoc={this.state.test_res_body}
-                        />
-                      : <AceEditor
-                          readOnly={true}
-                          className="pretty-editor-body"
-                          data={this.state.test_res_body}
-                          mode={handleContentType(this.state.test_res_header)}
-                      />
-                  }
+                  <AceEditor
+                    readOnly={true}
+                    className="pretty-editor-body"
+                    data={this.state.test_res_body}
+                    mode={handleContentType(this.state.test_res_header)}
+                  // mode="html"
+                  />
                 </div>
               </div>
             </Spin>

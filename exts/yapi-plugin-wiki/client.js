@@ -6,7 +6,8 @@ module.exports = function() {
     app.wiki = {
       name: 'Wiki',
       path: '/project/:id/wiki',
-      component: WikiPage
+      component: WikiPage,
+      icon:'book'
     };
   });
 };

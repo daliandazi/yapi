@@ -13,7 +13,6 @@ const json5 = require('json5');
 const _ = require('underscore');
 const Ajv = require('ajv');
 const Mock = require('mockjs');
-const sandboxFn = require('./sandbox')
 
 
 
@@ -282,18 +281,15 @@ exports.verifyPath = path => {
  * a = {a: 2}
  */
 exports.sandbox = (sandbox, script) => {
-  try {
-    const vm = require('vm');
-    sandbox = sandbox || {};	
-    script = new vm.Script(script);	
-    const context = new vm.createContext(sandbox);	
-    script.runInContext(context, {	
-      timeout: 3000	
-    });	      
-    return sandbox
-  } catch (err) {
-    throw err
-  }
+  const vm = require('vm');
+  sandbox = sandbox || {};
+  script = new vm.Script(script);
+  const context = new vm.createContext(sandbox);
+  script.runInContext(context, {
+    timeout: 3000
+  });
+
+  return sandbox;
 };
 
 function trim(str) {
@@ -368,6 +364,7 @@ exports.validateParams = (schema2, params) => {
     useDefaults: true,
     removeAdditional: flag ? false : true
   });
+  console.log(params)
 
   var localize = require('ajv-i18n');
   delete schema2.closeRemoveAdditional;
@@ -389,6 +386,61 @@ exports.validateParams = (schema2, params) => {
     message: message
   };
 };
+
+
+exports.translateDataToTree = (data, mynodeid) => {
+  let mynode = { "id": Number(mynodeid), "node": null };
+  data.forEach(item => {
+
+    item.title = item.name;
+    item.key = item._id;
+    item.value = item._id + '';
+    if (!data.find(me => me._id === item.parent_id)) {
+      item.parent_id = -1;
+    }
+  });
+  let parents = JSON.parse(JSON.stringify(data.filter(value => (typeof value.parent_id) == 'undefined' || value.parent_id == -1)));
+  let children = JSON.parse(JSON.stringify(data.filter(value => (typeof value.parent_id) !== 'undefined' && value.parent_id != -1)));
+  let translator = (parents, children, mynode) => {
+    parents.forEach((parent) => {
+      parent.parent_id = (typeof parent.parent_id) == 'undefined' ? -1 : parent.parent_id;
+      parent.treePath = (typeof parent.treePath) == 'undefined' ? [] : parent.treePath;
+      mynode.node = mynode.id === parent._id ? parent : mynode.node;
+      children.forEach((current, index) => {
+        if (current.parent_id === parent._id) {
+
+          if (typeof parent.children !== 'undefined') {
+            parent.children.push(current);
+          } else {
+            parent.children = [current];
+          }
+          if (typeof current.treePath !== 'undefined') {
+            current.treePath.push(...parent.treePath, parent._id);
+          } else {
+            current.treePath = [...parent.treePath, parent._id];
+          }
+          if (current.treePath.includes(mynode.id)) {
+            if (typeof mynode.node.descendants !== 'undefined') {
+              mynode.node.descendants.push(current._id);
+            } else {
+              mynode.node.descendants = [current._id];
+            }
+          }
+          let temp = JSON.parse(JSON.stringify(children));
+          temp.splice(index, 1);
+          translator([current], temp, mynode);
+        }
+      }
+      )
+    }
+    )
+  }
+  translator(parents, children, mynode)
+  let ret = mynode.node ? mynode.node : parents;
+  return ret
+}
+
+
 
 exports.saveLog = logData => {
   try {
@@ -577,7 +629,7 @@ ${JSON.stringify(schema, null, 2)}`)
       // script 是断言
       if (globalScript) {
         logs.push('执行脚本：' + globalScript)
-        result = await sandboxFn(context, globalScript);
+        result = yapi.commons.sandbox(context, globalScript);
       }
     }
 
@@ -586,13 +638,14 @@ ${JSON.stringify(schema, null, 2)}`)
     // script 是断言
     if (script) {
       logs.push('执行脚本:' + script)
-      result = await sandboxFn(context, script);
+      result = yapi.commons.sandbox(context, script);
     }
     result.logs = logs;
     return yapi.commons.resReturn(result);
   } catch (err) {
     logs.push(convertString(err));
     result.logs = logs;
+    logs.push(err.name + ': ' + err.message)
     return yapi.commons.resReturn(result, 400, err.name + ': ' + err.message);
   }
 };
@@ -611,9 +664,44 @@ exports.getUserdata = async function getUserdata(uid, role) {
     email: userData.email
   };
 };
+// 邮件发送
+exports.sendNotice = async function (projectId, data) {
+  const followInst = yapi.getInst(followModel);
+  const userInst = yapi.getInst(userModel);
+  const projectInst = yapi.getInst(projectModel);
+  const list = await followInst.listByProjectId(projectId);
+  const starUsers = list.map(item => item.uid);
+
+  const projectList = await projectInst.get(projectId);
+  const projectMenbers = projectList.members
+    .filter(item => item.email_notice)
+    .map(item => item.uid);
+
+  const users = arrUnique(projectMenbers, starUsers);
+  const usersInfo = await userInst.findByUids(users);
+  const emails = usersInfo.map(item => item.email).join(',');
+
+  try {
+    yapi.commons.sendMail({
+      to: emails,
+      contents: data.content,
+      subject: data.title
+    });
+  } catch (e) {
+    yapi.commons.log('邮件发送失败：' + e, 'error');
+  }
+};
+
+function arrUnique(arr1, arr2) {
+  let arr = arr1.concat(arr2);
+  let res = arr.filter(function (item, index, arr) {
+    return arr.indexOf(item) === index;
+  });
+  return res;
+}
 
 // 处理mockJs脚本
-exports.handleMockScript = async function (script, context) {
+exports.handleMockScript = function (script, context) {
   let sandbox = {
     header: context.ctx.header,
     query: context.ctx.query,
@@ -632,7 +720,7 @@ exports.handleMockScript = async function (script, context) {
       var parts = Cookie.split('=');
       sandbox.cookie[parts[0].trim()] = (parts[1] || '').trim();
     });
-  sandbox = await sandboxFn(sandbox, script);
+  sandbox = yapi.commons.sandbox(sandbox, script);
   sandbox.delay = isNaN(sandbox.delay) ? 0 : +sandbox.delay;
 
   context.mockJson = sandbox.mockJson;
@@ -677,3 +765,18 @@ exports.createWebAPIRequest = function (ops) {
   });
 }
 
+/**
+ * 对数组进行分组
+ * @param {*} list 
+ * @param {*} field 
+ * @returns 
+ */
+exports.groupBy = function (list, field) {
+  let groups = {}
+  list.forEach((o) => {
+    let key = o[field]
+    groups[key] = groups[key] || []
+    groups[key].push(o)
+  })
+  return groups;
+}

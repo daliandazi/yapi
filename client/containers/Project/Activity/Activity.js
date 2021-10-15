@@ -25,7 +25,7 @@ class Activity extends Component {
   render() {
     let { currProject } = this.props;
     return (
-      <div className="g-row">
+      <div className="" style={{height:'100%',overflowY:'auto'}}>
         <section className="news-box m-panel">
           <div style={{ display: 'none' }} className="logHead">
             {/*<Breadcrumb />*/}

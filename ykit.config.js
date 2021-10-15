@@ -4,7 +4,7 @@ var CompressionPlugin = require('compression-webpack-plugin');
 var commonLib = require('./common/plugin.js');
 var assetsPluginInstance = new AssetsPlugin({
   filename: 'static/prd/assets.js',
-  processOutput: function(assets) {
+  processOutput: function (assets) {
     return 'window.WEBPACK_ASSETS = ' + JSON.stringify(assets);
   }
 });
@@ -24,17 +24,15 @@ var compressPlugin = new CompressionPlugin({
 function createScript(plugin, pathAlias) {
   let options = plugin.options ? JSON.stringify(plugin.options) : null;
   if (pathAlias === 'node_modules') {
-    return `"${plugin.name}" : {module: require('yapi-plugin-${
-      plugin.name
-    }/client.js'),options: ${options}}`;
+    return `"${plugin.name}" : {module: require('yapi-plugin-${plugin.name
+      }/client.js'),options: ${options}}`;
   }
-  return `"${plugin.name}" : {module: require('${pathAlias}/yapi-plugin-${
-    plugin.name
-  }/client.js'),options: ${options}}`;
+  return `"${plugin.name}" : {module: require('${pathAlias}/yapi-plugin-${plugin.name
+    }/client.js'),options: ${options}}`;
 }
 
 function initPlugins(configPlugin) {
-  configPlugin = require('../config.json').plugins;
+  configPlugin = require('./config.json').plugins;
   var systemConfigPlugin = require('./common/config.js').exts;
 
   var scripts = [];
@@ -65,7 +63,7 @@ module.exports = {
     {
       name: 'antd',
       options: {
-        modifyQuery: function(defaultQuery) {
+        modifyQuery: function (defaultQuery) {
           // 可查看和编辑 defaultQuery
           defaultQuery.plugins = [];
           defaultQuery.plugins.push([
@@ -84,7 +82,7 @@ module.exports = {
     }
   ],
   devtool: 'cheap-source-map',
-  config: function(ykit) {
+  config: function (ykit) {
     return {
       exports: ['./index.js'],
       commonsChunk: {
@@ -108,7 +106,7 @@ module.exports = {
           lib3: ['mockjs', 'moment', 'recharts']
         }
       },
-      modifyWebpackConfig: function(baseConfig) {
+      modifyWebpackConfig: function (baseConfig) {
         var ENV_PARAMS = {};
         switch (this.env) {
           case 'local':
@@ -134,10 +132,18 @@ module.exports = {
         //初始化配置
         baseConfig.devtool = 'cheap-module-eval-source-map';
         baseConfig.context = path.resolve(__dirname, './client');
-        baseConfig.resolve.alias.client = '/client';
-        baseConfig.resolve.alias.common = '/common';
+        // baseConfig.resolve.alias.client = '/client';
+        // baseConfig.resolve.alias.common = '/common';
 
-        baseConfig.resolve.alias.exts = '/exts';
+        // baseConfig.resolve.alias.exts = '/exts';
+
+        baseConfig.resolve.alias = {
+          client: '/client',
+          common: '/common',
+          exts: '/exts',
+          "@reducer":"/client/reducer",
+          "@components":"/client/components"
+        }
 
         // baseConfig.resolve.alias.react = 'anujs';
         // baseConfig.resolve.alias['react-dom'] = 'anujs';
@@ -152,9 +158,9 @@ module.exports = {
           loader: ykit.ExtractTextPlugin.extract(
             require.resolve('style-loader'),
             require.resolve('css-loader') +
-              '?sourceMap!' +
-              require.resolve('less-loader') +
-              '?sourceMap'
+            '?sourceMap!' +
+            require.resolve('less-loader') +
+            '?sourceMap'
           )
         });
 
@@ -171,9 +177,9 @@ module.exports = {
           test: /\.(sass|scss)$/,
           loader: ykit.ExtractTextPlugin.extract(
             require.resolve('css-loader') +
-              '?sourceMap!' +
-              require.resolve('sass-loader') +
-              '?sourceMap'
+            '?sourceMap!' +
+            require.resolve('sass-loader') +
+            '?sourceMap'
           )
         });
 

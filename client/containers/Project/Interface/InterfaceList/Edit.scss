@@ -65,10 +65,16 @@
 }
 
 .table-interfacelist {
-  margin-top: .2rem;
+  // margin-top: .2rem;
   white-space: nowrap;
+  // padding: 4px;
+  
   table {
     table-layout: fixed;
+    
+  }
+  .ant-table-body {
+    height: calc(100vh - 230px);
   }
   .path {
     width: 95%;
@@ -77,6 +83,8 @@
     text-overflow:ellipsis;
     white-space: nowrap;
     padding-right: 24px;
+    padding-left: 10px;
+    color: rgb(32, 32, 32);
     // line-height: 100%;
     vertical-align: middle;
   }

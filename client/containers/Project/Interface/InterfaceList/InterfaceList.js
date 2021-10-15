@@ -8,13 +8,13 @@ import {
   fetchInterfaceListMenu,
   fetchInterfaceList,
   fetchInterfaceCatList
-} from '../../../../reducer/modules/interface.js';
-import { getProject } from '../../../../reducer/modules/project.js';
+} from '@reducer/modules/interface.js';
+import { getProject } from '@reducer/modules/project.js';
 import { Link } from 'react-router-dom';
-import variable from '../../../../constants/variable';
+import variable from 'client/constants/variable';
 import './Edit.scss';
-import Label from '../../../../components/Label/Label.js';
-
+import Label from '@components/Label/Label.js';
+import { formatTime, safeArray } from 'client/common.js';
 const Option = Select.Option;
 const limit = 20;
 
@@ -43,7 +43,6 @@ class InterfaceList extends Component {
     this.state = {
       visible: false,
       data: [],
-      filteredInfo: {},
       catid: null,
       total: null,
       current: 1
@@ -76,21 +75,18 @@ class InterfaceList extends Component {
       let option = {
         page: this.state.current,
         limit,
-        project_id: projectId,
-        status: this.state.filteredInfo.status,
-        tag: this.state.filteredInfo.tag
+        project_id: projectId
       };
       await this.props.fetchInterfaceList(option);
     } else if (isNaN(params.actionId)) {
       let catid = params.actionId.substr(4);
-      this.setState({catid: +catid});
+      this.setState({ catid: +catid });
       let option = {
         page: this.state.current,
         limit,
-        catid,
-        status: this.state.filteredInfo.status,
-        tag: this.state.filteredInfo.tag
+        catid
       };
+
       await this.props.fetchInterfaceCatList(option);
     }
   };
@@ -113,13 +109,10 @@ class InterfaceList extends Component {
       message.success('接口集合简介更新成功');
     });
   };
-
   handleChange = (pagination, filters, sorter) => {
     this.setState({
-      current: pagination.current || 1,
-      sortedInfo: sorter,
-      filteredInfo: filters
-    }, () => this.handleRequest(this.props));
+      sortedInfo: sorter
+    });
   };
 
   componentWillMount() {
@@ -183,25 +176,26 @@ class InterfaceList extends Component {
     }
   };
 
-  //page change will be processed in handleChange by pagination
-  // changePage = current => {
-  //   if (this.state.current !== current) {
-  //     this.setState(
-  //       {
-  //         current: current
-  //       },
-  //       () => this.handleRequest(this.props)
-  //     );
-  //   }
-  // };
+  changePage = current => {
+    this.setState(
+      {
+        current: current
+      },
+      () => this.handleRequest(this.props)
+    );
+  };
 
   render() {
     let tag = this.props.curProject.tag;
-    let tagFilter = tag.map(item => {
-      return {text: item.name, value: item.name};
+    let filter = tag.map(item => {
+      return { text: item.name, value: item.name };
     });
 
     const columns = [
+      {
+        key:"p",
+        width: 2,
+      },
       {
         title: '接口名称',
         dataIndex: 'title',
@@ -216,7 +210,7 @@ class InterfaceList extends Component {
         }
       },
       {
-        title: '接口路径',
+        title: 'URL',
         dataIndex: 'path',
         key: 'path',
         width: 50,
@@ -243,75 +237,92 @@ class InterfaceList extends Component {
           );
         }
       },
+      // {
+      //   title: '接口分类',
+      //   dataIndex: 'catid',
+      //   key: 'catid',
+      //   width: 28,
+      //   render: (item, record) => {
+      //     return (
+      //       <Select
+      //         value={item + ''}
+      //         className="select path"
+      //         onChange={catid => this.changeInterfaceCat(record._id, catid)}
+      //       >
+      //         {this.props.catList.map(cat => {
+      //           return (
+      //             <Option key={cat.id + ''} value={cat._id + ''}>
+      //               <span>{cat.name}</span>
+      //             </Option>
+      //           );
+      //         })}
+      //       </Select>
+      //     );
+      //   }
+      // },
+      // {
+      //   title: '状态',
+      //   dataIndex: 'status',
+      //   key: 'status',
+      //   width: 20,
+      //   render: (text, record) => {
+      //     const key = record.key;
+      //     return (
+      //       <Select
+      //         value={key + '-' + text}
+      //         className="select"
+      //         onChange={this.changeInterfaceStatus}
+      //       >
+      //         <Option value={key + '-done'}>
+      //           <span className="tag-status done">已完成</span>
+      //         </Option>
+      //         <Option value={key + '-undone'}>
+      //           <span className="tag-status undone">未完成</span>
+      //         </Option>
+      //         <Option value={key + '-invalid'}>
+      //           <span className="tag-status invalid">废弃</span>
+      //         </Option>
+      //       </Select>
+      //     );
+      //   },
+      //   filters: [
+      //     {
+      //       text: '已完成',
+      //       value: 'done'
+      //     },
+      //     {
+      //       text: '未完成',
+      //       value: 'undone'
+      //     }
+      //   ],
+      //   onFilter: (value, record) => record.status.indexOf(value) === 0
+      // }, 
+
       {
-        title: '接口分类',
-        dataIndex: 'catid',
-        key: 'catid',
-        width: 28,
-        render: (item, record) => {
-          return (
-            <Select
-              value={item + ''}
-              className="select path"
-              onChange={catid => this.changeInterfaceCat(record._id, catid)}
-            >
-              {this.props.catList.map(cat => {
-                return (
-                  <Option key={cat.id + ''} value={cat._id + ''}>
-                    <span>{cat.name}</span>
-                  </Option>
-                );
-              })}
-            </Select>
-          );
-        }
+        title: '负责人',
+        width: 20,
       },
       {
-        title: '状态',
-        dataIndex: 'status',
-        key: 'status',
-        width: 24,
+        title: '创建者',
+        width: 20,
+      }, {
+        title: '更新时间',
+        dataIndex: 'up_time',
+        key: 'up_time',
+        width: 20,
+        ellipsis: true,
         render: (text, record) => {
-          const key = record.key;
-          return (
-            <Select
-              value={key + '-' + text}
-              className="select"
-              onChange={this.changeInterfaceStatus}
-            >
-              <Option value={key + '-done'}>
-                <span className="tag-status done">已完成</span>
-              </Option>
-              <Option value={key + '-undone'}>
-                <span className="tag-status undone">未完成</span>
-              </Option>
-            </Select>
-          );
-        },
-        filters: [
-          {
-            text: '已完成',
-            value: 'done'
-          },
-          {
-            text: '未完成',
-            value: 'undone'
-          }
-        ],
-        onFilter: (value, record) => record.status.indexOf(value) === 0
-      },
-      {
-        title: 'tag',
-        dataIndex: 'tag',
-        key: 'tag',
-        width: 14,
-        render: text => {
-          let textMsg = text.length > 0 ? text.join('\n') : '未设置';
-          return <div className="table-desc">{textMsg}</div>;
-        },
-        filters: tagFilter,
-        onFilter: (value, record) => {
-          return record.tag.indexOf(value) >= 0;
+          return formatTime(text)
+        }
+      }, {
+        title: '操作',
+        width: 20,
+        render: (text, record) => {
+            return(
+              <div>
+                <Button type='link'>删除</Button>
+              </div>
+            );
         }
       }
     ];
@@ -351,8 +362,9 @@ class InterfaceList extends Component {
     const pageConfig = {
       total: total,
       pageSize: limit,
-      current: this.state.current
-      // onChange: this.changePage
+      showTotal: total => `共 ${total} 条记录`,
+      current: this.state.current,
+      onChange: this.changePage
     };
 
     const isDisabled = this.props.catList.length === 0;
@@ -360,29 +372,38 @@ class InterfaceList extends Component {
     // console.log(this.props.curProject.tag)
 
     return (
-      <div style={{ padding: '24px' }}>
-        <h2 className="interface-title" style={{ display: 'inline-block', margin: 0 }}>
-          {intername ? intername : '全部接口'}共 ({total}) 个
-        </h2>
-
-        <Button
-          style={{ float: 'right' }}
-          disabled={isDisabled}
-          type="primary"
-          onClick={() => this.setState({ visible: true })}
-        >
-          添加接口
-        </Button>
-        <div style={{ marginTop: '10px' }}>
-          <Label onChange={value => this.handleChangeInterfaceCat(value, intername)} desc={desc} />
+      <div style={{ padding: '0px' }}>
+        <div style={{ maxHeight: '54px', borderBottom: '1px solid #D9D9D9', padding: '8px 10px' }}>
+          <Button
+            icon="plus"
+            disabled={isDisabled}
+            type="primary"
+            onClick={() => this.setState({ visible: true })}
+          >
+            添加接口
+          </Button>
         </div>
+        {/* <h2 className="interface-title" style={{ display: 'inline-block', margin: 0 }}>
+          {intername ? intername : '全部接口'}共 ({total}) 个
+        </h2> */}
+
+
+        {/* <div style={{ marginTop: '10px' }}>
+          <Label onChange={value => this.handleChangeInterfaceCat(value, intername)} desc={desc} />
+        </div> */}
         <Table
+          style={{ height: 'calc(100vh - 230px)' }}
           className="table-interfacelist"
+          scroll={{ x: 1200, y: parseInt(document.body.clientHeight) - 230, scrollToFirstRowOnChange: true }}
           pagination={pageConfig}
           columns={columns}
+          rowKey={record => record.key}
           onChange={this.handleChange}
+          bordered
+          size="small"
           dataSource={data}
         />
+
         {this.state.visible && (
           <Modal
             title="添加接口"

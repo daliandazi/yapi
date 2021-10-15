@@ -10,17 +10,18 @@ class interfaceModel extends baseModel {
     return {
       title: { type: String, required: true },
       uid: { type: Number, required: true },
-      path: { type: String, required: true },
-      method: { type: String, required: true },
+      path: { type: String, required: false },
+      method: { type: String, required: false },
       project_id: { type: Number, required: true },
       catid: { type: Number, required: true },
       edit_uid: { type: Number, default: 0 },
-      status: { type: String, enum: ['undone', 'done'], default: 'undone' },
+      status: { type: String, enum: ['undone', 'done', 'invalid'], default: 'undone' },
       desc: String,
       markdown: String,
       add_time: Number,
       up_time: Number,
-      type: { type: String, enum: ['static', 'var'], default: 'static' },
+      type: { type: String, enum: ['static', 'var', 'ref'], default: 'static' },
+      ref_id: { type: Number },
       query_path: {
         path: String,
         params: [
@@ -197,11 +198,12 @@ class interfaceModel extends baseModel {
       .exec();
   }
 
-  listByPid(project_id) {
+  listByPid(project_id,select) {
+    select = select || '_id title uid path method project_id catid edit_uid status add_time up_time index tag ref_id type';
     return this.model
       .find({
         project_id: project_id
-      })
+      }).select(select)
       .sort({ title: 1 })
       .exec();
   }
@@ -234,21 +236,7 @@ class interfaceModel extends baseModel {
       .skip((page - 1) * limit)
       .limit(limit)
       .select(
-        '_id title uid path method project_id catid edit_uid api_opened status add_time up_time, index, tag'
-      )
-      .exec();
-  }
-
-  listByOptionWithPage(option, page, limit) {
-    page = parseInt(page);
-    limit = parseInt(limit);
-    return this.model
-      .find(option)
-      .sort({index: 1})
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .select(
-        '_id title uid path method project_id catid edit_uid api_opened status add_time up_time, index, tag'
+        '_id title uid path method project_id catid edit_uid api_opened status add_time , up_time , type, index, tag, type, ref_id'
       )
       .exec();
   }
@@ -340,10 +328,7 @@ class interfaceModel extends baseModel {
   search(keyword) {
     return this.model
       .find({
-        $or: [
-          { 'title': new RegExp(keyword, 'ig') },
-          { 'path': new RegExp(keyword, 'ig') }
-        ]
+        title: new RegExp(keyword, 'ig')
       })
       .limit(10);
   }

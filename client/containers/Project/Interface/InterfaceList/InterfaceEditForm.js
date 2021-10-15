@@ -160,7 +160,11 @@ class InterfaceEditForm extends Component {
         headers: 'hide'
       }
     };
-    curdata['hideTabs']['req'][HTTP_METHOD[curdata.method].default_tab] = '';
+    console.log(curdata)
+    if(curdata.method){
+      curdata['hideTabs']['req'][HTTP_METHOD[curdata.method].default_tab] = '';
+    }
+    
     return Object.assign(
       {
         submitStatus: false,
@@ -266,7 +270,7 @@ class InterfaceEditForm extends Component {
           values.req_headers = values.req_headers || [];
           values.req_body_form = values.req_body_form || [];
           let isfile = false,
-            isHaveContentType = false;
+            isHavaContentType = false;
           if (values.req_body_type === 'form') {
             values.req_body_form.forEach(item => {
               if (item.type === 'file') {
@@ -277,10 +281,10 @@ class InterfaceEditForm extends Component {
             values.req_headers.map(item => {
               if (item.name === 'Content-Type') {
                 item.value = isfile ? 'multipart/form-data' : 'application/x-www-form-urlencoded';
-                isHaveContentType = true;
+                isHavaContentType = true;
               }
             });
-            if (isHaveContentType === false) {
+            if (isHavaContentType === false) {
               values.req_headers.unshift({
                 name: 'Content-Type',
                 value: isfile ? 'multipart/form-data' : 'application/x-www-form-urlencoded'
@@ -291,11 +295,11 @@ class InterfaceEditForm extends Component {
               ? values.req_headers.map(item => {
                   if (item.name === 'Content-Type') {
                     item.value = 'application/json';
-                    isHaveContentType = true;
+                    isHavaContentType = true;
                   }
                 })
               : [];
-            if (isHaveContentType === false) {
+            if (isHavaContentType === false) {
               values.req_headers = values.req_headers || [];
               values.req_headers.unshift({
                 name: 'Content-Type',
@@ -542,21 +546,17 @@ class InterfaceEditForm extends Component {
 
   // 处理批量导入参数
   handleBulkOk = () => {
-    let curValue = this.props.form.getFieldValue(this.state.bulkName)||[];
+    let curValue = this.props.form.getFieldValue(this.state.bulkName);
     // { name: '', required: '1', desc: '', example: '' }
     let newValue = [];
 
     this.state.bulkValue.split('\n').forEach((item, index) => {
       let valueItem = Object.assign({}, curValue[index] || dataTpl[this.state.bulkName]);
-      let indexOfColon = item.indexOf(':');
-      if (indexOfColon!==-1) {
-        valueItem.name = item.substring(0, indexOfColon);
-        valueItem.example = item.substring(indexOfColon + 1) || '';
-        newValue.push(valueItem);
-      }
+      valueItem.name = item.split(':')[0];
+      valueItem.example = item.split(':')[1] || '';
+      newValue.push(valueItem);
     });
 
-    this.props.form.setFieldsValue({[this.state.bulkName]: newValue});
     this.setState({
       visible: false,
       bulkValue: null,
@@ -578,11 +578,9 @@ class InterfaceEditForm extends Component {
     let value = this.props.form.getFieldValue(name);
 
     let bulkValue = ``;
-    if(value) {
-      value.forEach(item => {
-        return (bulkValue += item.name ? `${item.name}:${item.example || ''}\n` : '');
-      });
-    }
+    value.forEach(item => {
+      return (bulkValue += item.name ? `${item.name}:${item.example || ''}\n` : '');
+    });
 
     this.setState({
       visible: true,
@@ -823,9 +821,9 @@ class InterfaceEditForm extends Component {
           </div>
         </Modal>
         <Form onSubmit={this.handleSubmit}>
-          <h2 className="interface-title" style={{ marginTop: 0 }}>
+          <h3 className="interface-title" style={{ marginTop: 0 }}>
             基本设置
-          </h2>
+          </h3>
           <div className="panel-sub">
             <FormItem className="interface-edit-item" {...formItemLayout} label="接口名称">
               {getFieldDecorator('title', {
@@ -834,12 +832,12 @@ class InterfaceEditForm extends Component {
               })(<Input id="title" placeholder="接口名称" />)}
             </FormItem>
 
-            <FormItem className="interface-edit-item" {...formItemLayout} label="选择分类">
+            <FormItem className="interface-edit-item" {...formItemLayout} label="选择分组">
               {getFieldDecorator('catid', {
                 initialValue: this.state.catid + '',
-                rules: [{ required: true, message: '请选择一个分类' }]
+                rules: [{ required: true, message: '请选择一个分组' }]
               })(
-                <Select placeholder="请选择一个分类">
+                <Select placeholder="请选择一个分组">
                   {this.props.cat.map(item => {
                     return (
                       <Option key={item._id} value={item._id + ''}>
@@ -943,10 +941,16 @@ class InterfaceEditForm extends Component {
             </FormItem>
             <FormItem className="interface-edit-item" {...formItemLayout} label="状态">
               {getFieldDecorator('status', { initialValue: this.state.status })(
-                <Select>
-                  <Option value="done">已完成</Option>
-                  <Option value="undone">未完成</Option>
-                </Select>
+                <Radio.Group value={this.state.status}>
+                <Radio value='done'>已完成</Radio>
+                <Radio value='undone'>未完成</Radio>
+                <Radio value='invalid'>废弃</Radio>
+              </Radio.Group>
+                // <Select>
+                //   <Option value="done">已完成</Option>
+                //   <Option value="undone">未完成</Option>
+                //   <Option value="invalid">废弃</Option>
+                // </Select>
               )}
             </FormItem>
             {custom_field.enable && (
@@ -962,7 +966,7 @@ class InterfaceEditForm extends Component {
             )}
           </div>
 
-          <h2 className="interface-title">请求参数设置</h2>
+          <h3 className="interface-title">请求参数设置</h3>
 
           <div className="container-radiogroup">
             <RadioGroup
@@ -1217,7 +1221,7 @@ class InterfaceEditForm extends Component {
                         <span
                           className="href"
                           onClick={() =>
-                            window.open('https://hellosean1025.github.io/yapi/documents/mock.html', '_blank')
+                            window.open('https://yapi.ymfe.org/documents/mock.html', '_blank')
                           }
                         >
                           查看文档
@@ -1292,13 +1296,13 @@ class InterfaceEditForm extends Component {
           {/* ----------- email ------------- */}
           <h2 className="interface-title">其 他</h2>
           <div className="panel-sub">
-            <FormItem
+            {/* <FormItem
               className={'interface-edit-item'}
               {...formItemLayout}
               label={
                 <span>
-                  消息通知&nbsp;
-                  <Tooltip title={'开启消息通知，可在 项目设置 里修改'}>
+                  邮件通知&nbsp;
+                  <Tooltip title={'开启邮件通知，可在 项目设置 里修改'}>
                     <Icon type="question-circle-o" style={{ width: '10px' }} />
                   </Tooltip>
                 </span>
@@ -1308,7 +1312,7 @@ class InterfaceEditForm extends Component {
                 valuePropName: 'checked',
                 initialValue: this.props.noticed
               })(<Switch checkedChildren="开" unCheckedChildren="关" />)}
-            </FormItem>
+            </FormItem> */}
             <FormItem
               className={'interface-edit-item'}
               {...formItemLayout}
@@ -1333,7 +1337,7 @@ class InterfaceEditForm extends Component {
             style={{ textAlign: 'center', marginTop: '16px' }}
           >
             {/* <Button type="primary" htmlType="submit">保存1</Button> */}
-            <Affix offsetBottom={0}>
+            <Affix offsetBottom={14} style={{height:'60px',padding:'0px'}}>
               <Button
                 className="interface-edit-submit-button"
                 disabled={this.state.submitStatus}

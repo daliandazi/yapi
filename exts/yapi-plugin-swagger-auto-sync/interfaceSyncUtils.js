@@ -41,7 +41,7 @@ class syncUtils {
      * @param {*} uid 用户id
      */
     async addSyncJob(projectId, cronExpression, swaggerUrl, syncMode, uid) {
-        if(!swaggerUrl)return;
+        return;
         let projectToken = await this.getProjectToken(projectId, uid);
         //立即执行一次
         this.syncInterface(projectId, swaggerUrl, syncMode, uid, projectToken);
@@ -94,11 +94,11 @@ class syncUtils {
         let oldSyncJob = await this.syncModel.getByProjectId(projectId);
 
         //更新之前判断本次swagger json数据是否跟上次的相同,相同则不更新
-        if (newSwaggerJsonData && oldSyncJob.old_swagger_content && oldSyncJob.old_swagger_content == md5(newSwaggerJsonData)) {
+        if (oldSyncJob.old_swagger_content && oldSyncJob.old_swagger_content == md5(newSwaggerJsonData)) {
             //记录日志
-            // this.saveSyncLog(0, syncMode, "接口无更新", uid, projectId);
+            this.saveSyncLog(0, syncMode, "接口无更新", uid, projectId);
             oldSyncJob.last_sync_time = yapi.commons.time();
-            await this.syncModel.upById(oldSyncJob._id, oldSyncJob);
+            await this.syncModel.upById(projectId, oldSyncJob);
             return;
         }
 
@@ -138,11 +138,11 @@ class syncUtils {
 
     /**
      * 记录同步日志
-     * @param {*} errcode 
-     * @param {*} syncMode 
-     * @param {*} moremsg 
-     * @param {*} uid 
-     * @param {*} projectId 
+     * @param {*} errcode
+     * @param {*} syncMode
+     * @param {*} moremsg
+     * @param {*} uid
+     * @param {*} projectId
      */
     saveSyncLog(errcode, syncMode, moremsg, uid, projectId) {
         yapi.commons.saveLog({
@@ -211,7 +211,7 @@ class syncUtils {
             }
             return response.data;
         } catch (e) {
-            let response = e.response || {status: e.message || 'error'};
+            let response = e.response;
             throw new Error(`http status "${response.status}"` + '获取数据失败，请确认 swaggerUrl 是否正确')
         }
     }

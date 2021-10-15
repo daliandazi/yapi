@@ -95,7 +95,7 @@ class InterfaceEdit extends Component {
         });
         initData = true;
       }
-    }, 3000);
+    }, 1000);
 
     try {
       s = new WebSocket(
@@ -187,7 +187,7 @@ class InterfaceEdit extends Component {
   render() {
     const { cat, basepath, switch_notice, tag } = this.props.currProject;
     return (
-      <div className="interface-edit">
+      <div className="interface-edit" style={{ height: '100%', overflowY: 'auto' }}>
         {this.state.status === 1 ? (
           <InterfaceEditForm
             cat={cat}

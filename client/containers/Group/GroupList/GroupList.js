@@ -130,6 +130,11 @@ export default class GroupList extends Component {
       });
       await this.props.fetchGroupList();
       this.setState({ groupList: this.props.groupList });
+      const id = res.data.data._id;
+      const currGroup = _.find(this.props.groupList, group => {
+        return +group._id === +id;
+      });
+      this.props.setCurrGroup(currGroup);
       this.props.fetchGroupMsg(this.props.currGroup._id);
       this.props.fetchNewsData(this.props.currGroup._id, 'group', 1, 10);
     } else {
@@ -216,7 +221,7 @@ export default class GroupList extends Component {
           <div className="curr-group">
             <div className="curr-group-name">
               <span className="name">{currGroup.group_name}</span>
-              <Tooltip title="添加分组">
+              <Tooltip title="添加空间">
                 <a className="editSet">
                   <Icon className="btn" type="folder-add" onClick={this.showModal} />
                 </a>
@@ -241,7 +246,6 @@ export default class GroupList extends Component {
             justifyContent: 'center'
           }} />}
           <Menu
-            className="group-list"
             mode="inline"
             onClick={this.selectGroup}
             selectedKeys={[`${currGroup._id}`]}

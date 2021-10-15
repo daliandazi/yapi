@@ -1,4 +1,24 @@
 .tree-wrappper{
-  min-height: 500px;
-  overflow-y: scroll;
+  // min-height: 500px;
+  height: calc(100vh - 160px);
+  overflow-y: auto;
+}
+.IM-menu{
+  div{
+    line-height: 24px;
+    height: 28px;
+    cursor: default;
+    color: #6d6e72;
+    width: 100%;
+    padding: 2px 4px;
+    border-radius: 4px;
+    margin: 2px 0;
+    &:hover{
+      // color: #303445;
+      background-color: #E7F5FE;
+    }
+    &:active{
+      color: #303445;
+    }
+  }
 }

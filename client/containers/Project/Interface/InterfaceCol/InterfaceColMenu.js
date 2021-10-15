@@ -14,7 +14,6 @@ import axios from 'axios';
 import ImportInterface from './ImportInterface';
 import { Input, Icon, Button, Modal, message, Tooltip, Tree, Form } from 'antd';
 import { arrayChangeIndex } from '../../../../common.js';
-import _ from 'underscore'
 
 const TreeNode = Tree.TreeNode;
 const FormItem = Form.Item;
@@ -149,7 +148,7 @@ export default class InterfaceColMenu extends Component {
     this.setState({ expands: keys });
   };
 
-  onSelect = _.debounce(keys => {
+  onSelect = keys => {
     if (keys.length) {
       const type = keys[0].split('_')[0];
       const id = keys[0].split('_')[1];
@@ -158,18 +157,18 @@ export default class InterfaceColMenu extends Component {
         this.props.setColData({
           isRander: false
         });
-        this.props.history.push('/project/' + project_id + '/interface/col/' + id);
+        this.props.history.push('/project/' + project_id + '/interfaceCol/col/' + id);
       } else {
         this.props.setColData({
           isRander: false
         });
-        this.props.history.push('/project/' + project_id + '/interface/case/' + id);
+        this.props.history.push('/project/' + project_id + '/interfaceCol/case/' + id);
       }
     }
     this.setState({
       expands: null
     });
-  }, 500);
+  };
 
   showDelColConfirm = colId => {
     let that = this;
@@ -418,6 +417,7 @@ export default class InterfaceColMenu extends Component {
         return rNull;
       }
       if (router) {
+        console.log(router.params.action)
         if (router.params.action === 'case') {
           if (!currCase || !currCase._id) {
             return rNull;
@@ -436,7 +436,7 @@ export default class InterfaceColMenu extends Component {
       } else {
         return {
           expands: this.state.expands ? this.state.expands : ['col_' + interfaceColList[0]._id],
-          selects: ['col_' + interfaceColList[0]._id]
+          selects: ['root']
         };
       }
     };

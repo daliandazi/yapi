@@ -34,7 +34,7 @@ class Content extends Component {
   };
   constructor(props) {
     super(props);
-    this.title = 'YApi-高效、易用、功能强大的可视化接口管理平台';
+    this.title = '凯叔API管理';
     this.state = {
       curtab: 'view',
       visible: false,
@@ -122,15 +122,15 @@ class Content extends Component {
       },
       run: {
         component: Run,
-        name: '运行'
+        name: '测试'
       }
     };
 
     plugin.emitHook('interface_tab', InterfaceTabs);
-
+    // console.log(this.props.curdata)
     const tabs = (
       <Tabs
-        className="tabs-large"
+        
         onChange={this.onChange}
         activeKey={this.state.curtab}
         defaultActiveKey="view"

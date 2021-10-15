@@ -148,6 +148,17 @@ export default class ImportInterface extends Component {
       selectedRowKeys: self.state.selectedRowKeys
     };
 
+    getStatusText:(text)=>{
+      if(text === 'invalid'){
+        <span className="tag-status done">废弃</span>
+      }else if(text === 'done'){ 
+        <span className="tag-status done">已完成</span>
+      }else{
+        <span className="tag-status undone">未完成</span>
+      }
+      
+    }
+
     const columns = [
       {
         title: '接口名称',
@@ -189,14 +200,9 @@ export default class ImportInterface extends Component {
         ),
         dataIndex: 'status',
         render: text => {
-          return (
-            text &&
-            (text === 'done' ? (
-              <span className="tag-status done">已完成</span>
-            ) : (
-              <span className="tag-status undone">未完成</span>
-            ))
-          );
+
+            this.getStatusText(text)
+            
         },
         filters: [
           {
@@ -206,6 +212,9 @@ export default class ImportInterface extends Component {
           {
             text: '未完成',
             value: 'undone'
+          },{
+            text:'废弃',
+            value:'invalid'
           }
         ],
         onFilter: (value, record) => {

@@ -36,7 +36,7 @@ class AddInterfaceForm extends Component {
 
     return (
       <Form onSubmit={this.handleSubmit}>
-        <FormItem {...formItemLayout} label="分类名">
+        <FormItem {...formItemLayout} label="分组名">
           {getFieldDecorator('name', {
             rules: [
               {

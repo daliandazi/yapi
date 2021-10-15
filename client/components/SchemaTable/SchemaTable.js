@@ -122,7 +122,7 @@ class SchemaTable extends Component {
     }
     let data = schemaTransformToTable(product);
     data = _.isArray(data) ? data : [];
-    return <Table bordered size="small" pagination={false} dataSource={data} columns={columns} />;
+    return <Table bordered size="small" defaultExpandAllRows pagination={false} dataSource={data} columns={columns} />;
   }
 }
 export default SchemaTable;

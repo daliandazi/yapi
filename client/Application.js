@@ -21,16 +21,16 @@ const LOADING_STATUS = 0;
 const alertContent = () => {
   const ua = window.navigator.userAgent,
     isChrome = ua.indexOf('Chrome') && window.chrome;
-  if (!isChrome) {
-    return (
-      <Alert
-        style={{ zIndex: 99 }}
-        message={'YApi 的接口测试等功能仅支持 Chrome 浏览器，请使用 Chrome 浏览器获得完整功能。'}
-        banner
-        closable
-      />
-    );
-  }
+  // if (!isChrome) {
+  //   return (
+  //     <Alert
+  //       style={{ zIndex: 99 }}
+  //       message={'YApi 的接口测试等功能仅支持 Chrome 浏览器，请使用 Chrome 浏览器获得完整功能。'}
+  //       banner
+  //       closable
+  //     />
+  //   );
+  // }
 };
 
 let AppRoute = {
@@ -142,7 +142,7 @@ export default class App extends Component {
                 {/* <Route path="/statistic" component={statisticsPage} /> */}
               {/* </div> */}
             </div>
-            <Footer />
+            {/* <Footer /> */}
           </div>
         </Router>
       );

@@ -21,23 +21,6 @@ const HomeGuest = () => (
     <div className="main-one">
       <div className="container">
         <Row>
-          <Col span={24}>
-            <div className="home-header">
-              <a href="#" className="item">
-                YAPI
-              </a>
-              <a
-                target="_blank"
-                rel="noopener noreferrer"
-                href="https://hellosean1025.github.io/yapi"
-                className="item"
-              >
-                使用文档
-              </a>
-            </div>
-          </Col>
-        </Row>
-        <Row>
           <Col lg={9} xs={24}>
             <div className="home-des">
               <div className="logo">
@@ -371,7 +354,7 @@ class Home extends Component {
                   </Button>
                 </Link>
                 <Button className="btn-home btn-home-normal">
-                  <a target="_blank" rel="noopener noreferrer" href="https://hellosean1025.github.io/yapi">
+                  <a target="_blank" rel="noopener noreferrer" href="https://yapi.ymfe.org">
                     使用文档
                   </a>
                 </Button>

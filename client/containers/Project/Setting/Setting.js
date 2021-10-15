@@ -28,7 +28,7 @@ class Setting extends Component {
     const id = this.props.match.params.id;
     plugin.emitHook('sub_setting_nav', routers);
     return (
-      <div className="g-row">
+      <div style={{height:'100%',overflowY:'auto'}}>
         <Tabs type="card" className="has-affix-footer tabs-large">
           <TabPane tab="项目配置" key="1">
             <ProjectMessage projectId={+id} />

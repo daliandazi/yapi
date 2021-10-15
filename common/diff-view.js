@@ -2,7 +2,7 @@
 
 const json5 = require('json5');
 
-module.exports = function(jsondiffpatch, formattersHtml, curDiffData) {
+module.exports = function (jsondiffpatch, formattersHtml, curDiffData) {
   const json5_parse = json => {
     if (typeof json === 'object' && json) return json;
     try {
@@ -40,7 +40,8 @@ module.exports = function(jsondiffpatch, formattersHtml, curDiffData) {
     text: '文本',
     file: '文件',
     undone: '未完成',
-    done: '已完成'
+    done: '已完成',
+    invalid: '废弃'
   };
 
   const handleParams = item => {

@@ -1,5 +1,4 @@
 import axios from 'axios';
-import qs from 'qs';
 // Actions
 const INIT_INTERFACE_DATA = 'yapi/interface/INIT_INTERFACE_DATA';
 const FETCH_INTERFACE_DATA = 'yapi/interface/FETCH_INTERFACE_DATA';
@@ -92,15 +91,24 @@ export function updateInterfaceData(updata) {
     payload: true
   };
 }
-
+/**
+ * 删除接口
+ * @param {*} id 
+ * @returns 
+ */
 export async function deleteInterfaceData(id) {
-  let result = await axios.post('/api/interface/del', {id: id});
+  let result = await axios.post('/api/interface/del', { id: id });
   return {
     type: DELETE_INTERFACE_DATA,
     payload: result
   };
 }
 
+/**
+ * 保存接口信息
+ * @param {*} data 
+ * @returns 
+ */
 export async function saveImportData(data) {
   let result = await axios.post('/api/interface/save', data);
   return {
@@ -109,8 +117,13 @@ export async function saveImportData(data) {
   };
 }
 
+/**
+ * 删除接口分类
+ * @param {*} id 
+ * @returns 
+ */
 export async function deleteInterfaceCatData(id) {
-  let result = await axios.post('/api/interface/del_cat', {catid: id});
+  let result = await axios.post('/api/interface/del_cat', { catid: id });
   return {
     type: DELETE_INTERFACE_CAT_DATA,
     payload: result
@@ -135,12 +148,7 @@ export async function fetchInterfaceListMenu(projectId) {
 }
 
 export async function fetchInterfaceList(params) {
-  let result = await axios.get('/api/interface/list', {
-    params,
-    paramsSerializer: params => {
-      return qs.stringify(params, {indices: false})
-    }
-  })
+  let result = await axios.get('/api/interface/list', { params });
   return {
     type: FETCH_INTERFACE_LIST,
     payload: result
@@ -148,12 +156,7 @@ export async function fetchInterfaceList(params) {
 }
 
 export async function fetchInterfaceCatList(params) {
-  let result = axios.get('/api/interface/list_cat', {
-    params,
-    paramsSerializer: params => {
-      return qs.stringify(params, {indices: false})
-    }
-  })
+  let result = await axios.get('/api/interface/list_cat', { params });
   return {
     type: FETCH_INTERFACE_CAT_LIST,
     payload: result
