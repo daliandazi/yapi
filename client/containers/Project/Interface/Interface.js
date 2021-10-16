@@ -125,6 +125,7 @@ class Interface extends Component {
 
     // 移动的距离
     let spaceW = e.clientX - this.state.mouseX;
+    
 
     // 计算移动后的宽度
     let w = this.state.beforeWidth + spaceW;
