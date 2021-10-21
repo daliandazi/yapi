@@ -11,7 +11,7 @@ import {
   initInterface
 } from '../../../../reducer/modules/interface.js';
 import { getProject } from '../../../../reducer/modules/project.js';
-import { Input, Icon, Button, Modal, message, Tree, Tooltip, Menu, Popover, Divider } from 'antd';
+import { Input, Icon, Button, Modal, message, Tree, Tooltip, Menu, Popover, Divider, Tag } from 'antd';
 import AddInterfaceForm from './AddInterfaceForm';
 import AddInterfaceCatForm from './AddInterfaceCatForm';
 import AddForkDocForm from './AddForkDocForm'
@@ -19,6 +19,7 @@ import axios from 'axios';
 import { Link, withRouter } from 'react-router-dom';
 import produce from 'immer';
 import { arrayChangeIndex } from '../../../../common.js';
+import variable from 'client/constants/variable';
 
 import './interfaceMenu.scss';
 
@@ -465,23 +466,43 @@ class InterfaceMenu extends Component {
         )}
 
         {this.state.add_fork_modal_visible ? (
-          // <Modal
-          //   title="添加文档"
-          //   okText="保存"
-          //   visible={this.state.add_fork_modal_visible}
-          //   onCancel={() => this.changeModal('add_fork_modal_visible', false)}
-          //   className="addcatmodal"
-          // >
-            <AddForkDocForm
-              visible={this.state.add_fork_modal_visible}
-              catdata={this.state.curCatdata}
-              onCancel={() => this.changeModal('add_fork_modal_visible', false)}
-              onSubmit={(data)=>{
-                console.log(data)
-                this.changeModal('add_fork_modal_visible', false)
-              }}
-            />
-          // </Modal>
+
+          <AddForkDocForm
+            visible={this.state.add_fork_modal_visible}
+            catdata={this.state.curCatdata}
+            onCancel={() => this.changeModal('add_fork_modal_visible', false)}
+            onSubmit={(data) => {
+              console.log(data)
+              if (data && data.length > 0) {
+                console.log(this.state.curCatdata)
+                console.log(this.state.curCatid)
+
+                for (let i in data) {
+                  let d = data[i];
+
+                  if (d.cat === true) {
+
+                  } else {
+                    let api = {
+                      "catid": this.state.curCatid,
+                      "project_id": this.props.projectId,
+                      "type": "ref",
+                      "ref_id": d.key
+                    }
+                    console.log(api)
+                    axios.post('/api/interface/add', api).then(res => {
+                      if (res.data.errcode !== 0) {
+                        return message.error(`${res.data.errmsg}, 关联接口出现异常`);
+                      }
+                    });
+                  }
+                }
+
+                this.getList();
+              }
+              this.changeModal('add_fork_modal_visible', false)
+            }}
+          />
         ) : ('')
 
         }
@@ -558,7 +579,8 @@ class InterfaceMenu extends Component {
                           e.stopPropagation();
                           this.changeModal('add_fork_modal_visible', true);
                           this.setState({
-                            curCatid: item._id
+                            curCatid: item._id,
+                            curCatdata: item
                           });
                         }}
                       >
@@ -677,6 +699,25 @@ class InterfaceMenu extends Component {
 
     };
 
+    const methodTag = (method) => {
+      // if (method == 'POST') {
+      //   return <Tag color="blue">{method}</Tag>
+      // } else {
+      //   return <Tag color="cyan">{method}</Tag>
+      // }
+      let methodColor =
+        variable.METHOD_COLOR[method ? method.toLowerCase() : 'get'] ||
+        variable.METHOD_COLOR['get'];
+
+      return <span
+        style={{ color: methodColor.color, backgroundColor: methodColor.bac }}
+        className="TreeColValue"
+      >
+        {method}
+      </span>
+
+    }
+
     const itemInterfaceCreate = item => {
       return (
         <TreeNode
@@ -691,7 +732,7 @@ class InterfaceMenu extends Component {
                 onClick={e => e.stopPropagation()}
                 to={'/project/' + matchParams.id + '/interface/api/' + item._id}
               >
-                {item.title}
+                {methodTag(item.method)} {item.title}
               </Link>
               <div className="btns">
                 <Tooltip title="删除接口">

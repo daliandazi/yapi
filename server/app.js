@@ -6,6 +6,7 @@ const commons = require('./utils/commons');
 yapi.commons = commons;
 const dbModule = require('./utils/db.js');
 yapi.connect = dbModule.connect();
+
 const mockServer = require('./middleware/mockServer.js');
 require('./plugin.js');
 const websockify = require('koa-websocket');

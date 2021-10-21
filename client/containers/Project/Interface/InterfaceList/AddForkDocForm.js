@@ -53,21 +53,11 @@ class AddForkDocForm extends Component {
     }
     static propTypes = {
         form: PropTypes.object,
-        onSubmit: PropTypes.func,
-        onCancel: PropTypes.func,
         catdata: PropTypes.object,
         fetchGroupList: PropTypes.func,
         visible: PropTypes.bool,
         onCancel: PropTypes.func,
         onSubmit: PropTypes.func
-    };
-    handleSubmit = e => {
-        e.preventDefault();
-        this.props.form.validateFields((err, values) => {
-            if (!err) {
-                this.props.onSubmit(values);
-            }
-        });
     };
 
     changeState = (key, value) => {
@@ -141,26 +131,26 @@ class AddForkDocForm extends Component {
 
     }
 
-    onSubmit() {
-        if (this.props.onSubmit) {
+    onSubmit = (e) => {
+        e.preventDefault();
+        if (this.props && this.props.onSubmit) {
             let result = []
             for (let i in this.state.selectedNodes) {
                 let node = this.state.selectedNodes[i]
+                // console.log(node)
                 let nodeType = node.props.nodeType;
                 let n = {
-                    key:node.key,
+                    key: node.key,
                 };
-                if(node.props.children.length > 0){
+                if (nodeType === 'cat') {
                     n.cat = true;
-                }else{
+                } else {
                     n.cat = false;
                 }
                 result.push(n)
-
-
             }
 
-            this.props.onSubmit(this.state.selectedNodes)
+            this.props.onSubmit(result)
         }
     }
 
@@ -250,24 +240,22 @@ class AddForkDocForm extends Component {
                         checkable
                         multiple
                         onSelect={(selectedKeys, e) => {
-                            console.log(selectedKeys)
                         }}
                         onCheck={(checkedKeys, e) => {
                             this.setState({
                                 selectedNodes: e.checkedNodes
                             })
-                            console.log(this.state.selectedNodes)
                         }}
                     >
                         {
                             this.state.projectData.map(project => {
                                 return (
-                                    <TreeNode title={project.name} key={project._id}>
+                                    <TreeNode nodeType="cat" title={project.name} key={project._id}>
                                         {
                                             project.intefaceList ? (
                                                 project.intefaceList.map(interfaceObj => {
                                                     return (
-                                                        <TreeNode treeType="interface" title={this.rendertitle(interfaceObj)} key={interfaceObj._id} >
+                                                        <TreeNode nodeType="interface" title={this.rendertitle(interfaceObj)} key={interfaceObj._id} >
 
                                                         </TreeNode>
                                                     )

@@ -8,7 +8,7 @@ class interfaceModel extends baseModel {
 
   getSchema() {
     return {
-      title: { type: String, required: true },
+      title: { type: String, required: false },
       uid: { type: Number, required: true },
       path: { type: String, required: false },
       method: { type: String, required: false },
@@ -172,7 +172,7 @@ class interfaceModel extends baseModel {
 
   list(project_id, select) {
     select =
-      select || '_id title uid path method project_id catid edit_uid status add_time up_time';
+      select || '_id title uid path method project_id catid edit_uid status add_time up_time ref_id type';
     return this.model
       .find({
         project_id: project_id
@@ -193,7 +193,7 @@ class interfaceModel extends baseModel {
       .skip((page - 1) * limit)
       .limit(limit)
       .select(
-        '_id title uid path method project_id catid api_opened edit_uid status add_time up_time tag'
+        '_id title uid path method project_id catid api_opened edit_uid status add_time up_time tag ref_id type'
       )
       .exec();
   }

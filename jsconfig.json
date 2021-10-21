@@ -1,15 +1,25 @@
 {
     "compilerOptions": {
+        "sourceMap": true,
         "baseUrl": "./",
         "paths": {
             "@/*": [
                 "client/*"
+            ],
+            "common": [
+                "common/*"
             ],
             "@reducer/*": [
                 "client/reducer/*"
             ],
             "@components/*": [
                 "client/components/*"
+            ],
+            "@server/*": [
+                "server/*"
+            ],
+            "@models/*": [
+                "server/models/*"
             ]
         },
         "experimentalDecorators": true, // 主要是这个

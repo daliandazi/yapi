@@ -127,15 +127,20 @@ class Content extends Component {
     };
 
     plugin.emitHook('interface_tab', InterfaceTabs);
-    // console.log(this.props.curdata)
     const tabs = (
       <Tabs
-        
+
         onChange={this.onChange}
         activeKey={this.state.curtab}
         defaultActiveKey="view"
       >
-        {Object.keys(InterfaceTabs).map(key => {
+        {Object.keys(InterfaceTabs).filter(key => {
+          // 如果是关联引用的接口，不能编辑
+          if (key == 'edit' && this.props.curdata.type && this.props.curdata.type == 'ref') {
+            return false;
+          }
+          return true;
+        }).map(key => {
           let item = InterfaceTabs[key];
           return <TabPane tab={item.name} key={key} />;
         })}

@@ -11,6 +11,7 @@ const logController = require('./controllers/log.js');
 const followController = require('./controllers/follow.js');
 const openController = require('./controllers/open.js');
 const { createAction } = require('./utils/commons.js');
+const yuqueController = require('./controllers/yuque')
 
 const router = koaRouter();
 
@@ -50,10 +51,25 @@ let INTERFACE_CONFIG = {
   open: {
     prefix: '/open/',
     controller: openController
+  },
+  yuque: {
+    prefix: '/yuque/',
+    controller: yuqueController
   }
 };
 
 let routerConfig = {
+  yuque: [
+    {
+      action: 'getDoc',
+      path: 'getDoc',
+      method: 'get'
+    }, {
+      action: 'getDocsByNamespace',
+      path: 'getDocsByNamespace',
+      method: 'get'
+    }
+  ],
   group: [
     {
       action: 'getMyGroup',
@@ -61,7 +77,7 @@ let routerConfig = {
       method: 'get'
     },
 
-    
+
     {
       action: 'list',
       path: 'list',

@@ -8,15 +8,5 @@
     "port": "3717",
     "user": "yapi",
     "pass": "Kaishu2099"
-  },
-  "mail": {
-    "enable": true,
-    "host": "smtp.163.com",
-    "port": 465,
-    "from": "***@163.com",
-    "auth": {
-      "user": "***@163.com",
-      "pass": "*****"
-    }
   }
 }

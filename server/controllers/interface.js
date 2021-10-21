@@ -519,12 +519,35 @@ class interfaceController extends baseController {
         result = await this.Model.listWithPage(project_id, page, limit);
       }
 
+      let datas = [];
+      if (result) {
+        for (let i in result) {
+          let api = result[i]
+          if (api.ref_id) {
+            let ref = await this.Model.get(api.ref_id);
+            if (ref) {
+              let data = Object.assign(ref, {
+                res_body: "",
+                req_query: "",
+                catid: api.catid,
+                project_id: api.project_id,
+                type: api.type,
+                _id: api._id
+              });
+              datas.push(data)
+            }
+          } else {
+            datas.push(api)
+          }
+        }
+      }
+
       let count = await this.Model.listCount({ project_id });
 
       ctx.body = yapi.commons.resReturn({
         count: count,
         total: Math.ceil(count / limit),
-        list: result
+        list: datas
       });
       yapi.emitHook('interface_list', result).then();
     } catch (err) {

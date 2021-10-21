@@ -162,9 +162,11 @@ module.exports = {
         alias: {
             common: resolve("common"),
             client: resolve("client"),
+            "@server": resolve("server"),
+            "@models": resolve("server/models"),
             exts: resolve("exts"),
-            "@reducer":resolve("client/reducer"),
-            "@components":resolve("client/components")
+            "@reducer": resolve("client/reducer"),
+            "@components": resolve("client/components")
         },
     },
 };

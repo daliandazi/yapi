@@ -8,20 +8,20 @@ function arrUnique(arr1, arr2) {
   return res;
 }
 
-const noticeObj = {
-  mail: {
-    title: '邮件',
-    hander: (emails, title, content)=>{
-      yapi.commons.sendMail({
-        to: emails,
-        contents: content,
-        subject: title
-      });
-    }
-  }
-}
+// const noticeObj = {
+//   mail: {
+//     title: '邮件',
+//     hander: (emails, title, content)=>{
+//       yapi.commons.sendMail({
+//         to: emails,
+//         contents: content,
+//         subject: title
+//       });
+//     }
+//   }
+// }
 
-yapi.emitHook('addNotice', noticeObj)
+// yapi.emitHook('addNotice', noticeObj)
 
 yapi.commons.sendNotice = async function(projectId, data) {
   const projectModel = require('../models/project.js');

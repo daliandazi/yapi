@@ -19,7 +19,7 @@ function connect(callback) {
   mongoose.set('useCreateIndex', true);
 
   let config = yapi.WEBCONFIG;
-  let options = { useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, poolSize: 10, keepAlive: 120, autoReconnect: true, connectTimeoutMS: 3000 };
+  let options = { useCreateIndex: true, useUnifiedTopology: true, poolSize: 10, keepAlive: 120, autoReconnect: true, connectTimeoutMS: 3000 };
 
   if (config.db.user) {
     options.user = config.db.user;
