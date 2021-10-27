@@ -1,28 +1,88 @@
-import React, { PureComponent as Component } from 'react';
+import React, {PureComponent as Component} from 'react';
 import PropTypes from 'prop-types';
-import { Tabs, Layout, Menu, Icon, Table, Button, Input } from 'antd';
-import { Route, Switch, matchPath, Link } from 'react-router-dom';
-import { connect } from 'react-redux';
-import axios from 'axios';
+import {Tabs, Layout, Menu, Icon, Table, Button, Input, Tree} from 'antd';
+import {Route, Switch, matchPath, Link} from 'react-router-dom';
+import {connect} from 'react-redux';
+import {axios} from 'common/httpUtil';
+import AddCodeModal from './AddCodeModal'
 
-const { Content, Sider } = Layout;
-
+const {Content, Sider} = Layout;
+const {TreeNode} = Tree;
 
 @connect(
     state => {
         return {
+            statusCodeList: [],
+            projectId: null
         };
     }
 )
 class StatusCodeList extends Component {
 
+    static propTypes = {
+        match: PropTypes.object,
+        projectId: PropTypes.string
+    };
+
     constructor(props) {
         super(props);
         this.state = {
+            statusCodeList: [],
+            projectId: null
         };
     }
 
-    async componentDidMount() {
+    queryCodeList(groupId) {
+        if (!groupId && this.state.groupId) {
+            groupId = this.state.groupId
+        }
+        axios.get('/api/statusCode/list', {
+            params: {
+                groupId: groupId,
+                projectId: this.state.projectId
+            }
+        }).then(response => {
+            this.setState({
+                statusCodeList: response.data,
+                groupId: groupId
+            })
+        })
+    }
+
+    componentWillMount() {
+        let params = this.props.match.params;
+        let groupId = params.groupId;
+        let projectId = params.id;
+
+        this.setState({
+            projectId: projectId,
+            groupId: groupId
+        }, () => {
+            this.queryCodeList();
+        })
+    }
+
+    componentWillReceiveProps(nextProps) {
+        let _groupId = nextProps.match.params.groupId;
+        let projectId = nextProps.match.params.id;
+        if (_groupId) {
+            if (_groupId && _groupId !== this.state.groupId) {
+                this.setState({
+                    projectId: projectId,
+                    groupId: _groupId
+                })
+                this.queryCodeList(_groupId);
+            }
+        } else {
+            this.setState({
+                projectId: projectId,
+                groupId: null
+            }, () => {
+                this.queryCodeList(_groupId);
+            })
+            console.log('没有groupId', nextProps.match.params)
+        }
+
     }
 
     render() {
@@ -31,99 +91,74 @@ class StatusCodeList extends Component {
             {
                 title: '错误码',
                 width: 2,
-                dataIndex: 'code',
+                dataIndex: 'code'
             },
             {
                 title: '描述',
-                width: 2,
+                width: 5,
                 dataIndex: "codeDescription"
-            },
-            {
-                title: '分组',
-                width: 2,
-                dataIndex: 'groupName'
             },
             {
                 title: '操作',
                 width: 2,
-            }
-        ]
-
-        const data = [
-            {
-                codeID: 1,
-                code: '0',
-                codeDescription: '返回正常',
-                groupName: '基础'
-            }, {
-                codeID: 2,
-                code: '-1',
-                codeDescription: '返回异常',
-                groupName: '基础'
+                render: (text, record) => {
+                    return (
+                        <div>
+                            <Button type="link">编辑</Button><Button type="link">删除</Button>
+                        </div>
+                    );
+                }
             }
         ]
 
         return (
-            <Layout style={{ height: 'calc(100vh - 80px)' }}>
-                <Sider style={{ height: '100%', overflow: 'hidden', borderLeft: '1px solid #D9D9D9', border: '1px solid #D9D9D9', }} ref={this.interfaceSiderFun} id={'interface-sider'} width={300}>
-                    <div className="left-menu" style={{ height: parseInt(document.body.clientHeight) - 80 + 'px' }}>
-                        <div style={{ padding: '10px' }}>
-                            <Button
-                                icon="plus"
-                                type="primary"
-                            >添加分组</Button>
-                        </div>
+            <div style={{backgroundColor: '#fff', height: 'calc(100vh - 80px)'}}>
+                <div style={{height: '30px', padding: '10px 10px '}}>
+                    {this.state.groupId ? (
+                        <Button
+                            icon="plus"
+                            type="primary"
+                            onClick={() => {
+                                this.setState({
+                                    add_code_modal_visible: true
+                                })
+                            }}
+                        >添加状态码</Button>
+                    ) : ('')}
 
-                        <div style={{ borderTop: '1px solid #D9D9D9', borderBottom: '1px solid #D9D9D9', padding: '6px 10px' }}>
-                            <Input style={{ width: '100%' }} placeholder="搜索分组" />
-                        </div>
+                </div>
+                {
+                    <AddCodeModal
+                        visible={this.state.add_code_modal_visible} projectId={this.state.projectId}
+                        onSubmit={() => {
+                            this.queryCodeList()
+                            this.setState({
+                                add_code_modal_visible: false
+                            })
+                        }
+                        }
+                        onCancel={() => {
+                            this.setState({
+                                add_code_modal_visible: false
+                            })
+                        }
+                        }
+                        groupId={this.state.groupId}
+                    />
+                }
+                <div style={{marginTop: '20px', overflowY: 'auto', height: 'calc(100vh - 130px)'}}>
 
-                        <Menu
-                            mode="inline"
-                        >
-                            <Menu.Item
-                                className="item"
-                                style={{ borderBottom: '1px dashed #D9D9D9' }}
-                            >
-                                <Icon type="menu" style={{ marginRight: 5 }} />
-                                所有状态码
-                            </Menu.Item>
-                        </Menu>
-                    </div>
-                </Sider>
-                <Layout>
-                    <Content
-                        style={{
-                            height: '100%',
-                            overflow: 'hidden',
-                            border: '1px solid #D9D9D9',
-                            borderLeft: '0px solid #D9D9D9',
-                            backgroundColor: '#fff'
-                        }}
+                    <Table
+                        style={{margin: '10px 10px'}}
+                        columns={columns}
+                        dataSource={this.state.statusCodeList}
+                        bordered
+                        size="small"
                     >
-                        <div style={{ backgroundColor: '#fff', height: 'calc(100vh - 80px)' }}>
-                            <div style={{ height: '30px', padding: '10px 10px ' }}>
-                                <Button
-                                    icon="plus"
-                                    type="primary"
-                                >添加状态码</Button>
-                            </div>
-                            <div style={{ marginTop: '20px',overflowY:'auto' ,height: 'calc(100vh - 130px)'}}>
 
-                                <Table
-                                    style={{ margin: '10px 10px' }}
-                                    columns={columns}
-                                    dataSource={data}
-                                    bordered
-                                    size="small"
-                                >
-
-                                </Table>
-                            </div>
-                        </div>
-                    </Content>
-                </Layout>
-            </Layout>
+                    </Table>
+                </div>
+            </div>
 
         )
     }

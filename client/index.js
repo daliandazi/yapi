@@ -1,6 +1,5 @@
 import './styles/common.scss';
 import './styles/theme.less';
-// import './styles/app.css'
 
 import { LocaleProvider } from 'antd';
 import './plugin';

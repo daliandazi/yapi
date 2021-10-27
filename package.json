@@ -5,7 +5,7 @@
   "main": "server/app.js",
   "scripts": {
     "dev-copy-icon": "cp -r static/iconfont ./",
-    "dev-server": " node server/app.js dev -L",
+    "dev-server": " nodemon server/app.js dev -L",
     "install-server": " node server/install.js",
     "dev": "npm run dev-server & npm run dev-client",
     "dev-client": "webpack serve --config ./config/webpack.dev.conf.js",
@@ -161,9 +161,9 @@
     "clean-webpack-plugin": "^3.0.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
     "react-scripts": "3.4.1",
-    "typescript": "^4",
+    "typescript": "^4.0.0",
+    "@types/node": "14",
     "ykit": "0.8.4",
-    "ykit-config-antd": "0.1.3",
     "ykit-config-es6": "^3.2.1"
   },
   "config": {},

@@ -73,8 +73,12 @@
     table-layout: fixed;
     
   }
-  .ant-table-body {
+  .ant-table-content {
     height: calc(100vh - 230px);
+    .ant-table-scroll{
+      height: calc(100vh - 230px);
+
+    }
   }
   .path {
     width: 95%;

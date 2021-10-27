@@ -80,7 +80,7 @@
       background-color: #eef7fe;
       position: absolute;
       top: 50%;
-      right: 0;
+      right: 5px;
       transform: translateY(-60%);
       transition: all 0.2s;
     }
@@ -113,7 +113,7 @@
     padding-left: 10px;
     .cat_switch_hidden {
       .ant-tree-switcher {
-        visibility: hidden;
+        // visibility: hidden;
       }
     }
 

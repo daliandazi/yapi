@@ -15,7 +15,7 @@ import ProjectMember from './Setting/ProjectMember/ProjectMember.js';
 import ProjectData from './Setting/ProjectData/ProjectData.js';
 import InterfaceCol from './Interface/InterfaceCol/InterfaceCol.js';
 
-import StatusCodeList from './StatusCode/StatusCodeList'
+import StatusCode from './StatusCode/StatusCode'
 import Lake from './Lake/Lake'
 
 const plugin = require('client/plugin.js');
@@ -102,8 +102,8 @@ export default class Project extends Component {
     let routers = {
       interface: { name: 'API', icon: 'api', path: '/project/:id/interface/:action', component: Interface, count: 0 },
       interfaceCol: { name: 'API测试', icon: 'car', path: '/project/:id/interfaceCol', component: InterfaceCol },
-      statusCode: { name: '状态码', icon: 'car', path: '/project/:id/statusCodeList', component: StatusCodeList },
-      lake: { name: '语雀文档', icon: 'car', path: '/project/:id/lake', component: Lake },
+      statusCode: { name: '状态码', icon: 'car', path: '/project/:id/statusCode', component: StatusCode },
+      // lake: { name: '语雀文档', icon: 'car', path: '/project/:id/lake', component: Lake },
       activity: { name: '动态', icon: 'eye', path: '/project/:id/activity', component: Activity },
       data: { name: '数据管理', icon: 'database', path: '/project/:id/data', component: ProjectData },
       members: { name: '成员管理', icon: 'user', path: '/project/:id/members', component: ProjectMember },

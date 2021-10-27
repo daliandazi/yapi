@@ -1,19 +1,16 @@
-import React, { PureComponent as Component } from 'react';
-import { connect } from 'react-redux';
+import React, {PureComponent as Component} from 'react';
+import {connect} from 'react-redux';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
-import { Form, Modal, Button, Table, Select, Tree, Tag } from 'antd';
+import {Button, Form, Modal, Select, Tag, Tree} from 'antd';
+import {fetchInterfaceCatList, fetchInterfaceList, fetchInterfaceListMenu} from '@reducer/modules/interface.js';
+import {fetchGroupList} from '@reducer/modules/group';
+
 const FormItem = Form.Item;
 const Option = Select.Option;
 const { TreeNode } = Tree;
 
-import {
-    fetchInterfaceListMenu,
-    fetchInterfaceList,
-    fetchInterfaceCatList
-} from '@reducer/modules/interface.js';
-import { fetchGroupList } from '@reducer/modules/group';
 function hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
 }
@@ -72,7 +69,6 @@ class AddForkDocForm extends Component {
             let result = res.data;
             if (result.errcode === 0) {
                 let list = result.data;
-                console.log(list)
                 this.setState({
                     groupData: list
                 });
@@ -89,13 +85,13 @@ class AddForkDocForm extends Component {
             selectedGroup: groupId
         });
         let api = "/api/project/list?group_id=" + groupId + "&page=1&limit=10";
-        var response = await (await axios.get(api)).data;
+        const response = await (await axios.get(api)).data;
 
         if (response.errcode === 0) {
-            var projectList = response.data.list;
-            for (var i in projectList) {
-                var project = projectList[i]
-                var ins = await this.getInterfaceList(project._id)
+            const projectList = response.data.list;
+            for (let i in projectList) {
+                const project = projectList[i];
+                const ins = await this.getInterfaceList(project._id);
                 project.intefaceList = ins;
             }
             this.setState({
@@ -106,16 +102,16 @@ class AddForkDocForm extends Component {
     }
 
     async getInterfaceList(projectId) {
-        var params = {
-            project_id: projectId
-        }
-        var response = await (await axios.get('/api/interface/list?project_id=' + projectId)).data;
+        let response = await (await axios.get('/api/interface/list',{
+            params:{
+                project_id:projectId,
+                limit:'all'
+            }
+        })).data;
         if (response.errcode === 0) {
-            var projectList = response.data.list;
-            return projectList;
+            return response.data.list;
         }
         return [];
-
     }
 
 
