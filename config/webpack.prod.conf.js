@@ -10,7 +10,7 @@ const prodWebpackConfig = merge(baseWebpackConfig, {
   devtool: "none",
   output: {
     filename: "[name].[contenthash:8].bundle.js",
-    publicPath: "/prd",
+    publicPath: "/",
   },
   optimization: {
     minimize: true,
