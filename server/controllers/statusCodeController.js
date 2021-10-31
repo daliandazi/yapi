@@ -30,7 +30,13 @@ class statusCodeController extends baseController {
             params.parentId = 0;
         }
 
-        let result = await this.groupModel.save(params);
+        let result;
+        if(params._id){
+             result = await this.groupModel.update(params);
+        }else{
+             result = await this.groupModel.save(params);
+        }
+
 
         return (ctx.body = yapi.commons.resReturn(result));
     }
@@ -54,6 +60,12 @@ class statusCodeController extends baseController {
         let datas = await this.groupModel.listByProject(params.projectId);
 
         return (ctx.body = yapi.commons.resReturn(datas));
+    }
+
+    async getGroup(ctx){
+        const groupId = ctx.params.groupId;
+        let data = await this.groupModel.get(groupId);
+        return (ctx.body = yapi.commons.resReturn(data));
     }
 
     async statusCodeList(ctx) {

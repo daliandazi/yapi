@@ -1,6 +1,7 @@
+require('@babel/register')
 process.env.NODE_PATH = __dirname;
 require('module').Module._initPaths();
-
+const path = require("path");
 const yapi = require('./yapi.js');
 const commons = require('./utils/commons');
 yapi.commons = commons;
@@ -19,7 +20,7 @@ const koaStatic = require('koa-static');
 // const bodyParser = require('koa-bodyparser');
 const koaBody = require('koa-body');
 const router = require('./router.js');
-
+const { Route } = require('./router/decorator');
 global.storageCreator = storageCreator;
 let indexFile = process.argv[2] === 'dev' ? 'dev.html' : 'index.html';
 let env = process.argv[2]
@@ -32,6 +33,10 @@ yapi.app = app;
 app.use(koaBody({ strict: false, multipart: true, jsonLimit: '2mb', formLimit: '1mb', textLimit: '1mb' }));
 app.use(mockServer);
 app.use(router.routes());
+
+const apiPath = path.resolve(__dirname, './controllers')
+new Route(app, apiPath).init();
+
 app.use(router.allowedMethods());
 
 websocket(app);

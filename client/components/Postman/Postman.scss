@@ -118,7 +118,7 @@
       }
     }
     .header {
-      max-width: 400px;
+      //max-width: 400px;
     }
     .container-title {
       display: flex;
@@ -153,12 +153,14 @@
   }
   .url {
     display: flex;
-    margin: 24px 10px;
+    padding: 10px 10px 10px 10px;
+    background-color: #F2F2F2;
   }
   .key-value-wrap {
     display: flex;
     align-items: center;
-    margin: 0 0 5px 0;
+    //margin: 5px 0 5px 0;
+    padding: 5px 10px;
     .key {
       flex-basis: 220px;
     }

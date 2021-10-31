@@ -22,10 +22,11 @@
                 "server/models/*"
             ]
         },
-        "experimentalDecorators": true, // 主要是这个
+        "experimentalDecorators": true,
+        "include": ["server/**"],
         "exclude": [
             "node_modules",
             "dist"
-        ],
+        ]
     }
 }

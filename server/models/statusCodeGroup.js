@@ -16,6 +16,10 @@ class statusCodeGroupModel extends baseModel {
                 type: Number,
                 required: true
             },
+            desc:{
+                type: String,
+                required: false
+            },
             parentId: {
                 type: Number,
                 required: true
@@ -27,18 +31,19 @@ class statusCodeGroupModel extends baseModel {
     }
 
     save(data) {
+        data.up_time = yapi.commons.time();
+        data.add_time = yapi.commons.time();
         let m = new this.model(data);
         return m.save();
     }
-
-    update(id, data) {
+    update(data) {
         data.up_time = yapi.commons.time();
         return this.model.update(
             {
-                _id: id
+                _id: data._id
             },
             data,
-            {runValidators: true}
+            { runValidators: true }
         );
     }
 

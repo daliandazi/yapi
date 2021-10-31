@@ -1,24 +1,36 @@
-import './View.scss';
-import React, { PureComponent as Component } from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { Table, Icon, Row, Col, Tooltip, message, Tag, Divider } from 'antd';
-import { Link } from 'react-router-dom';
-import AceEditor from 'client/components/AceEditor/AceEditor';
-import { formatTime, safeArray } from '../../../../common.js';
-import ErrMsg from '../../../../components/ErrMsg/ErrMsg.js';
-import variable from '../../../../constants/variable';
-import constants from '../../../../constants/variable.js';
-import copy from 'copy-to-clipboard';
-import SchemaTable from '../../../../components/SchemaTable/SchemaTable.js';
+import "./View.scss";
+import React, { PureComponent as Component } from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import {
+  Table,
+  Icon,
+  Row,
+  Col,
+  Tooltip,
+  message,
+  Tag,
+  Divider,
+  Button,
+  Popover,
+} from "antd";
+import { Link } from "react-router-dom";
+import AceEditor from "client/components/AceEditor/AceEditor";
+import { formatTime, safeArray } from "../../../../common.js";
+import ErrMsg from "../../../../components/ErrMsg/ErrMsg.js";
+import variable from "../../../../constants/variable";
+import constants from "../../../../constants/variable.js";
+import copy from "copy-to-clipboard";
+import SchemaTable from "../../../../components/SchemaTable/SchemaTable.js";
+import IconFont from "client/components/Icon/MyIcon";
 
 const HTTP_METHOD = constants.HTTP_METHOD;
 
-@connect(state => {
+@connect((state) => {
   return {
     curData: state.inter.curdata,
     custom_field: state.group.field,
-    currProject: state.project.currProject
+    currProject: state.project.currProject,
   };
 })
 class View extends Component {
@@ -26,65 +38,67 @@ class View extends Component {
     super(props);
     this.state = {
       init: true,
-      enter: false
+      enter: false,
     };
   }
+
   static propTypes = {
     curData: PropTypes.object,
     currProject: PropTypes.object,
-    custom_field: PropTypes.object
+    custom_field: PropTypes.object,
   };
 
   req_body_form(req_body_type, req_body_form) {
-    if (req_body_type === 'form') {
+    if (req_body_type === "form") {
       const columns = [
         {
-          title: '参数名称',
-          dataIndex: 'name',
-          key: 'name',
-          width: 140
+          title: "参数名称",
+          dataIndex: "name",
+          key: "name",
+          width: 140,
         },
         {
-          title: '参数类型',
-          dataIndex: 'type',
-          key: 'type',
+          title: "参数类型",
+          dataIndex: "type",
+          key: "type",
           width: 100,
-          render: text => {
-            text = text || '';
-            return text.toLowerCase() === 'text' ? (
+          render: (text) => {
+            text = text || "";
+            return text.toLowerCase() === "text" ? (
               <span>
                 <i className="query-icon text">T</i>文本
               </span>
             ) : (
               <span>
-                <Icon type="file" className="query-icon" />文件
+                <Icon type="file" className="query-icon" />
+                文件
               </span>
             );
-          }
+          },
         },
         {
-          title: '是否必须',
-          dataIndex: 'required',
-          key: 'required',
-          width: 100
+          title: "是否必须",
+          dataIndex: "required",
+          key: "required",
+          width: 100,
         },
         {
-          title: '示例',
-          dataIndex: 'example',
-          key: 'example',
+          title: "示例",
+          dataIndex: "example",
+          key: "example",
           width: 80,
           render(_, item) {
-            return <p style={{ whiteSpace: 'pre-wrap' }}>{item.example}</p>;
-          }
+            return <p style={{ whiteSpace: "pre-wrap" }}>{item.example}</p>;
+          },
         },
         {
-          title: '备注',
-          dataIndex: 'value',
-          key: 'value',
+          title: "备注",
+          dataIndex: "value",
+          key: "value",
           render(_, item) {
-            return <p style={{ whiteSpace: 'pre-wrap' }}>{item.value}</p>;
-          }
-        }
+            return <p style={{ whiteSpace: "pre-wrap" }}>{item.value}</p>;
+          },
+        },
       ];
 
       const dataSource = [];
@@ -95,14 +109,17 @@ class View extends Component {
             name: item.name,
             value: item.desc,
             example: item.example,
-            required: item.required == 0 ? '否' : '是',
-            type: item.type
+            required: item.required == 0 ? "否" : "是",
+            type: item.type,
           });
         });
       }
 
       return (
-        <div style={{ display: dataSource.length ? '' : 'none' }} className="colBody">
+        <div
+          style={{ display: dataSource.length ? "" : "none" }}
+          className="colBody"
+        >
           <Table
             bordered
             size="small"
@@ -114,22 +131,32 @@ class View extends Component {
       );
     }
   }
+
   res_body(res_body_type, res_body, res_body_is_json_schema) {
-    if (res_body_type === 'json') {
+    if (res_body_type === "json") {
       if (res_body_is_json_schema) {
         return <SchemaTable dataSource={res_body} />;
       } else {
         return (
           <div className="colBody">
             {/* <div id="vres_body_json" style={{ minHeight: h * 16 + 100 }}></div> */}
-            <AceEditor data={res_body} readOnly={true} style={{ minHeight: 600 }} />
+            <AceEditor
+              data={res_body}
+              readOnly={true}
+              style={{ minHeight: 600 }}
+            />
           </div>
         );
       }
-    } else if (res_body_type === 'raw') {
+    } else if (res_body_type === "raw") {
       return (
         <div className="colBody">
-          <AceEditor data={res_body} readOnly={true} mode="text" style={{ minHeight: 300 }} />
+          <AceEditor
+            data={res_body}
+            readOnly={true}
+            mode="text"
+            style={{ minHeight: 300 }}
+          />
         </div>
       );
     }
@@ -137,7 +164,7 @@ class View extends Component {
 
   req_body(req_body_type, req_body_other, req_body_is_json_schema) {
     if (req_body_other) {
-      if (req_body_is_json_schema && req_body_type === 'json') {
+      if (req_body_is_json_schema && req_body_type === "json") {
         return <SchemaTable dataSource={req_body_other} />;
       } else {
         return (
@@ -146,7 +173,7 @@ class View extends Component {
               data={req_body_other}
               readOnly={true}
               style={{ minHeight: 300 }}
-              mode={req_body_type === 'json' ? 'javascript' : 'text'}
+              mode={req_body_type === "json" ? "javascript" : "text"}
             />
           </div>
         );
@@ -157,34 +184,34 @@ class View extends Component {
   req_query(query) {
     const columns = [
       {
-        title: '参数名称',
-        dataIndex: 'name',
+        title: "参数名称",
+        dataIndex: "name",
         width: 140,
-        key: 'name'
+        key: "name",
       },
       {
-        title: '是否必须',
+        title: "是否必须",
         width: 100,
-        dataIndex: 'required',
-        key: 'required'
+        dataIndex: "required",
+        key: "required",
       },
       {
-        title: '示例',
-        dataIndex: 'example',
-        key: 'example',
+        title: "示例",
+        dataIndex: "example",
+        key: "example",
         width: 80,
         render(_, item) {
-          return <p style={{ whiteSpace: 'pre-wrap' }}>{item.example}</p>;
-        }
+          return <p style={{ whiteSpace: "pre-wrap" }}>{item.example}</p>;
+        },
       },
       {
-        title: '备注',
-        dataIndex: 'value',
-        key: 'value',
+        title: "备注",
+        dataIndex: "value",
+        key: "value",
         render(_, item) {
-          return <p style={{ whiteSpace: 'pre-wrap' }}>{item.value}</p>;
-        }
-      }
+          return <p style={{ whiteSpace: "pre-wrap" }}>{item.value}</p>;
+        },
+      },
     ];
 
     const dataSource = [];
@@ -195,13 +222,19 @@ class View extends Component {
           name: item.name,
           value: item.desc,
           example: item.example,
-          required: item.required == 0 ? '否' : '是'
+          required: item.required == 0 ? "否" : "是",
         });
       });
     }
 
     return (
-      <Table bordered size="small" pagination={false} columns={columns} dataSource={dataSource} />
+      <Table
+        bordered
+        size="small"
+        pagination={false}
+        columns={columns}
+        dataSource={dataSource}
+      />
     );
   }
 
@@ -211,8 +244,8 @@ class View extends Component {
     if (!str || !str.indexOf) {
       return 0;
     }
-    while (str.indexOf('\n', i) > -1) {
-      i = str.indexOf('\n', i) + 2;
+    while (str.indexOf("\n", i) > -1) {
+      i = str.indexOf("\n", i) + 2;
       c++;
     }
     return c;
@@ -226,19 +259,19 @@ class View extends Component {
 
   enterItem = () => {
     this.setState({
-      enter: true
+      enter: true,
     });
   };
 
   leaveItem = () => {
     this.setState({
-      enter: false
+      enter: false,
     });
   };
 
-  copyUrl = url => {
+  copyUrl = (url) => {
     copy(url);
-    message.success('已经成功复制到剪切板');
+    message.success("已经成功复制到剪切板");
   };
 
   flagMsg = (mock, strice) => {
@@ -255,15 +288,18 @@ class View extends Component {
 
   render() {
     const dataSource = [];
-    if (this.props.curData.req_headers && this.props.curData.req_headers.length) {
+    if (
+      this.props.curData.req_headers &&
+      this.props.curData.req_headers.length
+    ) {
       this.props.curData.req_headers.map((item, i) => {
         dataSource.push({
           key: i,
           name: item.name,
-          required: item.required == 0 ? '否' : '是',
+          required: item.required == 0 ? "否" : "是",
           value: item.value,
           example: item.example,
-          desc: item.desc
+          desc: item.desc,
         });
       });
     }
@@ -275,82 +311,82 @@ class View extends Component {
           key: i,
           name: item.name,
           desc: item.desc,
-          example: item.example
+          example: item.example,
         });
       });
     }
     const req_params_columns = [
       {
-        title: '参数名称',
-        dataIndex: 'name',
-        key: 'name',
-        width: 140
+        title: "参数名称",
+        dataIndex: "name",
+        key: "name",
+        width: 140,
       },
       {
-        title: '示例',
-        dataIndex: 'example',
-        key: 'example',
+        title: "示例",
+        dataIndex: "example",
+        key: "example",
         width: 80,
         render(_, item) {
-          return <p style={{ whiteSpace: 'pre-wrap' }}>{item.example}</p>;
-        }
+          return <p style={{ whiteSpace: "pre-wrap" }}>{item.example}</p>;
+        },
       },
       {
-        title: '备注',
-        dataIndex: 'desc',
-        key: 'desc',
+        title: "备注",
+        dataIndex: "desc",
+        key: "desc",
         render(_, item) {
-          return <p style={{ whiteSpace: 'pre-wrap' }}>{item.desc}</p>;
-        }
-      }
+          return <p style={{ whiteSpace: "pre-wrap" }}>{item.desc}</p>;
+        },
+      },
     ];
 
     const columns = [
       {
-        title: '参数名称',
-        dataIndex: 'name',
-        key: 'name',
-        width: '200px'
+        title: "参数名称",
+        dataIndex: "name",
+        key: "name",
+        width: "200px",
       },
       {
-        title: '参数值',
-        dataIndex: 'value',
-        key: 'value',
-        width: '300px'
+        title: "参数值",
+        dataIndex: "value",
+        key: "value",
+        width: "300px",
       },
       {
-        title: '是否必须',
-        dataIndex: 'required',
-        key: 'required',
-        width: '100px'
+        title: "是否必须",
+        dataIndex: "required",
+        key: "required",
+        width: "100px",
       },
       {
-        title: '示例',
-        dataIndex: 'example',
-        key: 'example',
-        width: '80px',
+        title: "示例",
+        dataIndex: "example",
+        key: "example",
+        width: "80px",
         render(_, item) {
-          return <p style={{ whiteSpace: 'pre-wrap' }}>{item.example}</p>;
-        }
+          return <p style={{ whiteSpace: "pre-wrap" }}>{item.example}</p>;
+        },
       },
       {
-        title: '备注',
-        dataIndex: 'desc',
-        key: 'desc',
+        title: "备注",
+        dataIndex: "desc",
+        key: "desc",
         render(_, item) {
-          return <p style={{ whiteSpace: 'pre-wrap' }}>{item.desc}</p>;
-        }
-      }
+          return <p style={{ whiteSpace: "pre-wrap" }}>{item.desc}</p>;
+        },
+      },
     ];
     let status = {
-      undone: '未完成',
-      done: '已完成',
-      invalid: '废弃'
+      undone: "未完成",
+      done: "已完成",
+      invalid: "废弃",
     };
 
     let bodyShow =
       this.props.curData.req_body_other ||
-      (this.props.curData.req_body_type === 'form' &&
+      (this.props.curData.req_body_type === "form" &&
         this.props.curData.req_body_form &&
         this.props.curData.req_body_form.length);
 
@@ -362,57 +398,122 @@ class View extends Component {
 
     let methodColor =
       variable.METHOD_COLOR[
-      this.props.curData.method ? this.props.curData.method.toLowerCase() : 'get'
+        this.props.curData.method
+          ? this.props.curData.method.toLowerCase()
+          : "get"
       ];
 
-    // statusColor = statusColor[this.props.curData.status?this.props.curData.status.toLowerCase():"undone"];
-    // const aceEditor = <div style={{ display: this.props.curData.req_body_other && (this.props.curData.req_body_type !== "form") ? "block" : "none" }} className="colBody">
-    //   <AceEditor data={this.props.curData.req_body_other} readOnly={true} style={{ minHeight: 300 }} mode={this.props.curData.req_body_type === 'json' ? 'javascript' : 'text'} />
-    // </div>
     if (!methodColor) {
-      methodColor = 'get';
+      methodColor = "get";
     }
 
     const { tag, up_time, title, uid, username } = this.props.curData;
 
     let res = (
-      <div className="caseContainer" style={{ height: '100%', overflowY: 'auto' }}>
+      <div
+        className="caseContainer"
+        style={{ height: "100%", overflowY: "auto" }}
+      >
         <div>
-          <div>
+          <div
+            style={{
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexDirection: "row",
+              display: "flex",
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "row" }}>
+              <span
+                style={{ color: "#fff", backgroundColor: "#8189A1" }}
+                className="colValue tag-method"
+              >
+                HTTP
+              </span>
+              <span
+                style={{
+                  color: methodColor.color,
+                  backgroundColor: methodColor.bac,
+                }}
+                className="colValue tag-method"
+              >
+                {this.props.curData.method}
+              </span>
 
-            <span style={{ color: '#fff', backgroundColor: '#8189A1' }} className="colValue tag-method">
-              HTTP
-            </span>
+              <span
+                style={{ marginLeft: "6px" }}
+                className={"tag-status " + this.props.curData.status}
+              >
+                {status[this.props.curData.status]}
+              </span>
+            </div>
 
-            <span style={{ color: methodColor.color, backgroundColor: methodColor.bac }} className="colValue tag-method">
-              {this.props.curData.method}
-            </span>
-
-            <span style={{ marginLeft: '6px' }} className={'tag-status ' + this.props.curData.status}>{status[this.props.curData.status]}</span>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                right: "20px",
+                height: "23px",
+                clear: "both",
+              }}
+            >
+              <Popover content={"查看历史"}>
+                <IconFont
+                  type={"yapi-history1"}
+                  height={"40"}
+                  style={{ fontSize: "24px" }}
+                  onClick={() => {
+                    console.log("==");
+                  }}
+                />
+              </Popover>
+              <Popover content={"编辑"}>
+                <IconFont
+                  type={"yapi-icon_edit_edit"}
+                  height={"40"}
+                  style={{ fontSize: "24px", marginLeft: "10px" }}
+                  onClick={() => {
+                    console.log("==");
+                  }}
+                />
+              </Popover>
+            </div>
           </div>
 
-          <div className="colValue" style={{ marginTop: '10px', fontSize: '22px', lineHeight: '32px', color: '#000' }} onMouseEnter={this.enterItem}
-            onMouseLeave={this.leaveItem}>
+          <div
+            className="colValue"
+            style={{
+              marginTop: "10px",
+              fontSize: "22px",
+              lineHeight: "32px",
+              color: "#000",
+            }}
+            onMouseEnter={this.enterItem}
+            onMouseLeave={this.leaveItem}
+          >
             {this.props.curData.path}
             <Tooltip title="复制路径">
               <Icon
                 type="copy"
                 className="interface-url-icon"
-                onClick={() => this.copyUrl(this.props.currProject.basepath + this.props.curData.path)}
-                style={{ display: this.state.enter ? 'inline-block' : 'none' }}
+                onClick={() =>
+                  this.copyUrl(
+                    this.props.currProject.basepath + this.props.curData.path
+                  )
+                }
+                style={{ display: this.state.enter ? "inline-block" : "none" }}
               />
             </Tooltip>
           </div>
 
-          <div style={{ fontSize: '16px', marginTop: '6px' }}>
-            {title}
-          </div>
+          <div style={{ fontSize: "16px", marginTop: "6px" }}>{title}</div>
 
-          <div style={{ marginTop: '20px', color: '#8189A1' }}>
-            <span style={{ marginRight: '30px' }}>创建人:  {username} </span>
-            <span style={{ marginRight: '30px' }}>更新时间:  {formatTime(up_time)} </span>
+          <div style={{ marginTop: "20px", color: "#8189A1" }}>
+            <span style={{ marginRight: "30px" }}>创建人: {username} </span>
+            <span style={{ marginRight: "30px" }}>
+              更新时间: {formatTime(up_time)}{" "}
+            </span>
           </div>
-
         </div>
         <Divider />
         {/* <h3 className="interface-title" style={{ marginTop: '10px' }}>
@@ -531,7 +632,10 @@ class View extends Component {
             )}
         </div> */}
 
-        <h3 className="interface-title" style={{ display: requestShow ? '' : 'none' }}>
+        <h3
+          className="interface-title"
+          style={{ display: requestShow ? "" : "none" }}
+        >
           请求参数
         </h3>
         {req_dataSource.length ? (
@@ -546,7 +650,7 @@ class View extends Component {
             />
           </div>
         ) : (
-          ''
+          ""
         )}
         {dataSource.length ? (
           <div className="colHeader">
@@ -560,7 +664,7 @@ class View extends Component {
             />
           </div>
         ) : (
-          ''
+          ""
         )}
         {this.props.curData.req_query && this.props.curData.req_query.length ? (
           <div className="colQuery">
@@ -568,32 +672,38 @@ class View extends Component {
             {this.req_query(this.props.curData.req_query)}
           </div>
         ) : (
-          ''
+          ""
         )}
 
         <div
           style={{
             display:
               this.props.curData.method &&
-                HTTP_METHOD[this.props.curData.method.toUpperCase()].request_body
-                ? ''
-                : 'none'
+              HTTP_METHOD[this.props.curData.method.toUpperCase()].request_body
+                ? ""
+                : "none",
           }}
         >
-          <h3 style={{ display: bodyShow ? '' : 'none' }} className="col-title">
+          <h3 style={{ display: bodyShow ? "" : "none" }} className="col-title">
             Body: <Tag color="#303445">{this.props.curData.req_body_type}</Tag>
           </h3>
-          {this.props.curData.req_body_type === 'form'
-            ? this.req_body_form(this.props.curData.req_body_type, this.props.curData.req_body_form)
+          {this.props.curData.req_body_type === "form"
+            ? this.req_body_form(
+                this.props.curData.req_body_type,
+                this.props.curData.req_body_form
+              )
             : this.req_body(
-              this.props.curData.req_body_type,
-              this.props.curData.req_body_other,
-              this.props.curData.req_body_is_json_schema
-            )}
+                this.props.curData.req_body_type,
+                this.props.curData.req_body_other,
+                this.props.curData.req_body_is_json_schema
+              )}
         </div>
 
         <div>
-          <h3 className="interface-title">返回参数 <Tag color="#303445">{this.props.curData.res_body_type}</Tag></h3>
+          <h3 className="interface-title">
+            返回参数{" "}
+            <Tag color="#303445">{this.props.curData.res_body_type}</Tag>
+          </h3>
           {this.res_body(
             this.props.curData.res_body_type,
             this.props.curData.res_body,
@@ -601,17 +711,16 @@ class View extends Component {
           )}
         </div>
         <div>
-        <Divider />
-          {this.props.curData.desc &&  <h3 className="interface-title">说明</h3>}
+          <Divider />
+          {this.props.curData.desc && <h3 className="interface-title">说明</h3>}
           {this.props.curData.desc && (
             <div
               className="tui-editor-contents"
-              style={{ margin: '0px', padding: '0px 20px', float: 'none' }}
+              style={{ margin: "0px", padding: "0px 20px", float: "none" }}
               dangerouslySetInnerHTML={{ __html: this.props.curData.desc }}
             />
           )}
         </div>
-        
       </div>
     );
 
