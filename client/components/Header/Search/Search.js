@@ -47,22 +47,6 @@ export default class Srch extends React.Component {
     fetchGroupMsg: PropTypes.func
   };
 
-  onSelect = async (value, option) => {
-    if (option.props.type === '分组') {
-      this.props.changeMenuItem('/group');
-      this.props.history.push('/group/' + option.props['id']);
-      this.props.setCurrGroup({ group_name: value, _id: option.props['id'] - 0 });
-    } else if (option.props.type === '项目') {
-      await this.props.fetchGroupMsg(option.props['groupId']);
-      this.props.history.push('/project/' + option.props['id']);
-    } else if (option.props.type === '接口') {
-      await this.props.fetchInterfaceListMenu(option.props['projectId']);
-      this.props.history.push(
-        '/project/' + option.props['projectId'] + '/interface/api/' + option.props['id']
-      );
-    }
-  };
-
   jump = async (projectId, id) => {
     await this.props.fetchInterfaceListMenu(projectId);
     this.props.history.push(
@@ -208,7 +192,7 @@ export default class Srch extends React.Component {
                   this.state.hasMore === true ? (
                     <Button type="link" onLoad={this.loading} onClick={this.loadMore}>加载更多...</Button>
                   ) : (
-                    <span>没有更多</span>
+                    <span>没有更多了...</span>
                   )
                 }
 
@@ -224,23 +208,6 @@ export default class Srch extends React.Component {
             })
           }} />
         </li>
-        {/* <AutoComplete
-          className="search-dropdown"
-          dataSource={dataSource}
-          style={{ width: '100%' }}
-          defaultActiveFirstOption={false}
-          onSelect={this.onSelect}
-          onSearch={this.handleSearch}
-          // filterOption={(inputValue, option) =>
-          //   option.props.children.toUpperCase().indexOf(inputValue.toUpperCase()) !== -1
-          // }
-        >
-          <Input
-            prefix={<Icon type="search" className="srch-icon" />}
-            placeholder="搜索分组/项目/接口"
-            className="search-input"
-          />
-        </AutoComplete> */}
       </div >
     );
   }

@@ -98,12 +98,17 @@ exports.log = (msg, type) => {
   let date = new Date();
   let year = date.getFullYear();
   let month = date.getMonth() + 1;
+  let day = date.getDay()
 
-  let logfile = path.join(yapi.WEBROOT_LOG, year + '-' + month + '.log');
+  let logfile = path.join(yapi.WEBROOT_LOG, year + '-' + month + '_' + day + '.log');
 
   if (typeof msg === 'object') {
-    if (msg instanceof Error) msg = msg.message;
-    else msg = JSON.stringify(msg);
+    if (msg instanceof Error) {
+      msg = JSON.stringify(msg);
+    }
+    else {
+      msg = JSON.stringify(msg);
+    }
   }
 
   // let data = (new Date).toLocaleString() + '\t|\t' + type + '\t|\t' + msg + '\n';
