@@ -20,10 +20,15 @@
             ],
             "@models/*": [
                 "server/models/*"
+            ],
+            "@svg/*": [
+                "client/assets/icons/*"
             ]
         },
         "experimentalDecorators": true,
-        "include": ["server/**"],
+        "include": [
+            "server/**"
+        ],
         "exclude": [
             "node_modules",
             "dist"

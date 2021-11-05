@@ -1,22 +1,27 @@
 @import '../../styles/mixin.scss';
+
 .postman {
-
-
-  
+  div.postman-content{
+    overflow-y: auto;
+    height: calc(100vh - 150px);
+  }
   .adv-button {
     margin-bottom: 8px;
   }
+
   .pretty-editor {
     border: 1px solid #d9d9d9;
     border-radius: 4px;
     min-height: 200px;
   }
+
   .pretty-editor-body {
     border: 1px solid #d9d9d9;
     border-radius: 4px;
     min-height: 300px;
     min-width: 100%;
   }
+
   .pretty-editor-header {
     border: 1px solid #d9d9d9;
     border-radius: 4px;
@@ -25,40 +30,42 @@
 
   .interface-test {
     padding: .24rem;
-    .ant-checkbox-wrapper{
+
+    .ant-checkbox-wrapper {
       display: flex;
     }
   }
 
-  
 
-  .insert-code{
-    
+  .insert-code {
+
     margin-right: 20px;
-    .code-item{
+
+    .code-item {
       border: 1px solid #dbd9d9;
-      padding:3px;
+      padding: 3px;
       line-height: 30px;
       margin-bottom: 5px;
     }
   }
 
-  .case-script{
+  .case-script {
     min-height: 500px;
     margin: 10px;
   }
 
-  .response-tab{    
-    margin-top: 20px;
+  .response-tab {
+    // margin-top: 20px;
     margin-bottom: 20px;
-    .ant-tabs-nav{
+
+    .ant-tabs-nav {
       background: #f7f7f7;
-      border-radius: 0 0 4px 4px;      
-      border: 1px solid #d9d9d9;
+      border-radius: 0 0 4px 4px;
+      border: 0px solid #d9d9d9;
       width: 100%;
     }
 
-    .header, .body{
+    .header, .body {
       margin-bottom: 10px;
     }
 
@@ -72,7 +79,7 @@
       padding-right: 10px;
     }
 
-    .response-test{
+    .response-test {
       min-height: 400px;
     }
   }
@@ -81,10 +88,12 @@
     .res-code.success {
       background-color: transparent;
     }
+
     .res-code.fail {
       background-color: transparent;
     }
   }
+
   .res-code {
     padding: .08rem .28rem;
     color: #fff;
@@ -94,9 +103,11 @@
     position: relative;
     border-radius: 2px;
   }
+
   .res-code.success {
     background-color: $color-antd-green;
   }
+
   .res-code.fail {
     background-color: $color-antd-red;
   }
@@ -105,29 +116,37 @@
   .container-header-body {
     display: flex;
     padding-bottom: .36rem;
+
     .header, .body {
       flex: 1 0 300px;
+
       .pretty-editor-header, .pretty-editor-body {
         height: 100%;
       }
+
       .postman .pretty-editor-body {
         min-height: 200px;
       }
+
       .ace_print-margin {
         display: none;
       }
     }
+
     .header {
       //max-width: 400px;
     }
+
     .container-title {
       display: flex;
       justify-content: space-between;
       padding: .08rem 0;
     }
+
     .resizer {
       flex: 0 0 21px;
       position: relative;
+
       &:after {
         content: '';
         display: block;
@@ -139,6 +158,7 @@
         left: 50%;
       }
     }
+
     // res body 无返回json时显示text信息
     .res-body-text {
       height: 100%;
@@ -151,41 +171,59 @@
   .has-plugin, .req-part, .resp-part {
     margin-bottom: 16px;
   }
+
   .url {
     display: flex;
     padding: 10px 10px 10px 10px;
     background-color: #F2F2F2;
   }
+
   .key-value-wrap {
     display: flex;
     align-items: center;
     //margin: 5px 0 5px 0;
     padding: 5px 10px;
+
     .key {
       flex-basis: 220px;
     }
+
     .value {
       flex-grow: 1;
     }
+
     .eq-symbol {
       margin: 0 5px;
     }
-    .params-enable{
+
+    .params-enable {
       width: 24px;
     }
   }
+
   .icon-btn {
     cursor: pointer;
     margin-left: 6px;
   }
+
   .icon-btn:hover {
     color: #2395f1;
   }
 
 }
 
-.env-modal{
-  .ant-modal-body{
+.env-modal {
+  .ant-modal-body {
     padding: 0;
+  }
+}
+
+.horizontal { 
+  .reflex-splitter {
+    border-bottom: 1px solid #e9e6e6;
+    border-top: 1px solid #e9e6e6;
+    cursor: row-resize;
+    width: 100%;
+    height: 2px; 
   }
 }

@@ -76,7 +76,7 @@ function handleJson(data, handleValueFn) {
 }
 
 function handleValueWithFilter(context) {
-  return function(match) {
+  return function (match) {
     if (match[0] === '@') {
       return handleMockWord(match);
     } else if (match.indexOf('$.') === 0) {
@@ -169,15 +169,15 @@ function isJson(json) {
 
 exports.isJson = isJson;
 
-exports.unbase64 = function(base64Str) {
-    try {
-      return stringUtils.unbase64(base64Str);
-    } catch (err) {
-      return base64Str;
-    }
-  };
+exports.unbase64 = function (base64Str) {
+  try {
+    return stringUtils.unbase64(base64Str);
+  } catch (err) {
+    return base64Str;
+  }
+};
 
-exports.json_parse = function(json) {
+exports.json_parse = function (json) {
   try {
     return JSON.parse(json);
   } catch (err) {
@@ -185,7 +185,7 @@ exports.json_parse = function(json) {
   }
 };
 
-exports.json_format = function(json) {
+exports.json_format = function (json) {
   try {
     return JSON.stringify(JSON.parse(json), null, '   ');
   } catch (e) {
@@ -193,7 +193,7 @@ exports.json_format = function(json) {
   }
 };
 
-exports.ArrayToObject = function(arr) {
+exports.ArrayToObject = function (arr) {
   let obj = {};
   safeArray(arr).forEach(item => {
     obj[item.name] = item.value;
@@ -202,7 +202,7 @@ exports.ArrayToObject = function(arr) {
   return obj;
 };
 
-exports.timeago = function(timestamp) {
+exports.timeago = function (timestamp) {
   let minutes, hours, days, seconds, mouth, year;
   const timeNow = parseInt(new Date().getTime() / 1000);
   seconds = timeNow - timestamp;
@@ -248,8 +248,18 @@ exports.timeago = function(timestamp) {
   }
 };
 
+exports.bytesToSize = function (bytes) {
+  if (bytes === 0) {
+    return '0 B'
+  }
+
+  var k = 1000, sizes = ['B', 'KB', 'MB', 'GB'],
+    i = Math.floor(Math.log(bytes) / Math.log(k))
+  return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+}
+
 // json schema 验证器
-exports.schemaValidator = function(schema, params) {
+exports.schemaValidator = function (schema, params) {
   try {
     const ajv = new Ajv({
       format: false,

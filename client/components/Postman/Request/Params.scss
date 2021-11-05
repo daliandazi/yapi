@@ -1,0 +1,30 @@
+.params {
+    border-bottom: 1px solid #E5E5E5;
+    .params-name,.params-value,.params-checked {
+        height: 32px;
+        overflow: hidden;
+        padding: 0 4px 0 4px;
+        // border: 1px solid #E5E5E5;
+        
+    }
+    .params-name{
+    }
+    .params-value{
+        border-left: 1px solid #E5E5E5;
+        border-right: 1px solid #E5E5E5;
+    }
+    .params-checked{
+        padding: 2px 2px;
+    }
+
+    .input{
+        color: #171717;
+        border: 1px solid #E5E5E5;
+        border: 0px;
+        border-radius: 0;
+        font-weight: 300;
+        &:focus {
+            box-shadow: none
+        }
+    }
+}

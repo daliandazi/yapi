@@ -1,6 +1,6 @@
 import './styles/common.scss';
 import './styles/theme.less';
-
+import './styles/reflex-styles.scss'
 import { LocaleProvider } from 'antd';
 import './plugin';
 import React from 'react';

@@ -15,7 +15,7 @@ const devWebpackConfig = merge(baseWebpackConfig, {
             {
                 context: ["/api", "/login"],
                 // 转发端口自定义
-                target: "http://127.0.0.1:3002",
+                target: "http://127.0.0.1:3000",
                 ws: true,
             },
         ],

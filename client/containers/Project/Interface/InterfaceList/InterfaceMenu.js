@@ -378,7 +378,7 @@ class InterfaceMenu extends Component {
         const searchBox = (
             <div className="interface-filter">
                 <div>
-                    <div style={{ maxHeight: '54px', padding: '8px 10px' }}>
+                    <div style={{ maxHeight: '54px', padding: '8px 10px',borderBottom: '1px solid #D9D9D9', }}>
                         <Button
                             icon="plus"
                             type="primary"
@@ -388,14 +388,14 @@ class InterfaceMenu extends Component {
                             添加分组
                         </Button>
                     </div>
-                    <div style={{
+                    {/* <div style={{
                         borderTop: '1px solid #D9D9D9',
                         borderBottom: '1px solid #D9D9D9',
                         padding: '6px 10px'
                     }}>
                         <Input style={{ width: '100%' }} onChange={this.onFilter} value={this.state.filter}
                             placeholder="搜索接口" />
-                    </div>
+                    </div> */}
                 </div>
 
                 {this.state.visible ? (

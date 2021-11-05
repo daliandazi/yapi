@@ -107,7 +107,7 @@ const ToolUser = props => {
   let imageUrl = props.imageUrl ? props.imageUrl : `/api/user/avatar?uid=${props.uid}`;
   return (
     <ul>
-      <li className="toolbar-li item-search">
+      <li className="toolbar-li ">
         <Srch groupList={props.groupList} />
       </li>
       <Popover
@@ -118,6 +118,7 @@ const ToolUser = props => {
         arrowPointAtCenter
         visible={props.studyTip === 1 && !props.study}
       >
+        
         <Tooltip placement="bottom" title={'我的关注'}>
           <li className="toolbar-li">
             <Link to="/follow">
@@ -126,6 +127,7 @@ const ToolUser = props => {
           </li>
         </Tooltip>
       </Popover>
+
       <Popover
         overlayClassName="popover-index"
         content={<GuideBtns />}
@@ -224,6 +226,9 @@ ToolUser.propTypes = {
 export default class HeaderCom extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      showSearch: false
+    }
   }
 
   static propTypes = {

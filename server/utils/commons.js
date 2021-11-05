@@ -780,3 +780,14 @@ exports.groupBy = function (list, field) {
   })
   return groups;
 }
+
+
+exports.bytesToSize = function (bytes) {
+  if (bytes === 0) {
+    return '0 B'
+  }
+
+  var k = 1000, sizes = ['B', 'KB', 'MB', 'GB'],
+    i = Math.floor(Math.log(bytes) / Math.log(k))
+  return (bytes / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
+}

@@ -26,7 +26,7 @@ export default class Notify extends Component {
     const isShow = this.state.newVersion !== this.state.version;
     return (
       <div>
-        {isShow && (
+        {/* {isShow && (
           <Alert
             message={
               <div>
@@ -44,7 +44,7 @@ export default class Notify extends Component {
             closable
             type="info"
           />
-        )}
+        )} */}
       </div>
     );
   }

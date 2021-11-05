@@ -1,5 +1,6 @@
 var fs = require("fs");
 const path = require("path");
+const os = require('os');
 const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
@@ -55,7 +56,12 @@ module.exports = {
                 test: /\.(js|jsx)$/,
                 exclude: /node_modules\/(?!(json-schema-editor-visual)\/).*/,
                 use: [
-                    "thread-loader",
+                    {
+                        loader: "thread-loader",
+                        options: {
+                            workers: os.cpus().length
+                        }
+                    },
                     {
                         loader: "babel-loader",
                         options: {
@@ -108,13 +114,27 @@ module.exports = {
                 ],
             },
             {
-                test: /\.(gif|jpg|jpeg|png|woff|woff2|eot|ttf|svg)$/i,
+                test: /\.(gif|jpg|jpeg|png|woff|woff2|eot|ttf)$/i,
                 use: [
                     {
                         loader: "url-loader",
                     },
                 ],
-            },
+            }, {
+                test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
+                use: [
+                    {
+                        loader: 'babel-loader',
+                    },
+                    {
+                        loader: '@svgr/webpack',
+                        options: {
+                            babel: false,
+                            icon: true,
+                        },
+                    },
+                ],
+            }
         ],
     },
     plugins: [
@@ -158,7 +178,7 @@ module.exports = {
     },
     resolve: {
         modules: ["node_modules"],
-        extensions: [".js", ".css", ".json", ".string", ".tpl"],
+        extensions: [".js", ".css", "scss", ".json", ".string", ".tpl"],
         alias: {
             common: resolve("common"),
             client: resolve("client"),
@@ -166,7 +186,8 @@ module.exports = {
             "@models": resolve("server/models"),
             exts: resolve("exts"),
             "@reducer": resolve("client/reducer"),
-            "@components": resolve("client/components")
+            "@components": resolve("client/components"),
+            "@svg": resolve("client/assets/icons")
         },
     },
 };

@@ -80,6 +80,21 @@
 
     }
   }
+
+  .name {
+    width: 95%;
+    display: inline-block;
+    overflow: hidden;
+    text-overflow:ellipsis;
+    white-space: nowrap;
+    padding-right: 24px;
+    padding-left: 10px;
+    color: #4964D0;
+    // line-height: 100%;
+    vertical-align: middle;
+    text-decoration:underline;
+  }
+
   .path {
     width: 95%;
     display: inline-block;
@@ -88,7 +103,7 @@
     white-space: nowrap;
     padding-right: 24px;
     padding-left: 10px;
-    color: rgb(32, 32, 32);
+    color: #171717;
     // line-height: 100%;
     vertical-align: middle;
   }

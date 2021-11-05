@@ -14,6 +14,7 @@ import {
 } from "antd";
 import { Route, Switch, matchPath, Link } from "react-router-dom";
 import { connect } from "react-redux";
+import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex';
 import { axios } from "common/httpUtil";
 import AddGroupModal from "./AddGroupModal";
 import StatusCodeList from "./StatusCodeList";
@@ -104,17 +105,17 @@ class StatusCode extends Component {
 
   render() {
     return (
-      <Layout style={{ height: "calc(100vh - 80px)" }}>
-        <Sider
+      <ReflexContainer style={{ height: "calc(100vh - 80px)" }} orientation="vertical">
+        <ReflexElement
           style={{
             height: "100%",
             overflow: "hidden",
             borderLeft: "1px solid #D9D9D9",
             border: "1px solid #D9D9D9",
+            backgroundColor:'#fff'
           }}
-          ref={this.interfaceSiderFun}
           id={"interface-sider"}
-          width={300}
+          size={250}
         >
           {this.state.add_group_modal_visible ? (
             <AddGroupModal
@@ -233,8 +234,9 @@ class StatusCode extends Component {
               })}
             </Tree>
           </div>
-        </Sider>
-        <Layout>
+        </ReflexElement>
+        <ReflexSplitter/>
+        <ReflexElement>
           <Content
             style={{
               height: "100%",
@@ -255,8 +257,8 @@ class StatusCode extends Component {
               />
             </Switch>
           </Content>
-        </Layout>
-      </Layout>
+        </ReflexElement>
+      </ReflexContainer>
     );
   }
 }

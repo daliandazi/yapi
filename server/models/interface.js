@@ -347,12 +347,25 @@ class interfaceModel extends baseModel {
     );
   }
 
-  search(keyword) {
+  search(keyword, page, limit) {
     return this.model
       .find({
-        title: new RegExp(keyword, "ig"),
-      })
-      .limit(10);
+        $or: [
+          { 'title': new RegExp(keyword, "ig") },
+          { 'path': new RegExp(keyword, "ig") }
+        ]
+      }).sort({ up_time: 1 }).skip((page - 1) * limit).limit(limit).select("title path uid method up_time project_id")
+  }
+
+  searchCount(keyword) {
+    return this.model
+      .count({
+        $or: [
+          { 'title': new RegExp(keyword, "ig") },
+          { 'path': new RegExp(keyword, "ig") }
+        ]
+      });
+
   }
 }
 

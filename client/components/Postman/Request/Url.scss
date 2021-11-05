@@ -1,0 +1,41 @@
+.url-container {
+    .input {
+        border: 1px solid #E5E5E5;
+        border-radius: 0px;
+        height: 32px;
+        line-height: 30px;
+        outline: none;
+        color: #171717;
+        padding: 2px 15px;
+        background-color: #FAFAFA;
+        text-align: left;
+        display: inline-grid;
+        font-weight: 400;
+
+        &:focus {
+            box-shadow: none
+        }
+    }
+
+    .ant-select-selection {
+        border-radius: 0px;
+        width: 80px;
+        border: 1px solid #E5E5E5;
+        font-weight: 600;
+
+        .ant-select-selection-selected-value {
+            color: #171717;
+        }
+
+        &:focus {
+            box-shadow: none
+        }
+    }
+
+    .ant-btn {
+        border-radius: 4px;
+        background-color: #10B981;
+        border-color: #10B981;
+        color: #fff;
+    }
+}

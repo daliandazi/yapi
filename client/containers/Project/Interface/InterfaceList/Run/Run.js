@@ -6,6 +6,7 @@ import axios from 'axios';
 import { message } from 'antd';
 import { Postman } from '../../../../../components';
 import AddColModal from './AddColModal';
+import HttpRequest from '../../../../../components/Postman/HttpRequest'
 
 // import {
 // } from '../../../reducer/modules/group.js'
@@ -90,6 +91,7 @@ export default class Run extends Component {
     data.path = currProject.basepath + currInterface.path;
     return (
       <div>
+        {/* <HttpRequest /> */}
         <Postman
           data={data}
           id={currProject._id}

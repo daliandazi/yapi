@@ -25,7 +25,7 @@ function connect(callback) {
     options.user = config.db.user;
     options.pass = config.db.pass;
   }
-  
+
 
   options = Object.assign({}, options, config.db.options)
 
@@ -45,7 +45,7 @@ function connect(callback) {
     options,
     function (err) {
       if (err) {
-        yapi.commons.log(err + ', mongodb Authentication failed', 'error');
+        yapi.commons.log(err + ', [连接MongoDB失败]', 'error');
       }
     }
   );
@@ -59,7 +59,7 @@ function connect(callback) {
       }
     },
     function (err) {
-      yapi.commons.log(err + 'mongodb connect error', 'error');
+      yapi.commons.log(err + '【mongodb connect error】', 'error');
     }
   );
 

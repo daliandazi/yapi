@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { Tabs, Layout, Menu, Icon } from 'antd';
 import { Route, Switch, matchPath } from 'react-router-dom';
 import { connect } from 'react-redux';
-
+import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex';
 const { Content, Sider } = Layout;
 
 import './interface.scss';
@@ -240,18 +240,17 @@ class Interface extends Component {
     }
 
     return (
-      <Layout style={{ height: 'calc(100vh - 80px)' }}>
-        <Sider style={{ height: '100%', overflow: 'hidden', borderLeft: '1px solid #D9D9D9', border: '1px solid #D9D9D9', borderRight: '0px' }} ref={this.interfaceSiderFun} id={'interface-sider'} width={300}>
+      <ReflexContainer style={{ height: 'calc(100vh - 80px)' ,backgroundColor:'#fff'}} orientation="vertical">
+        <ReflexElement style={{ height: '100%', overflow: 'hidden', borderLeft: '1px solid #D9D9D9', border: '1px solid #D9D9D9', borderRight: '0px' }} id={'interface-sider'} size={200}>
           <div className="left-menu" style={{ height: parseInt(document.body.clientHeight) - headHeight + 'px' }}>
             <InterfaceMenu
               router={matchPath(this.props.location.pathname, contentRouter)}
               projectId={this.props.match.params.id}
             />
           </div>
-          <div className="layout-split" onMouseDown={this.drag}></div>
-        </Sider>
-        <Layout>
-          <Content
+        </ReflexElement>
+        <ReflexSplitter/>
+          <ReflexElement
             style={{
               height: '100%',
               overflow: 'hidden',
@@ -266,9 +265,8 @@ class Interface extends Component {
                 <Route {...contentRouter} component={InterfaceRoute} />
               </Switch>
             </div>
-          </Content>
-        </Layout>
-      </Layout>
+          </ReflexElement>
+      </ReflexContainer>
     );
   }
 }

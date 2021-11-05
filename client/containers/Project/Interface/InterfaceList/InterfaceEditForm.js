@@ -954,6 +954,10 @@ class InterfaceEditForm extends Component {
                             )}
                         </FormItem>
                         <FormItem className="interface-edit-item"  {...formItemLayout}  label="负责人">
+                            {getFieldDecorator('api_manager_conn_id', {
+                                initialValue: this.state.api_manager_conn_id,
+                                rules: [{required: true, message: '请选择负责人'}]
+                            })(
                             <SelectPersonCommon value={this.state.api_manager_conn_id} onChange={(value) => {
                                 console.log(value)
                                 this.setState({
@@ -964,7 +968,7 @@ class InterfaceEditForm extends Component {
                                 //     api_manager_conn_id: value
                                 // });
                                 console.log(value)
-                            }}/>
+                            }}/>)}
                         </FormItem>
                         {custom_field.enable && (
                             <FormItem

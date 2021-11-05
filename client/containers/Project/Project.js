@@ -14,9 +14,8 @@ import Loading from '@components/Loading/Loading';
 import ProjectMember from './Setting/ProjectMember/ProjectMember.js';
 import ProjectData from './Setting/ProjectData/ProjectData.js';
 import InterfaceCol from './Interface/InterfaceCol/InterfaceCol.js';
-
-import StatusCode from './StatusCode/StatusCode'
-import Lake from './Lake/Lake'
+import StatusCode from './StatusCode/StatusCode';
+import Lake from './Lake/Lake';
 
 const plugin = require('client/plugin.js');
 
@@ -28,13 +27,13 @@ const headHeight = 80;
   state => {
     return {
       curProject: state.project.currProject,
-      currGroup: state.group.currGroup
+      currGroup: state.group.currGroup,
     };
   },
   {
     getProject,
     fetchGroupMsg,
-    setBreadcrumb
+    setBreadcrumb,
   }
 )
 export default class Project extends Component {
@@ -45,12 +44,13 @@ export default class Project extends Component {
     location: PropTypes.object,
     fetchGroupMsg: PropTypes.func,
     setBreadcrumb: PropTypes.func,
-    currGroup: PropTypes.object
+    currGroup: PropTypes.object,
   };
   state = {
     collapsed: false,
     project: null,
   };
+
   constructor(props) {
     super(props);
   }
@@ -62,20 +62,21 @@ export default class Project extends Component {
   };
 
   async componentWillMount() {
-    let project = (await this.props.getProject(this.props.match.params.id)).payload.data.data;
+    let project = (await this.props.getProject(this.props.match.params.id))
+      .payload.data.data;
     await this.props.fetchGroupMsg(this.props.curProject.group_id);
     // console.log(project.payload.data.data)
     this.setState({
-      project: project
-    })
+      project: project,
+    });
     this.props.setBreadcrumb([
       {
         name: this.props.currGroup.group_name,
-        href: '/group/' + this.props.currGroup._id
+        href: '/group/' + this.props.currGroup._id,
       },
       {
-        name: this.props.curProject.name
-      }
+        name: this.props.curProject.name,
+      },
     ]);
   }
 
@@ -88,11 +89,11 @@ export default class Project extends Component {
       this.props.setBreadcrumb([
         {
           name: this.props.currGroup.group_name,
-          href: '/group/' + this.props.currGroup._id
+          href: '/group/' + this.props.currGroup._id,
         },
         {
-          name: this.props.curProject.name
-        }
+          name: this.props.curProject.name,
+        },
       ]);
     }
   }
@@ -100,14 +101,50 @@ export default class Project extends Component {
   render() {
     const { match, location } = this.props;
     let routers = {
-      interface: { name: 'API', icon: 'api', path: '/project/:id/interface/:action', component: Interface, count: 0 },
-      interfaceCol: { name: 'API测试', icon: 'car', path: '/project/:id/interfaceCol', component: InterfaceCol },
-      statusCode: { name: '状态码', icon: 'car', path: '/project/:id/statusCode', component: StatusCode },
+      interface: {
+        name: 'API',
+        icon: 'api',
+        path: '/project/:id/interface/:action',
+        component: Interface,
+        count: 0,
+      },
+      interfaceCol: {
+        name: 'API测试',
+        icon: 'car',
+        path: '/project/:id/interfaceCol',
+        component: InterfaceCol,
+      },
+      statusCode: {
+        name: '状态码',
+        icon: 'car',
+        path: '/project/:id/statusCode',
+        component: StatusCode,
+      },
       // lake: { name: '语雀文档', icon: 'car', path: '/project/:id/lake', component: Lake },
-      activity: { name: '动态', icon: 'eye', path: '/project/:id/activity', component: Activity },
-      data: { name: '数据管理', icon: 'database', path: '/project/:id/data', component: ProjectData },
-      members: { name: '成员管理', icon: 'user', path: '/project/:id/members', component: ProjectMember },
-      setting: { name: '设置', icon: 'setting', path: '/project/:id/setting', component: Setting }
+      activity: {
+        name: '动态',
+        icon: 'eye',
+        path: '/project/:id/activity',
+        component: Activity,
+      },
+      data: {
+        name: '数据管理',
+        icon: 'database',
+        path: '/project/:id/data',
+        component: ProjectData,
+      },
+      members: {
+        name: '成员管理',
+        icon: 'user',
+        path: '/project/:id/members',
+        component: ProjectMember,
+      },
+      setting: {
+        name: '设置',
+        icon: 'setting',
+        path: '/project/:id/setting',
+        component: Setting,
+      },
     };
 
     plugin.emitHook('sub_nav', routers);
@@ -116,14 +153,13 @@ export default class Project extends Component {
     for (key in routers) {
       if (
         matchPath(location.pathname, {
-          path: routers[key].path
+          path: routers[key].path,
         }) !== null
       ) {
         defaultName = routers[key].name;
         break;
       }
     }
-
 
     let subnavData = [];
     Object.keys(routers).forEach(key => {
@@ -134,13 +170,14 @@ export default class Project extends Component {
           name: item.name,
           path: `/project/${match.params.id}/interface/api`,
           icon: item.icon,
-          count: this.state.project != null ? this.state.project.interface_count : 0
+          count:
+            this.state.project != null ? this.state.project.interface_count : 0,
         };
       } else {
         value = {
           name: item.name,
           path: item.path.replace(/\:id/gi, match.params.id),
-          icon: item.icon
+          icon: item.icon,
         };
       }
       subnavData.push(value);
@@ -159,33 +196,72 @@ export default class Project extends Component {
     return (
       <div>
         <Layout style={{ height: 'calc(100vh - 60px)', marginLeft: '2px' }}>
-          <Sider style={{ borderRight: '1px solid #E4E6E9', backgroundColor: '#F7F7F7' }} width={160} trigger={null} collapsible collapsed={this.state.collapsed} >
+          <Sider
+            style={{
+              borderRight: '1px solid #E4E6E9',
+              backgroundColor: '#F7F7F7',
+            }}
+            width={160}
+            trigger={null}
+            collapsible
+            collapsed={this.state.collapsed}
+          >
             {/* <div style={{height:'32px',padding:'4px 10px',marginTop:'2px',borderBottom:'1px dashed #EEEEEE'}}>
               <Icon type={this.state.collapsed ? 'arrow-right' : 'arrow-left'} onClick={this.toggleCollapsed}/>
             </div> */}
-            <Subnav inlineCollapsed={this.state.collapsed} default={defaultName} data={subnavData} />
-            <div style={{ width: '4px', height: '100%', position: 'absolute', right: 0, top: 0, textAlign: 'center', alignItems: 'center', display: 'flex' }}>
-              <Icon type={this.state.collapsed ? 'right' : 'left'} style={{ marginLeft: '3px' }} onClick={this.toggleCollapsed} />
+            <Subnav
+              inlineCollapsed={this.state.collapsed}
+              default={defaultName}
+              data={subnavData}
+            />
+            <div
+              style={{
+                width: '4px',
+                height: '100%',
+                position: 'absolute',
+                right: 0,
+                top: 0,
+                textAlign: 'center',
+                alignItems: 'center',
+                display: 'flex',
+              }}
+            >
+              <Icon
+                type={this.state.collapsed ? 'right' : 'left'}
+                style={{ marginLeft: '3px' }}
+                onClick={this.toggleCollapsed}
+              />
             </div>
           </Sider>
           <Content style={{ overflow: 'hidden', padding: '10px' }}>
             <Switch>
-              <Redirect exact from="/project/:id" to={`/project/${match.params.id}/interface/api`} />
+              <Redirect
+                exact
+                from="/project/:id"
+                to={`/project/${match.params.id}/interface/api`}
+              />
               {Object.keys(routers).map(key => {
                 let item = routers[key];
 
                 return key === 'members' ? (
                   this.props.currGroup.type !== 'private' ? (
-                    <Route path={item.path} component={item.component} key={key} />
+                    <Route
+                      path={item.path}
+                      component={item.component}
+                      key={key}
+                    />
                   ) : null
                 ) : (
-                  <Route path={item.path} component={item.component} key={key} />
+                  <Route
+                    path={item.path}
+                    component={item.component}
+                    key={key}
+                  />
                 );
               })}
             </Switch>
           </Content>
         </Layout>
-
       </div>
     );
   }

@@ -253,7 +253,7 @@ class InterfaceList extends Component {
             <Link
               to={"/project/" + item.project_id + "/interface/api/" + item._id}
             >
-              <span className="path">{text}</span>
+              <span className="name">{text}</span>
             </Link>
           );
         },
