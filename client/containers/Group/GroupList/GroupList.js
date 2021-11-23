@@ -1,7 +1,7 @@
 import React, { PureComponent as Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Icon, Modal, Input, message,Spin,  Row, Menu, Col, Popover, Tooltip } from 'antd';
+import { Icon, Modal, Input, message, Spin, Row, Menu, Col, Popover, Tooltip } from 'antd';
 import { autobind } from 'core-decorators';
 import axios from 'axios';
 import { withRouter } from 'react-router-dom';
@@ -226,7 +226,7 @@ export default class GroupList extends Component {
                   <Icon className="btn" type="folder-add" onClick={this.showModal} />
                 </a>
               </Tooltip>
-            
+
             </div>
             <div className="curr-group-desc">简介: {currGroup.group_desc}</div>
           </div>
@@ -234,7 +234,7 @@ export default class GroupList extends Component {
           <div className="group-operate">
             <div className="search">
               <Search
-                placeholder="搜索分类"
+                placeholder="搜索空间"
                 onChange={this.searchGroup}
                 onSearch={v => this.searchGroup(null, v)}
               />
@@ -245,41 +245,43 @@ export default class GroupList extends Component {
             display: 'flex',
             justifyContent: 'center'
           }} />}
-          <Menu
-            mode="inline"
-            onClick={this.selectGroup}
-            selectedKeys={[`${currGroup._id}`]}
-          >
-            {this.state.groupList.map(group => {
-              if (group.type === 'private') {
-                return (
-                  <Menu.Item
-                    key={`${group._id}`}
-                    className="group-item"
-                    style={{ zIndex: this.props.studyTip === 0 ? 3 : 1 }}
-                  >
-                    <Icon type="user" />
-                    <Popover
-                      overlayClassName="popover-index"
-                      content={<GuideBtns />}
-                      title={tip}
-                      placement="right"
-                      visible={this.props.studyTip === 0 && !this.props.study}
+          <div style={{height:'calc(100vh - 258px)',backgroundColor:'#fff',overflowY:'auto'}}>
+            <Menu
+              mode="inline"
+              onClick={this.selectGroup}
+              selectedKeys={[`${currGroup._id}`]}
+            >
+              {this.state.groupList.map(group => {
+                if (group.type === 'private') {
+                  return (
+                    <Menu.Item
+                      key={`${group._id}`}
+                      className="group-item"
+                      style={{ zIndex: this.props.studyTip === 0 ? 3 : 1 }}
                     >
+                      <Icon type="user" />
+                      <Popover
+                        overlayClassName="popover-index"
+                        content={<GuideBtns />}
+                        title={tip}
+                        placement="right"
+                        visible={this.props.studyTip === 0 && !this.props.study}
+                      >
+                        {group.group_name}
+                      </Popover>
+                    </Menu.Item>
+                  );
+                } else {
+                  return (
+                    <Menu.Item key={`${group._id}`} className="group-item">
+                      <Icon type="folder-open" />
                       {group.group_name}
-                    </Popover>
-                  </Menu.Item>
-                );
-              } else {
-                return (
-                  <Menu.Item key={`${group._id}`} className="group-item">
-                    <Icon type="folder-open" />
-                    {group.group_name}
-                  </Menu.Item>
-                );
-              }
-            })}
-          </Menu>
+                    </Menu.Item>
+                  );
+                }
+              })}
+            </Menu>
+          </div>
         </div>
         {this.state.addGroupModalVisible ? (
           <Modal

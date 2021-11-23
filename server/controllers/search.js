@@ -2,12 +2,12 @@ const { Controller, Get, Post } = require('../router/decorator');
 const yapi = require('../yapi.js');
 const interfaceModel = require('../models/interface.js');
 
-@Controller('/api')
+@Controller('/api/search')
 class SearchController {
     constructor(ctx) {
     }
 
-    @Post('/search')
+    @Post('/')
     async search(ctx) {
         let keyWord = ctx.request.body.keyWord;
         let limit = ctx.request.body.limit || 10;

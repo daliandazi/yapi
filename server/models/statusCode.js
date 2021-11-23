@@ -24,7 +24,7 @@ class statusCodeModel extends baseModel {
                 type: Number,
                 required: true
             },
-            index: {type: Number, default: 0},
+            index: { type: Number, default: 0 },
             add_time: Number,
             up_time: Number
         };
@@ -45,7 +45,7 @@ class statusCodeModel extends baseModel {
                 _id: id
             },
             data,
-            {runValidators: true}
+            { runValidators: true }
         );
     }
 
@@ -75,6 +75,18 @@ class statusCodeModel extends baseModel {
         return this.model
             .findOne({
                 _id: id
+            })
+            .exec();
+    }
+
+
+    getCountByCode(code, id) {
+        return this.model
+            .count({
+                code: code,
+                _id: {
+                    $ne: id
+                }
             })
             .exec();
     }

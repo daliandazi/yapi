@@ -129,10 +129,9 @@ class Content extends Component {
     plugin.emitHook('interface_tab', InterfaceTabs);
     const tabs = (
       <Tabs
-
         onChange={this.onChange}
         activeKey={this.state.curtab}
-        defaultActiveKey="view"
+        defaultActiveKey="run"
       >
         {Object.keys(InterfaceTabs).filter(key => {
           // 如果是关联引用的接口，不能编辑

@@ -12,7 +12,7 @@ import {
   Tag,
   Divider,
   Button,
-  Popover,
+  Popover
 } from "antd";
 import { Link } from "react-router-dom";
 import AceEditor from "client/components/AceEditor/AceEditor";
@@ -81,6 +81,11 @@ class View extends Component {
           dataIndex: "required",
           key: "required",
           width: 100,
+          render: (text) => {
+            <span>
+              {text}
+            </span>
+          }
         },
         {
           title: "示例",
@@ -222,7 +227,7 @@ class View extends Component {
           name: item.name,
           value: item.desc,
           example: item.example,
-          required: item.required == 0 ? "否" : "是",
+          required: item.required == 0 ? "否" : <span style={{ color: '#FF274F' }}>是</span>,
         });
       });
     }
@@ -285,6 +290,18 @@ class View extends Component {
       return;
     }
   };
+
+  identityTypeHandler = (identityType) => {
+    console.log(identityType)
+    if (identityType === 'none') {
+      return <Tag>未登录</Tag>
+    } else if (identityType === 'tourist') {
+      return <Tag>游客账户</Tag>
+    } else if (identityType === 'certified') {
+      return <Tag color="red"><Icon type="exclamation" />正式账户</Tag>
+    }
+
+  }
 
   render() {
     const dataSource = [];
@@ -398,9 +415,9 @@ class View extends Component {
 
     let methodColor =
       variable.METHOD_COLOR[
-        this.props.curData.method
-          ? this.props.curData.method.toLowerCase()
-          : "get"
+      this.props.curData.method
+        ? this.props.curData.method.toLowerCase()
+        : "get"
       ];
 
     if (!methodColor) {
@@ -509,10 +526,14 @@ class View extends Component {
           <div style={{ fontSize: "16px", marginTop: "6px" }}>{title}</div>
 
           <div style={{ marginTop: "20px", color: "#8189A1" }}>
-            <span style={{ marginRight: "30px" }}>创建人: {username} </span>
+          <span style={{ marginRight: "30px" }}><span className="h4">负责人: </span>{this.props.curData.connUsername} </span>
+            <span style={{ marginRight: "30px" }}><span className="h4">创建人:</span> {username} </span>
             <span style={{ marginRight: "30px" }}>
-              更新时间: {formatTime(up_time)}{" "}
+              <span className="h4">更新时间:</span> {formatTime(up_time)}{" "}
             </span>
+          </div>
+          <div style={{ height: '40px', marginTop:'10px'}}>
+            <span className="h4">访问权限：</span>{this.props.curData.identityType && this.props.curData.identityType.length>0 ? this.props.curData.identityType.map(this.identityTypeHandler):"未设置"}
           </div>
         </div>
         <Divider />
@@ -679,7 +700,7 @@ class View extends Component {
           style={{
             display:
               this.props.curData.method &&
-              HTTP_METHOD[this.props.curData.method.toUpperCase()].request_body
+                HTTP_METHOD[this.props.curData.method.toUpperCase()].request_body
                 ? ""
                 : "none",
           }}
@@ -689,14 +710,14 @@ class View extends Component {
           </h3>
           {this.props.curData.req_body_type === "form"
             ? this.req_body_form(
-                this.props.curData.req_body_type,
-                this.props.curData.req_body_form
-              )
+              this.props.curData.req_body_type,
+              this.props.curData.req_body_form
+            )
             : this.req_body(
-                this.props.curData.req_body_type,
-                this.props.curData.req_body_other,
-                this.props.curData.req_body_is_json_schema
-              )}
+              this.props.curData.req_body_type,
+              this.props.curData.req_body_other,
+              this.props.curData.req_body_is_json_schema
+            )}
         </div>
 
         <div>

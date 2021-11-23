@@ -184,7 +184,7 @@ class ProjectList extends Component {
             )}
           </Col>
         </Row>
-        <Row>
+        <Row style={{height:'calc(100vh - 270px)',overflowY:'auto'}}>
           {/* {projectData.length ? projectData.map((item, index) => {
             return (
               <Col xs={8} md={6} xl={4} key={index}>

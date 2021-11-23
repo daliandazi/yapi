@@ -1,16 +1,14 @@
 import React, { PureComponent as Component } from "react";
 import PropTypes from "prop-types";
 import {
-  Tabs,
   Layout,
   Menu,
   Icon,
-  Table,
   Button,
-  Input,
   Tree,
   Popover,
   Modal,
+  Empty
 } from "antd";
 import { Route, Switch, matchPath, Link } from "react-router-dom";
 import { connect } from "react-redux";
@@ -39,6 +37,7 @@ class StatusCode extends Component {
     super(props);
     this.state = {
       statusCodeGroupList: [],
+      editGroupId: null
     };
   }
 
@@ -58,9 +57,9 @@ class StatusCode extends Component {
     }
     this.props.history.push(
       "/project/" +
-        this.props.match.params.id +
-        "/statusCode/list/" +
-        groupId[0]
+      this.props.match.params.id +
+      "/statusCode/list/" +
+      groupId[0]
     );
   }
 
@@ -91,7 +90,7 @@ class StatusCode extends Component {
             that.queryGroupList();
           });
       },
-      onCancel() {},
+      onCancel() { },
     });
   }
 
@@ -112,7 +111,7 @@ class StatusCode extends Component {
             overflow: "hidden",
             borderLeft: "1px solid #D9D9D9",
             border: "1px solid #D9D9D9",
-            backgroundColor:'#fff'
+            backgroundColor: '#fff'
           }}
           id={"interface-sider"}
           size={250}
@@ -141,7 +140,7 @@ class StatusCode extends Component {
             className="left-menu"
             style={{ height: parseInt(document.body.clientHeight) - 80 + "px" }}
           >
-            <div style={{ padding: "10px" }}>
+            <div style={{ padding: "8px 10px", borderBottom: "1px solid #D9D9D9", }}>
               <Button
                 icon="plus"
                 type="primary"
@@ -156,15 +155,6 @@ class StatusCode extends Component {
               </Button>
             </div>
 
-            <div
-              style={{
-                borderTop: "1px solid #D9D9D9",
-                borderBottom: "1px solid #D9D9D9",
-                padding: "6px 10px",
-              }}
-            >
-              <Input style={{ width: "100%" }} placeholder="搜索分组" />
-            </div>
 
             <Menu mode="inline">
               <Menu.Item
@@ -183,6 +173,9 @@ class StatusCode extends Component {
                 </Link>
               </Menu.Item>
             </Menu>
+            {
+              this.state.statusCodeGroupList.length <= 0 ? (<Empty description="还没有状态码哦~"></Empty>) : ("")
+            }
             <Tree
               onSelect={(selectedKeys) => {
                 this.selectedGroup(selectedKeys);
@@ -235,7 +228,7 @@ class StatusCode extends Component {
             </Tree>
           </div>
         </ReflexElement>
-        <ReflexSplitter/>
+        <ReflexSplitter />
         <ReflexElement>
           <Content
             style={{

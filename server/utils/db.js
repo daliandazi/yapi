@@ -54,7 +54,7 @@ function connect(callback) {
     function (err) {
       if (err) {
         yapi.commons.log(err,'error')
-        // yapi.commons.log(err + ', [连接MongoDB失败]', 'error');
+        yapi.commons.log(err + ', [连接MongoDB失败]', 'error');
       }
     }
   );

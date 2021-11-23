@@ -85,7 +85,7 @@ export default class Srch extends React.Component {
     }).then(response => {
       let before = this.state.interfaceList || []
       if (this.state.page > 1) {
-        response.data.interfaceData.list.forEach(api=>{
+        response.data.interfaceData.list.forEach(api => {
           before.push(api)
         })
       } else {
@@ -148,7 +148,7 @@ export default class Srch extends React.Component {
           style={{ overflow: 'hidden' }}
         >
           <div>
-            <Input placeholder="输入接口名字或者路径" value={this.state.keyWord} suffix={<Icon type="search"></Icon>} allowClear="true" onKeyDown={(e) => {
+            <Input placeholder="输入接口名字或者路径" value={this.state.keyWord} suffix={<Icon type="search"></Icon>} allowClear={true} onKeyDown={(e) => {
               if (e.keyCode == 13) {
                 this.search()
               }
@@ -201,13 +201,11 @@ export default class Srch extends React.Component {
           ) : <Empty />}
 
         </Modal >
-        <li className="toolbar-li">
           <Icon className="search" style={{ fontSize: 16 }} type="search" onClick={() => {
             this.setState({
               visible: true
             })
           }} />
-        </li>
       </div >
     );
   }

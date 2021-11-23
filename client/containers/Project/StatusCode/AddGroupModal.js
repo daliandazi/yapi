@@ -16,38 +16,11 @@ import {
 } from "antd";
 
 const FormItem = Form.Item;
-const Option = Select.Option;
-const { TreeNode } = Tree;
-
-import {
-  fetchInterfaceListMenu,
-  fetchInterfaceList,
-  fetchInterfaceCatList,
-} from "@reducer/modules/interface.js";
-import { fetchGroupList } from "@reducer/modules/group";
 
 function hasErrors(fieldsError) {
   return Object.keys(fieldsError).some((field) => fieldsError[field]);
 }
 
-@connect(
-  (state) => {
-    return {
-      curProject: state.project.currProject,
-      catList: state.inter.list,
-      totalTableList: state.inter.totalTableList,
-      catTableList: state.inter.catTableList,
-      totalCount: state.inter.totalCount,
-      count: state.inter.count,
-    };
-  },
-  {
-    fetchInterfaceListMenu,
-    fetchInterfaceList,
-    fetchInterfaceCatList,
-    fetchGroupList,
-  }
-)
 class AddGroupModal extends Component {
   constructor(props) {
     super(props);
@@ -67,7 +40,6 @@ class AddGroupModal extends Component {
   };
 
   componentDidMount() {
-    console.log(this.props.groupId);
     if(this.props.groupId){
       this.loadGroup(this.props.groupId)
     }
@@ -90,7 +62,7 @@ class AddGroupModal extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        if(this.state.group){
+        if(this.state.group && this.state.group._id){
           values.projectId = this.state.group.projectId;
           values.parentId = this.state.group.parentId;
           values.inedx = this.state.group.inedx;
@@ -128,7 +100,7 @@ class AddGroupModal extends Component {
     return (
       <Modal
         title="添加分组"
-        footer={null}
+        footer=""
         visible={this.props.visible}
         className="addcatmodal"
         onCancel={() => {

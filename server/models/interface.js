@@ -1,3 +1,4 @@
+const { string } = require("prop-types");
 const yapi = require("../yapi.js");
 const baseModel = require("./base.js");
 
@@ -27,6 +28,7 @@ class interfaceModel extends baseModel {
       markdown: String,
       add_time: Number,
       up_time: Number,
+      identityType:{type: Array ,required: false},
       type: { type: String, enum: ["static", "var", "ref"], default: "static" },
       ref_id: { type: Number },
       query_path: {

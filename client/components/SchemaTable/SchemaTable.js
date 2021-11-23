@@ -37,7 +37,6 @@ const columns = [
     key: 'type',
     width: 100,
     render: (text, item) => {
-      // console.log('text',item.sub);
       return text === 'array' ? (
         <span>{item.sub ? item.sub.itemType || '' : 'array'} []</span>
       ) : (
@@ -51,7 +50,7 @@ const columns = [
     key: 'required',
     width: 80,
     render: text => {
-      return <div>{text ? '必须' : '非必须'}</div>;
+      return text ? <div style={{color:'#FF274F'}}>必须</div>:<div>非必须</div> ;
     }
   },
   {

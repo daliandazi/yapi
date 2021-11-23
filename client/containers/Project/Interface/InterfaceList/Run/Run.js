@@ -91,7 +91,7 @@ export default class Run extends Component {
     data.path = currProject.basepath + currInterface.path;
     return (
       <div>
-        {/* <HttpRequest /> */}
+        {/* <HttpRequest data={data}/> */}
         <Postman
           data={data}
           id={currProject._id}

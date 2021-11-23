@@ -57,10 +57,10 @@ let INTERFACE_CONFIG = {
     prefix: "/yuque/",
     controller: yuqueController,
   },
-  statusCode: {
-    prefix: "/statusCode/",
-    controller: statusCodeController,
-  },
+  // statusCode: {
+  //   prefix: "/statusCode/",
+  //   controller: statusCodeController,
+  // },
 };
 
 let routerConfig = {
@@ -76,38 +76,38 @@ let routerConfig = {
       method: "get",
     },
   ],
-  statusCode: [
-    {
-      action: "groupSave",
-      path: "group/save",
-      method: "post",
-    },
-    {
-      action: "groupDel",
-      path: "group/del",
-      method: "post",
-    },
-    {
-      action: "groupList",
-      path: "group/list",
-      method: "get",
-    },
-    {
-      action: "getGroup",
-      path: "group/get",
-      method: "get",
-    },
-    {
-      action: "statusCodeList",
-      path: "list",
-      method: "get",
-    },
-    {
-      action: "statusCodeSave",
-      path: "save",
-      method: "post",
-    },
-  ],
+  // statusCode: [
+  //   {
+  //     action: "groupSave",
+  //     path: "group/save",
+  //     method: "post",
+  //   },
+  //   {
+  //     action: "groupDel",
+  //     path: "group/del",
+  //     method: "post",
+  //   },
+  //   {
+  //     action: "groupList",
+  //     path: "group/list",
+  //     method: "get",
+  //   },
+  //   {
+  //     action: "getGroup",
+  //     path: "group/get",
+  //     method: "get",
+  //   },
+  //   {
+  //     action: "statusCodeList",
+  //     path: "list",
+  //     method: "get",
+  //   },
+  //   {
+  //     action: "statusCodeSave",
+  //     path: "save",
+  //     method: "post",
+  //   },
+  // ],
   group: [
     {
       action: "getMyGroup",
@@ -361,11 +361,11 @@ let routerConfig = {
       path: "getCatMenu",
       method: "get",
     },
-    {
-      action: "list",
-      path: "list",
-      method: "get",
-    },
+    // {
+    //   action: "list",
+    //   path: "list",
+    //   method: "get",
+    // },
     {
       action: "get",
       path: "get",

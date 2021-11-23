@@ -2,12 +2,14 @@ import React, { PureComponent as Component } from "react";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import axios from "axios";
+import produce from 'immer';
 import { Table, Button, Modal, message, Tooltip, Select, Icon } from "antd";
 import AddInterfaceForm from "./AddInterfaceForm";
 import {
   fetchInterfaceListMenu,
   fetchInterfaceList,
   fetchInterfaceCatList,
+  fetchInterfaceData,
   deleteInterfaceData,
 } from "@reducer/modules/interface.js";
 import { getProject } from "@reducer/modules/project.js";
@@ -40,6 +42,7 @@ const limit = 20;
     fetchInterfaceCatList,
     deleteInterfaceData,
     getProject,
+    fetchInterfaceData,
   }
 )
 class InterfaceList extends Component {
@@ -63,6 +66,7 @@ class InterfaceList extends Component {
     fetchInterfaceListMenu: PropTypes.func,
     deleteInterfaceData: PropTypes.func,
     fetchInterfaceList: PropTypes.func,
+    fetchInterfaceData: PropTypes.func,
     fetchInterfaceCatList: PropTypes.func,
     totalTableList: PropTypes.array,
     catTableList: PropTypes.array,
@@ -177,6 +181,30 @@ class InterfaceList extends Component {
     });
   };
 
+  /**
+   * 复制接口
+   * @param {*} id 
+   */
+  copyInterface = async id => {
+    let interfaceData = await this.props.fetchInterfaceData(id);
+    // let data = JSON.parse(JSON.stringify(interfaceData.payload.data.data));
+    // data.title = data.title + '_copy';
+    // data.path = data.path + '_' + Date.now();
+    let data = interfaceData.payload.data.data;
+    let newData = produce(data, draftData => {
+      draftData.title = draftData.title + '_copy';
+      draftData.path = draftData.path + '_' + Date.now();
+    });
+
+    axios.post('/api/interface/add', newData).then(async res => {
+      if (res.data.errcode !== 0) {
+        return message.error(res.data.errmsg);
+      }
+      message.success('接口添加成功');
+      this.handleRequest(this.props);
+    });
+  };
+
   handleAddInterface = (data) => {
     data.project_id = this.props.curProject._id;
     axios.post("/api/interface/add", data).then((res) => {
@@ -267,7 +295,7 @@ class InterfaceList extends Component {
           const path = this.props.curProject.basepath + item;
           let methodColor =
             variable.METHOD_COLOR[
-              record.method ? record.method.toLowerCase() : "get"
+            record.method ? record.method.toLowerCase() : "get"
             ] || variable.METHOD_COLOR["get"];
           return (
             <div>
@@ -365,10 +393,12 @@ class InterfaceList extends Component {
 
       {
         title: "负责人",
+        dataIndex: "managerName",
         width: 20,
       },
       {
         title: "创建者",
+        dataIndex: "createUserName",
         width: 20,
       },
       {
@@ -394,6 +424,15 @@ class InterfaceList extends Component {
                 }}
               >
                 {record.ref_id ? "移除" : "删除"}
+              </Button>
+
+              <Button
+                type="link"
+                onClick={() => {
+                  this.copyInterface(record._id);
+                }}
+              >
+                复制
               </Button>
             </div>
           );

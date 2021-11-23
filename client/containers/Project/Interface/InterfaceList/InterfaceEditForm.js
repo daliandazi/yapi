@@ -1,28 +1,28 @@
-import React, {PureComponent as Component} from 'react';
+import React, { PureComponent as Component } from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import _ from 'underscore';
 import constants from '../../../../constants/variable.js';
-import {handlePath, nameLengthLimit} from '../../../../common.js';
-import {changeEditStatus} from '../../../../reducer/modules/interface.js';
+import { handlePath, nameLengthLimit } from '../../../../common.js';
+import { changeEditStatus } from '../../../../reducer/modules/interface.js';
 import json5 from 'json5';
-import {message, Affix, Tabs, Modal} from 'antd';
+import { message, Affix, Tabs, Modal } from 'antd';
 import EasyDragSort from '../../../../components/EasyDragSort/EasyDragSort.js';
 import mockEditor from 'client/components/AceEditor/mockEditor';
 import AceEditor from 'client/components/AceEditor/AceEditor';
 import axios from 'axios';
-import {MOCK_SOURCE} from '../../../../constants/variable.js';
-import Editor from 'common/tui-editor/dist/tui-editor-Editor-all.min.js';
+import { MOCK_SOURCE } from '../../../../constants/variable.js';
 import jSchema from 'json-schema-editor-visual';
 import SelectPersonCommon from '@components/User/SelectPersonCommon'
 
-const ResBodySchema = jSchema({lang: 'zh_CN', mock: MOCK_SOURCE});
-const ReqBodySchema = jSchema({lang: 'zh_CN', mock: MOCK_SOURCE});
+const ResBodySchema = jSchema({ lang: 'zh_CN', mock: MOCK_SOURCE });
+const ReqBodySchema = jSchema({ lang: 'zh_CN', mock: MOCK_SOURCE });
 const TabPane = Tabs.TabPane;
 
-
-require('common/tui-editor/dist/tui-editor.min.css'); // editor ui
-require('common/tui-editor/dist/tui-editor-contents.min.css'); // editor content
+import Editor from '@toast-ui/editor';
+import uml from '@toast-ui/editor-plugin-uml';
+import 'codemirror/lib/codemirror.css';
+import '@toast-ui/editor/dist/toastui-editor.css';
 require('./editor.css');
 
 
@@ -91,9 +91,9 @@ const InputGroup = Input.Group;
 const RadioButton = Radio.Button;
 const RadioGroup = Radio.Group;
 const dataTpl = {
-    req_query: {name: '', required: '1', desc: '', example: ''},
-    req_headers: {name: '', required: '1', desc: '', example: ''},
-    req_params: {name: '', desc: '', example: ''},
+    req_query: { name: '', required: '1', desc: '', example: '' },
+    req_headers: { name: '', required: '1', desc: '', example: '' },
+    req_params: { name: '', desc: '', example: '' },
     req_body_form: {
         name: '',
         type: 'text',
@@ -221,7 +221,7 @@ class InterfaceEditForm extends Component {
 
     constructor(props) {
         super(props);
-        const {curdata} = this.props;
+        const { curdata } = this.props;
         // console.log('custom_field1', this.props.custom_field);
         this.state = this.initState(curdata);
     }
@@ -373,7 +373,7 @@ class InterfaceEditForm extends Component {
             req_radio_type: radio.join('-')
         });
 
-        this.setState({method: val}, () => {
+        this.setState({ method: val }, () => {
             this._changeRadioGroup(radio[0], radio[1]);
         });
     };
@@ -394,7 +394,11 @@ class InterfaceEditForm extends Component {
         this.editor = new Editor({
             el: document.querySelector('#desc'),
             initialEditType: 'wysiwyg',
+            previewStyle: 'vertical',
+            theme: 'dark',
+            plugins: [uml],
             height: '500px',
+            viewer: true,
             initialValue: this.state.markdown || this.state.desc
         });
     }
@@ -459,11 +463,11 @@ class InterfaceEditForm extends Component {
             queue = [];
 
         let insertParams = name => {
-            let findExist = _.find(this.state.req_params, {name: name});
+            let findExist = _.find(this.state.req_params, { name: name });
             if (findExist) {
                 queue.push(findExist);
             } else {
-                queue.push({name: name, desc: ''});
+                queue.push({ name: name, desc: '' });
             }
         };
         val = handlePath(val);
@@ -600,12 +604,12 @@ class InterfaceEditForm extends Component {
     };
 
     render() {
-        const {getFieldDecorator} = this.props.form;
-        const {custom_field, projectMsg} = this.props;
+        const { getFieldDecorator } = this.props.form;
+        const { custom_field, projectMsg } = this.props;
 
         const formItemLayout = {
-            labelCol: {span: 4},
-            wrapperCol: {span: 18}
+            labelCol: { span: 4 },
+            wrapperCol: { span: 18 }
         };
 
         const res_body_use_schema_editor = checkIsJsonSchema(this.state.res_body) || '';
@@ -620,12 +624,12 @@ class InterfaceEditForm extends Component {
                         easy_drag_sort_child="true"
                         className="interface-edit-item-content-col interface-edit-item-content-col-drag"
                     >
-                        <Icon type="bars"/>
+                        <Icon type="bars" />
                     </Col>
                     <Col span="4" draggable="false" className="interface-edit-item-content-col">
                         {getFieldDecorator('req_query[' + index + '].name', {
                             initialValue: data.name
-                        })(<Input placeholder="参数名称"/>)}
+                        })(<Input placeholder="参数名称" />)}
                     </Col>
                     <Col span="3" className="interface-edit-item-content-col">
                         {getFieldDecorator('req_query[' + index + '].required', {
@@ -640,12 +644,12 @@ class InterfaceEditForm extends Component {
                     <Col span="6" className="interface-edit-item-content-col">
                         {getFieldDecorator('req_query[' + index + '].example', {
                             initialValue: data.example
-                        })(<TextArea autosize={true} placeholder="参数示例"/>)}
+                        })(<TextArea autosize={true} placeholder="参数示例" />)}
                     </Col>
                     <Col span="9" className="interface-edit-item-content-col">
                         {getFieldDecorator('req_query[' + index + '].desc', {
                             initialValue: data.desc
-                        })(<TextArea autosize={true} placeholder="备注"/>)}
+                        })(<TextArea autosize={true} placeholder="备注" />)}
                     </Col>
                     <Col span="1" className="interface-edit-item-content-col">
                         <Icon
@@ -666,7 +670,7 @@ class InterfaceEditForm extends Component {
                         easy_drag_sort_child="true"
                         className="interface-edit-item-content-col interface-edit-item-content-col-drag"
                     >
-                        <Icon type="bars"/>
+                        <Icon type="bars" />
                     </Col>
                     <Col span="4" className="interface-edit-item-content-col">
                         {getFieldDecorator('req_headers[' + index + '].name', {
@@ -684,17 +688,17 @@ class InterfaceEditForm extends Component {
                     <Col span="5" className="interface-edit-item-content-col">
                         {getFieldDecorator('req_headers[' + index + '].value', {
                             initialValue: data.value
-                        })(<Input placeholder="参数值"/>)}
+                        })(<Input placeholder="参数值" />)}
                     </Col>
                     <Col span="5" className="interface-edit-item-content-col">
                         {getFieldDecorator('req_headers[' + index + '].example', {
                             initialValue: data.example
-                        })(<TextArea autosize={true} placeholder="参数示例"/>)}
+                        })(<TextArea autosize={true} placeholder="参数示例" />)}
                     </Col>
                     <Col span="8" className="interface-edit-item-content-col">
                         {getFieldDecorator('req_headers[' + index + '].desc', {
                             initialValue: data.desc
-                        })(<TextArea autosize={true} placeholder="备注"/>)}
+                        })(<TextArea autosize={true} placeholder="备注" />)}
                     </Col>
                     <Col span="1" className="interface-edit-item-content-col">
                         <Icon
@@ -715,12 +719,12 @@ class InterfaceEditForm extends Component {
                         easy_drag_sort_child="true"
                         className="interface-edit-item-content-col interface-edit-item-content-col-drag"
                     >
-                        <Icon type="bars"/>
+                        <Icon type="bars" />
                     </Col>
                     <Col span="4" className="interface-edit-item-content-col">
                         {getFieldDecorator('req_body_form[' + index + '].name', {
                             initialValue: data.name
-                        })(<Input placeholder="name"/>)}
+                        })(<Input placeholder="name" />)}
                     </Col>
                     <Col span="3" className="interface-edit-item-content-col">
                         {getFieldDecorator('req_body_form[' + index + '].type', {
@@ -745,12 +749,12 @@ class InterfaceEditForm extends Component {
                     <Col span="5" className="interface-edit-item-content-col">
                         {getFieldDecorator('req_body_form[' + index + '].example', {
                             initialValue: data.example
-                        })(<TextArea autosize={true} placeholder="参数示例"/>)}
+                        })(<TextArea autosize={true} placeholder="参数示例" />)}
                     </Col>
                     <Col span="7" className="interface-edit-item-content-col">
                         {getFieldDecorator('req_body_form[' + index + '].desc', {
                             initialValue: data.desc
-                        })(<TextArea autosize={true} placeholder="备注"/>)}
+                        })(<TextArea autosize={true} placeholder="备注" />)}
                     </Col>
                     <Col span="1" className="interface-edit-item-content-col">
                         <Icon
@@ -769,17 +773,17 @@ class InterfaceEditForm extends Component {
                     <Col span="6" className="interface-edit-item-content-col">
                         {getFieldDecorator('req_params[' + index + '].name', {
                             initialValue: data.name
-                        })(<Input disabled placeholder="参数名称"/>)}
+                        })(<Input disabled placeholder="参数名称" />)}
                     </Col>
                     <Col span="7" className="interface-edit-item-content-col">
                         {getFieldDecorator('req_params[' + index + '].example', {
                             initialValue: data.example
-                        })(<TextArea autosize={true} placeholder="参数示例"/>)}
+                        })(<TextArea autosize={true} placeholder="参数示例" />)}
                     </Col>
                     <Col span="11" className="interface-edit-item-content-col">
                         {getFieldDecorator('req_params[' + index + '].desc', {
                             initialValue: data.desc
-                        })(<TextArea autosize={true} placeholder="备注"/>)}
+                        })(<TextArea autosize={true} placeholder="备注" />)}
                     </Col>
                 </Row>
             );
@@ -818,14 +822,14 @@ class InterfaceEditForm extends Component {
                     <div>
                         <TextArea
                             placeholder="每行一个name:examples"
-                            autosize={{minRows: 6, maxRows: 10}}
+                            autosize={{ minRows: 6, maxRows: 10 }}
                             value={this.state.bulkValue}
                             onChange={this.handleBulkValueInput}
                         />
                     </div>
                 </Modal>
                 <Form onSubmit={this.handleSubmit}>
-                    <h3 className="interface-title" style={{marginTop: 0}}>
+                    <h3 className="interface-title" style={{ marginTop: 0 }}>
                         基本设置
                     </h3>
                     <div className="panel-sub">
@@ -833,13 +837,13 @@ class InterfaceEditForm extends Component {
                             {getFieldDecorator('title', {
                                 initialValue: this.state.title,
                                 rules: nameLengthLimit('接口')
-                            })(<Input id="title" placeholder="接口名称"/>)}
+                            })(<Input id="title" placeholder="接口名称" />)}
                         </FormItem>
 
                         <FormItem className="interface-edit-item" {...formItemLayout} label="选择分组">
                             {getFieldDecorator('catid', {
                                 initialValue: this.state.catid + '',
-                                rules: [{required: true, message: '请选择一个分组'}]
+                                rules: [{ required: true, message: '请选择一个分组' }]
                             })(
                                 <Select placeholder="请选择一个分组">
                                     {this.props.cat.map(item => {
@@ -858,7 +862,7 @@ class InterfaceEditForm extends Component {
                             {...formItemLayout}
                             label={
                                 <span>
-                  接口路径&nbsp;
+                                    接口路径&nbsp;
                                     <Tooltip
                                         title={
                                             <div>
@@ -873,16 +877,16 @@ class InterfaceEditForm extends Component {
                                             </div>
                                         }
                                     >
-                    <Icon type="question-circle-o" style={{width: '10px'}}/>
-                  </Tooltip>
-                </span>
+                                        <Icon type="question-circle-o" style={{ width: '10px' }} />
+                                    </Tooltip>
+                                </span>
                             }
                         >
                             <InputGroup compact>
                                 <Select
                                     value={this.state.method}
                                     onChange={this.onChangeMethod}
-                                    style={{width: '15%'}}
+                                    style={{ width: '15%' }}
                                 >
                                     {HTTP_METHOD_KEYS.map(item => {
                                         return (
@@ -905,7 +909,7 @@ class InterfaceEditForm extends Component {
                                         readOnly
                                         onChange={() => {
                                         }}
-                                        style={{width: '25%'}}
+                                        style={{ width: '25%' }}
                                     />
                                 </Tooltip>
                                 {getFieldDecorator('path', {
@@ -917,7 +921,7 @@ class InterfaceEditForm extends Component {
                                         }
                                     ]
                                 })(
-                                    <Input onChange={this.handlePath} placeholder="/path" style={{width: '60%'}}/>
+                                    <Input onChange={this.handlePath} placeholder="/path" style={{ width: '60%' }} />
                                 )}
                             </InputGroup>
                             <Row className="interface-edit-item">
@@ -927,7 +931,7 @@ class InterfaceEditForm extends Component {
                             </Row>
                         </FormItem>
                         <FormItem className="interface-edit-item" {...formItemLayout} label="Tag">
-                            {getFieldDecorator('tag', {initialValue: this.state.tag})(
+                            {getFieldDecorator('tag', { initialValue: this.state.tag })(
                                 <Select placeholder="请选择 tag " mode="multiple">
                                     {projectMsg.tag.map(item => {
                                         return (
@@ -936,7 +940,7 @@ class InterfaceEditForm extends Component {
                                             </Option>
                                         );
                                     })}
-                                    <Option value="tag设置" disabled style={{cursor: 'pointer', color: '#2395f1'}}>
+                                    <Option value="tag设置" disabled style={{ cursor: 'pointer', color: '#2395f1' }}>
                                         <Button type="primary" onClick={this.props.onTagClick}>
                                             Tag设置
                                         </Button>
@@ -945,7 +949,7 @@ class InterfaceEditForm extends Component {
                             )}
                         </FormItem>
                         <FormItem className="interface-edit-item" {...formItemLayout} label="状态">
-                            {getFieldDecorator('status', {initialValue: this.state.status})(
+                            {getFieldDecorator('status', { initialValue: this.state.status })(
                                 <Radio.Group value={this.state.status}>
                                     <Radio value="done">已完成</Radio>
                                     <Radio value="undone">未完成</Radio>
@@ -953,22 +957,51 @@ class InterfaceEditForm extends Component {
                                 </Radio.Group>
                             )}
                         </FormItem>
-                        <FormItem className="interface-edit-item"  {...formItemLayout}  label="负责人">
+                        <FormItem className="interface-edit-item" {...formItemLayout} label={<span>
+                            访问权限
+                            <Tooltip
+                                        title={
+                                            <div>
+                                                <p>
+                                                    1.未登录：没有登录也可以访问该接口
+                                                </p>
+                                                <p>
+                                                    2.游客账户：游客账户也可以访问该接口，例如某些游客账户也记录数据到云端
+                                                </p>
+                                                <p>
+                                                    3.正式账户：正式账户
+                                                </p>
+                                            </div>
+                                        }
+                                    >
+                                        <Icon type="question-circle-o" style={{ width: '10px' }} />
+                                    </Tooltip>
+                        </span>}>
+                            {getFieldDecorator('identityType', { initialValue: this.state.identityType,rules: [{ required: true, message: '请选择访问权限' }] })(
+                                <Select placeholder="请选择访问权限" mode="multiple" defaultValue='none'>
+                                    <Option value="none" style={{ cursor: 'pointer', color: '#2395f1' }}>
+                                        未登录
+                                    </Option>
+                                    <Option value="tourist" style={{ cursor: 'pointer', color: '#2395f1' }}>
+                                        游客账户
+                                    </Option>
+                                    <Option value="certified" style={{ cursor: 'pointer', color: '#2395f1' }}>
+                                        正式账户
+                                    </Option>
+                                </Select>
+                            )}
+                        </FormItem>
+
+                        <FormItem className="interface-edit-item"  {...formItemLayout} label="负责人">
                             {getFieldDecorator('api_manager_conn_id', {
                                 initialValue: this.state.api_manager_conn_id,
-                                rules: [{required: true, message: '请选择负责人'}]
+                                rules: [{ required: true, message: '请选择负责人' }]
                             })(
-                            <SelectPersonCommon value={this.state.api_manager_conn_id} onChange={(value) => {
-                                console.log(value)
-                                this.setState({
-                                    api_manager_conn_id: value
-                                })
-
-                                // this.props.form.setFieldsValue({
-                                //     api_manager_conn_id: value
-                                // });
-                                console.log(value)
-                            }}/>)}
+                                <SelectPersonCommon value={this.state.api_manager_conn_id} onChange={(value) => {
+                                    this.setState({
+                                        api_manager_conn_id: value
+                                    })
+                                }} />)}
                         </FormItem>
                         {custom_field.enable && (
                             <FormItem
@@ -978,7 +1011,7 @@ class InterfaceEditForm extends Component {
                             >
                                 {getFieldDecorator('custom_field_value', {
                                     initialValue: this.state.custom_field_value
-                                })(<Input placeholder="请输入"/>)}
+                                })(<Input placeholder="请输入" />)}
                             </FormItem>
                         )}
                     </div>
@@ -1068,7 +1101,7 @@ class InterfaceEditForm extends Component {
                                             : 'hide')
                                     }
                                 >
-                                    <Col style={{minHeight: '50px'}}>
+                                    <Col style={{ minHeight: '50px' }}>
                                         <Row type="flex" justify="space-around">
                                             <Col span="12" className="interface-edit-item">
                                                 <Button
@@ -1081,7 +1114,7 @@ class InterfaceEditForm extends Component {
                                             </Col>
                                             <Col span="12">
                                                 <div className="bulk-import"
-                                                     onClick={() => this.showBulk('req_body_form')}>
+                                                    onClick={() => this.showBulk('req_body_form')}>
                                                     批量添加
                                                 </div>
                                             </Col>
@@ -1106,14 +1139,14 @@ class InterfaceEditForm extends Component {
                                     : 'hide')
                             }
                         >
-              <span>
-                JSON-SCHEMA:&nbsp;
-                  {!projectMsg.is_json5 && (
-                      <Tooltip title="项目 -> 设置 开启 json5">
-                          <Icon type="question-circle-o"/>{' '}
-                      </Tooltip>
-                  )}
-              </span>
+                            <span>
+                                JSON-SCHEMA:&nbsp;
+                                {!projectMsg.is_json5 && (
+                                    <Tooltip title="项目 -> 设置 开启 json5">
+                                        <Icon type="question-circle-o" />{' '}
+                                    </Tooltip>
+                                )}
+                            </span>
                             {getFieldDecorator('req_body_is_json_schema', {
                                 valuePropName: 'checked',
                                 initialValue: this.state.req_body_is_json_schema || !projectMsg.is_json5
@@ -1125,15 +1158,15 @@ class InterfaceEditForm extends Component {
                                 />
                             )}
 
-                            <Col style={{marginTop: '5px'}} className="interface-edit-json-info">
+                            <Col style={{ marginTop: '5px' }} className="interface-edit-json-info">
                                 {!this.props.form.getFieldValue('req_body_is_json_schema') ? (
                                     <span>
-                    基于 Json5, 参数描述信息用注释的方式实现{' '}
+                                        基于 Json5, 参数描述信息用注释的方式实现{' '}
                                         <Tooltip title={<pre>{Json5Example}</pre>}>
-                      <Icon type="question-circle-o" style={{color: '#086dbf'}}/>
-                    </Tooltip>
-                    “全局编辑”或 “退出全屏” 请按 F9
-                  </span>
+                                            <Icon type="question-circle-o" style={{ color: '#086dbf' }} />
+                                        </Tooltip>
+                                        “全局编辑”或 “退出全屏” 请按 F9
+                                    </span>
                                 ) : (
                                     <ReqBodySchema
                                         onChange={text => {
@@ -1163,22 +1196,22 @@ class InterfaceEditForm extends Component {
                         </Row>
 
                         {this.props.form.getFieldValue('req_body_type') === 'file' &&
-                        this.state.hideTabs.req.body !== 'hide' ? (
+                            this.state.hideTabs.req.body !== 'hide' ? (
                             <Row className="interface-edit-item">
                                 <Col className="interface-edit-item-other-body">
                                     {getFieldDecorator('req_body_other', {
                                         initialValue: this.state.req_body_other
-                                    })(<TextArea placeholder="" autosize={true}/>)}
+                                    })(<TextArea placeholder="" autosize={true} />)}
                                 </Col>
                             </Row>
                         ) : null}
                         {this.props.form.getFieldValue('req_body_type') === 'raw' &&
-                        this.state.hideTabs.req.body !== 'hide' ? (
+                            this.state.hideTabs.req.body !== 'hide' ? (
                             <Row>
                                 <Col>
                                     {getFieldDecorator('req_body_other', {
                                         initialValue: this.state.req_body_other
-                                    })(<TextArea placeholder="" autosize={{minRows: 8}}/>)}
+                                    })(<TextArea placeholder="" autosize={{ minRows: 8 }} />)}
                                 </Col>
                             </Row>
                         ) : null}
@@ -1190,7 +1223,7 @@ class InterfaceEditForm extends Component {
                         返回数据设置&nbsp;
                         {!projectMsg.is_json5 && (
                             <Tooltip title="项目 -> 设置 开启 json5">
-                                <Icon type="question-circle-o" className="tooltip"/>{' '}
+                                <Icon type="question-circle-o" className="tooltip" />{' '}
                             </Tooltip>
                         )}
                         {getFieldDecorator('res_body_is_json_schema', {
@@ -1224,31 +1257,31 @@ class InterfaceEditForm extends Component {
                         >
                             <Col>
                                 <Tabs size="large" defaultActiveKey="tpl" onChange={this.handleJsonType}>
-                                    <TabPane tab="模板" key="tpl"/>
-                                    <TabPane tab="预览" key="preview"/>
+                                    <TabPane tab="模板" key="tpl" />
+                                    <TabPane tab="预览" key="preview" />
                                 </Tabs>
-                                <div style={{marginTop: '10px'}}>
+                                <div style={{ marginTop: '10px' }}>
                                     {!this.props.form.getFieldValue('res_body_is_json_schema') ? (
-                                        <div style={{padding: '10px 0', fontSize: '15px'}}>
-                      <span>
-                        基于 mockjs 和 json5,使用注释方式写参数说明{' '}
-                          <Tooltip title={<pre>{Json5Example}</pre>}>
-                          <Icon type="question-circle-o" style={{color: '#086dbf'}}/>
-                        </Tooltip>{' '}
-                          ,具体使用方法请{' '}
-                          <span
-                              className="href"
-                              onClick={() =>
-                                  window.open('https://yapi.ymfe.org/documents/mock.html', '_blank')
-                              }
-                          >
-                          查看文档
-                        </span>
-                      </span>
-                                            ，“全局编辑”或 “退出全屏” 请按 <span style={{fontWeight: '500'}}>F9</span>
+                                        <div style={{ padding: '10px 0', fontSize: '15px' }}>
+                                            <span>
+                                                基于 mockjs 和 json5,使用注释方式写参数说明{' '}
+                                                <Tooltip title={<pre>{Json5Example}</pre>}>
+                                                    <Icon type="question-circle-o" style={{ color: '#086dbf' }} />
+                                                </Tooltip>{' '}
+                                                ,具体使用方法请{' '}
+                                                <span
+                                                    className="href"
+                                                    onClick={() =>
+                                                        window.open('https://yapi.ymfe.org/documents/mock.html', '_blank')
+                                                    }
+                                                >
+                                                    查看文档
+                                                </span>
+                                            </span>
+                                            ，“全局编辑”或 “退出全屏” 请按 <span style={{ fontWeight: '500' }}>F9</span>
                                         </div>
                                     ) : (
-                                        <div style={{display: this.state.jsonType === 'tpl' ? 'block' : 'none'}}>
+                                        <div style={{ display: this.state.jsonType === 'tpl' ? 'block' : 'none' }}>
                                             <ResBodySchema
                                                 onChange={text => {
                                                     this.setState({
@@ -1264,15 +1297,15 @@ class InterfaceEditForm extends Component {
                                         </div>
                                     )}
                                     {!this.props.form.getFieldValue('res_body_is_json_schema') &&
-                                    this.state.jsonType === 'tpl' && (
-                                        <AceEditor
-                                            className="interface-editor"
-                                            data={this.state.res_body}
-                                            onChange={this.handleResBody}
-                                            ref={editor => (this.resBodyEditor = editor)}
-                                            fullScreen={true}
-                                        />
-                                    )}
+                                        this.state.jsonType === 'tpl' && (
+                                            <AceEditor
+                                                className="interface-editor"
+                                                data={this.state.res_body}
+                                                onChange={this.handleResBody}
+                                                ref={editor => (this.resBodyEditor = editor)}
+                                                fullScreen={true}
+                                            />
+                                        )}
                                     <div
                                         id="mock-preview"
                                         style={{
@@ -1295,7 +1328,7 @@ class InterfaceEditForm extends Component {
                             <Col>
                                 {getFieldDecorator('res_body', {
                                     initialValue: this.state.res_body
-                                })(<TextArea style={{minHeight: '150px'}} placeholder=""/>)}
+                                })(<TextArea style={{ minHeight: '150px' }} placeholder="" />)}
                             </Col>
                         </Row>
                     </div>
@@ -1306,7 +1339,7 @@ class InterfaceEditForm extends Component {
                     <div className="panel-sub">
                         <FormItem className={'interface-edit-item'}>
                             <div>
-                                <div id="desc" style={{lineHeight: '20px'}} className="remark-editor"/>
+                                <div id="desc" style={{ lineHeight: '20px' }} className="remark-editor" />
                             </div>
                         </FormItem>
                     </div>
@@ -1336,26 +1369,26 @@ class InterfaceEditForm extends Component {
                             {...formItemLayout}
                             label={
                                 <span>
-                  开放接口&nbsp;
+                                    开放接口&nbsp;
                                     <Tooltip title={'用户可以在 数据导出 时选择只导出公开接口'}>
-                    <Icon type="question-circle-o" style={{width: '10px'}}/>
-                  </Tooltip>
-                </span>
+                                        <Icon type="question-circle-o" style={{ width: '10px' }} />
+                                    </Tooltip>
+                                </span>
                             }
                         >
                             {getFieldDecorator('api_opened', {
                                 valuePropName: 'checked',
                                 initialValue: this.state.api_opened
-                            })(<Switch checkedChildren="开" unCheckedChildren="关"/>)}
+                            })(<Switch checkedChildren="开" unCheckedChildren="关" />)}
                         </FormItem>
                     </div>
 
                     <FormItem
                         className="interface-edit-item"
-                        style={{textAlign: 'center', marginTop: '16px'}}
+                        style={{ textAlign: 'center', marginTop: '16px' }}
                     >
                         {/* <Button type="primary" htmlType="submit">保存1</Button> */}
-                        <Affix offsetBottom={14} style={{height: '60px', padding: '0px'}}>
+                        <Affix offsetBottom={14} style={{ height: '60px', padding: '0px' }}>
                             <Button
                                 className="interface-edit-submit-button"
                                 disabled={this.state.submitStatus}

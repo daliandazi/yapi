@@ -7,6 +7,17 @@ import Url from './Request/Url';
 export default class HttpRequest extends Component {
     constructor(props) {
         super(props);
+        this.state = {
+            ...this.props.data,
+        }
+    }
+
+    componentWillMount() {
+        console.log(this.props.data)
+    }
+
+    send() {
+        console.log(this.state)
     }
 
     render() {
@@ -14,13 +25,22 @@ export default class HttpRequest extends Component {
             <div style={{ height: '1000px', margin: '10px 0 0 0' }}>
                 <ReflexContainer >
                     <ReflexElement size={40}>
-                        <Url />
+                        <Url method={this.state.method} path={this.state.path} onChange={({ method, path, environment }) => {
+                            this.setState({
+                                path: path,
+                                method: method
+                            })
+                        }} onSend={() => {
+                            this.send()
+                        }} />
                     </ReflexElement>
                     <ReflexElement size={200}>
-                        <Request></Request>
+                        <Request onChange={({headers,params}) => {
+                            console.log(params)
+                        }}></Request>
                     </ReflexElement>
                     <ReflexSplitter />
-                    <ReflexElement size={300}>
+                    <ReflexElement >
                         xxx
                     </ReflexElement>
                 </ReflexContainer>

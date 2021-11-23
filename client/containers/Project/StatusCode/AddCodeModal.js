@@ -1,48 +1,21 @@
-import React, {PureComponent as Component} from 'react';
-import {connect} from 'react-redux';
+import React, { PureComponent as Component } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import axios from 'axios';
+import { axios } from "common/httpUtil";
 
-import {Form, Modal, Button, Table, Select, Tree, Tag, Input, message} from 'antd';
+import { Form, Modal, Button, Table, Select, Tree, Tag, Input, message } from 'antd';
 
 const FormItem = Form.Item;
-const Option = Select.Option;
-const {TreeNode} = Tree;
-
-import {
-    fetchInterfaceListMenu,
-    fetchInterfaceList,
-    fetchInterfaceCatList
-} from '@reducer/modules/interface.js';
-import {fetchGroupList} from '@reducer/modules/group';
 
 function hasErrors(fieldsError) {
     return Object.keys(fieldsError).some(field => fieldsError[field]);
 }
 
-@connect(
-    state => {
-        return {
-            curProject: state.project.currProject,
-            catList: state.inter.list,
-            totalTableList: state.inter.totalTableList,
-            catTableList: state.inter.catTableList,
-            totalCount: state.inter.totalCount,
-            count: state.inter.count
-        };
-    },
-    {
-        fetchInterfaceListMenu,
-        fetchInterfaceList,
-        fetchInterfaceCatList,
-        fetchGroupList
-    }
-)
-class AddCodeModal extends Component {
+class AddCodeModal extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            visible: this.props.visible
+            data: null
         };
     }
 
@@ -56,8 +29,22 @@ class AddCodeModal extends Component {
         onSubmit: PropTypes.func
     };
 
-    componentWillUnmount() {
-        console.log('==')
+    componentDidMount() {
+        if (this.props.id) {
+            this.loadData(this.props.id)
+        }
+    }
+
+    loadData(id) {
+        axios.get('/api/statusCode/getById', {
+            params: {
+                id: id
+            }
+        }).then(response => {
+            this.setState({
+                data: response.data
+            })
+        })
     }
 
     onSubmit = (e) => {
@@ -66,9 +53,16 @@ class AddCodeModal extends Component {
             if (!err) {
                 values.projectId = this.props.projectId;
                 values.groupId = this.props.groupId;
-                axios.post('/api/statusCode/save', values).then(res => {
-                    if (res.data.errcode !== 0) {
-                        return message.error(`${res.data.errmsg}, 新增错误码出现异常`);
+                let code = {
+                    projectId: this.props.projectId,
+                    groupId: this.props.groupId,
+                    code: values.code,
+                    codeDescription: values.codeDescription,
+                    _id: this.props.id
+                }
+                axios.post('/api/statusCode/save', code).then(res => {
+                    if (res.errcode !== 0) {
+                        return message.error(`${res.errmsg}, 新增错误码出现异常`);
                     } else {
                         this.props.onSubmit(res.data);
                         this.props.form.resetFields()
@@ -79,32 +73,30 @@ class AddCodeModal extends Component {
     }
 
 
-    async componentDidMount() {
-    }
-
     render() {
-        const {getFieldDecorator, getFieldsError} = this.props.form;
+        const { getFieldDecorator, getFieldsError } = this.props.form;
         const formItemLayout = {
             labelCol: {
-                xs: {span: 24},
-                sm: {span: 6}
+                xs: { span: 24 },
+                sm: { span: 6 }
             },
             wrapperCol: {
-                xs: {span: 24},
-                sm: {span: 14}
+                xs: { span: 24 },
+                sm: { span: 14 }
             }
         };
         return (
             <Modal
+                destroyOnClose={true}
                 title="添加状态码"
                 footer={null}
                 visible={this.props.visible}
                 className="addcatmodal"
                 onCancel={() => {
+                    this.props.form.resetFields();
                     if (this.props.onCancel) {
                         this.props.onCancel();
                     }
-                    this.props.form.resetFields()
                 }}
             >
                 <Form onSubmit={this.onSubmit}>
@@ -116,21 +108,21 @@ class AddCodeModal extends Component {
                                     message: '请输入code!'
                                 }
                             ],
-                            initialValue: this.props.data ? this.props.data.name || null : null
-                        })(<Input placeholder="code"/>)}
+                            initialValue: this.state.data ? this.state.data.code || null : null
+                        })(<Input placeholder="code" />)}
                     </FormItem>
                     <FormItem {...formItemLayout} label="描述">
                         {getFieldDecorator('codeDescription', {
-                            initialValue: this.props.data ? this.props.data.codeDescription || null : null
-                        })(<Input placeholder="描述"/>)}
+                            initialValue: this.state.data ? this.state.data.codeDescription || null : null
+                        })(<Input placeholder="描述" />)}
                     </FormItem>
 
-                    <FormItem className="catModalfoot" wrapperCol={{span: 24, offset: 8}}>
+                    <FormItem className="catModalfoot" wrapperCol={{ span: 24, offset: 8 }}>
                         <Button onClick={() => {
                             this.props.form.resetFields()
                             this.props.onCancel()
                         }}
-                                style={{marginRight: '10px'}}>
+                            style={{ marginRight: '10px' }}>
                             取消
                         </Button>
                         <Button type="primary" htmlType="submit" disabled={hasErrors(getFieldsError())}>

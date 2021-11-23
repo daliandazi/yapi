@@ -1,13 +1,14 @@
-import React, {PureComponent as Component} from 'react';
+import React, { PureComponent as Component } from 'react';
 import PropTypes from 'prop-types';
-import {Tabs, Layout, Menu, Icon, Table, Button, Input, Tree} from 'antd';
-import {Route, Switch, matchPath, Link} from 'react-router-dom';
-import {connect} from 'react-redux';
-import {axios} from 'common/httpUtil';
+import { Tabs, Layout, Menu, Icon, Table, Button, Input, Tree, Modal } from 'antd';
+import { Route, Switch, matchPath, Link } from 'react-router-dom';
+import { connect } from 'react-redux';
+import { axios } from 'common/httpUtil';
 import AddCodeModal from './AddCodeModal'
 
-const {Content, Sider} = Layout;
-const {TreeNode} = Tree;
+const { Content, Sider } = Layout;
+const { TreeNode } = Tree;
+const confirm = Modal.confirm;
 
 @connect(
     state => {
@@ -28,7 +29,8 @@ class StatusCodeList extends Component {
         super(props);
         this.state = {
             statusCodeList: [],
-            projectId: null
+            projectId: null,
+            editCodeId: null
         };
     }
 
@@ -48,6 +50,25 @@ class StatusCodeList extends Component {
             })
         })
     }
+
+    delete(id) {
+        let that = this;
+        const ref = confirm({
+            title: "确定删除此状态码吗？",
+            content: "温馨提示：删除后无法恢复",
+            okText: "确认",
+            cancelText: "取消",
+            async onOk() {
+                axios.post("/api/statusCode/del", {
+                    id: id,
+                }).then(() => {
+                    that.queryCodeList();
+                });
+            },
+            onCancel() { },
+        });
+    }
+
 
     componentWillMount() {
         let params = this.props.match.params;
@@ -104,7 +125,17 @@ class StatusCodeList extends Component {
                 render: (text, record) => {
                     return (
                         <div>
-                            <Button type="link">编辑</Button><Button type="link">删除</Button>
+                            <Button type="link" onClick={(e) => {
+                                e.stopPropagation();
+                                this.setState({
+                                    editCodeId: record._id,
+                                    add_code_modal_visible: true
+                                })
+                            }}>编辑</Button>
+                            <Button type="link" onClick={(e) => {
+                                e.stopPropagation();
+                                this.delete(record._id)
+                            }}>删除</Button>
                         </div>
                     );
                 }
@@ -112,8 +143,8 @@ class StatusCodeList extends Component {
         ]
 
         return (
-            <div style={{backgroundColor: '#fff', height: 'calc(100vh - 80px)'}}>
-                <div style={{height: '30px', padding: '10px 10px '}}>
+            <div style={{ backgroundColor: '#fff', height: 'calc(100vh - 80px)' }}>
+                <div style={{ height: '30px', padding: '10px 10px ' }}>
                     {this.state.groupId ? (
                         <Button
                             icon="plus"
@@ -127,29 +158,33 @@ class StatusCodeList extends Component {
                     ) : ('')}
 
                 </div>
-                {
+                {this.state.add_code_modal_visible === true ? (
                     <AddCodeModal
+                        id={this.state.editCodeId}
                         visible={this.state.add_code_modal_visible} projectId={this.state.projectId}
                         onSubmit={() => {
                             this.queryCodeList()
                             this.setState({
-                                add_code_modal_visible: false
+                                add_code_modal_visible: false,
+                                editCodeId: null
                             })
                         }
                         }
                         onCancel={() => {
                             this.setState({
-                                add_code_modal_visible: false
+                                add_code_modal_visible: false,
+                                editCodeId: null
                             })
                         }
                         }
                         groupId={this.state.groupId}
                     />
+                ) : ""
                 }
-                <div style={{marginTop: '20px', overflowY: 'auto', height: 'calc(100vh - 130px)'}}>
+                <div style={{ marginTop: '20px', overflowY: 'auto', height: 'calc(100vh - 130px)' }}>
 
                     <Table
-                        style={{margin: '10px 10px'}}
+                        style={{ margin: '10px 10px' }}
                         columns={columns}
                         dataSource={this.state.statusCodeList}
                         bordered
