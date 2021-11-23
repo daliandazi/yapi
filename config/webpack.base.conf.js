@@ -118,6 +118,10 @@ module.exports = {
                 use: [
                     {
                         loader: "url-loader",
+                        options: {
+                            publicPath: "./static",
+                            hmr: devMode,
+                        },
                     },
                 ],
             }, {
@@ -187,7 +191,8 @@ module.exports = {
             exts: resolve("exts"),
             "@reducer": resolve("client/reducer"),
             "@components": resolve("client/components"),
-            "@svg": resolve("client/assets/icons")
+            "@svg": resolve("client/assets/icons"),
+            "@image": resolve("client/assets/image")
         },
     },
 };

@@ -193,8 +193,9 @@ class InterfaceList extends Component {
     let data = interfaceData.payload.data.data;
     let newData = produce(data, draftData => {
       draftData.title = draftData.title + '_copy';
-      draftData.path = draftData.path + '_' + Date.now();
+      draftData.path = draftData.path.trim() + '_' + new Date().getTime();
     });
+
 
     axios.post('/api/interface/add', newData).then(async res => {
       if (res.data.errcode !== 0) {

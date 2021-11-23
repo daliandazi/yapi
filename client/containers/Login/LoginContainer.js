@@ -20,7 +20,7 @@ class LoginContainer extends Component {
                 <Card className="card-login">
                   <h2 className="login-title">凯叔接口文档管理</h2>
                   <div className="login-logo">
-                    <img src="/static/image/logo.png"></img>
+                    <img src={require('@image/logo.png')}></img>
                     {/* <LogoSVG length="100px" /> */}
                   </div>
                   <Login />

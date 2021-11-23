@@ -23,6 +23,9 @@
             ],
             "@svg/*": [
                 "client/assets/icons/*"
+            ],
+            "@image/*": [
+                "client/assets/image/*"
             ]
         },
         "experimentalDecorators": true,
