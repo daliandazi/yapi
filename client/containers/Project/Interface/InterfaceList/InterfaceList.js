@@ -394,7 +394,7 @@ class InterfaceList extends Component {
 
       {
         title: "负责人",
-        dataIndex: "managerName",
+        dataIndex: "connUsername",
         width: 20,
       },
       {

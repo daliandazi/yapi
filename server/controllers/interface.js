@@ -388,7 +388,6 @@ class interfaceController extends baseController {
    */
 
   async save(ctx) {
-    console.log(ctx);
     let params = ctx.params;
 
     if (!this.$tokenAuth) {
@@ -569,7 +568,7 @@ class interfaceController extends baseController {
           result.connUsername = connUserinfo.username;
         }
       } else {
-        result.connUsername = result.username 
+        result.connUsername = result.username
       }
       let project = await this.projectModel.getBaseInfo(result.project_id);
       let authTimeStart = new Date().getTime();
@@ -605,7 +604,7 @@ class interfaceController extends baseController {
   @Get("/list")
   async list(ctx) {
     let project_id = ctx.params.project_id;
-    let page = ctx.request.query.page || 1,
+    let pageNo = ctx.request.query.page || 1,
       limit = ctx.request.query.limit || 10;
     let project = await this.projectModel.getBaseInfo(project_id);
     if (!project) {
@@ -684,6 +683,62 @@ class interfaceController extends baseController {
     } catch (err) {
       ctx.body = yapi.commons.resReturn(null, 402, err.message);
     }
+  }
+
+  /**
+   * 我负责的和创建的接口
+   * @param {}} ctx 
+   */
+  @Get('/my')
+  async myInterfaceList(ctx) {
+    let uid = this.getUid();
+    let { page, limit } = ctx.params;
+    page = page || 1;
+    limit = limit || 15;
+    let interfaces = await this.Model.myInterfaces(uid, page, limit);
+
+    let data = [];
+    interfaces.forEach(api => {
+      data.push(api.toObject())
+    })
+
+    if (interfaces) {
+      let uids = [];
+      interfaces.forEach(api => {
+        uids.push(api.uid)
+        if (api.api_manager_conn_id) {
+          uids.push(api.api_manager_conn_id)
+        }
+      })
+      uids = Array.from(new Set(uids))
+      try {
+        let users = await this.userModel.findByUids(uids);
+        let userMap = {};
+        users.forEach(m => {
+          userMap[m._id] = m.username;
+        })
+        data.forEach(api => {
+          if (api.uid) {
+            let userName = userMap[api.uid];
+            api.createUserName = userName
+          }
+          if (api.api_manager_conn_id) {
+            let userName = userMap[api.api_manager_conn_id];
+            api.connUsername = userName;
+          }
+        })
+      } catch (e) {
+        console.log(e)
+      }
+    }
+    let interfaceCount = await this.Model.myInterfacesCount(uid);
+    ctx.body = yapi.commons.resReturn({
+      list: data,
+      total: Math.ceil(interfaceCount / limit),
+      count: interfaceCount,
+      page: page,
+      limit: limit
+    })
   }
 
   async findByProjects(ctx) {
@@ -798,21 +853,52 @@ class interfaceController extends baseController {
         }
       }
 
-      let managerIds = datas.filter(a => a.api_manager_conn_id).map(a => a.api_manager_conn_id)
 
-      let managers = await this.userModel.findByUids(managerIds);
-
-      let managerMap = {};
-      managers.forEach(m => {
-        managerMap[m._id] = m.username;
-      })
-
-      await datas.forEach(a => {
-        if (a.api_manager_conn_id) {
-          let username = managerMap[a.api_manager_conn_id] || "";
-          a.managerName = username;
+      if (datas) {
+        let uids = [];
+        datas.forEach(api => {
+          uids.push(api.uid)
+          if (api.api_manager_conn_id) {
+            uids.push(api.api_manager_conn_id)
+          }
+        })
+        uids = Array.from(new Set(uids))
+        try {
+          let users = await this.userModel.findByUids(uids);
+          let userMap = {};
+          users.forEach(m => {
+            userMap[m._id] = m.username;
+          })
+          datas.forEach(api => {
+            if (api.uid) {
+              let userName = userMap[api.uid];
+              api.createUserName = userName
+            }
+            if (api.api_manager_conn_id) {
+              let userName = userMap[api.api_manager_conn_id];
+              api.connUsername = userName;
+            }
+          })
+        } catch (e) {
+          console.log(e)
         }
-      })
+      }
+
+      // let managerIds = datas.filter(a => a.api_manager_conn_id).map(a => a.api_manager_conn_id)
+
+      // let managers = await this.userModel.findByUids(managerIds);
+
+      // let managerMap = {};
+      // managers.forEach(m => {
+      //   managerMap[m._id] = m.username;
+      // })
+
+      // datas.forEach(a => {
+      //   if (a.api_manager_conn_id) {
+      //     let username = managerMap[a.api_manager_conn_id] || "";
+      //     a.createUserName = username;
+      //   }
+      // })
 
       let count = await this.Model.listCount({ catid });
 

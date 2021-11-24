@@ -1,10 +1,14 @@
 const { Controller, Get, Post } = require('../router/decorator');
 const axios = require('axios');
 const yapi = require('../yapi.js');
+const baseController = require('./base.js');
 const { size } = require('underscore');
 
 @Controller('/api/postman')
-class CommonController {
+class CommonController extends baseController {
+  constructor(ctx) {
+    super(ctx);
+  }
   @Post('/send')
   async test(ctx) {
     let body = ctx.request.body;
@@ -13,13 +17,16 @@ class CommonController {
       method: body.method,
       headers: body.headers,
       timeout: body.timeout ? body.timeout : 10000,
+      data:body.data,
     };
+
+
 
     const startTime = new Date();
     let response = await axios(config);
     const endTime = new Date();
     let time = endTime - startTime;
-    console.log(response);
+    // console.log(response);
 
     let size = yapi.commons.bytesToSize(JSON.stringify(response.data).length)
 

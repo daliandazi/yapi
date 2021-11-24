@@ -1,4 +1,5 @@
 const userModel = require('../models/user.js');
+const pinyin = require("pinyin");
 const yapi = require('../yapi.js');
 const baseController = require('./base.js');
 const common = require('../utils/commons.js');
@@ -357,9 +358,8 @@ class userController extends baseController {
       });
       yapi.commons.sendMail({
         to: user.email,
-        contents: `<h3>亲爱的用户：</h3><p>您好，感谢使用YApi可视化接口平台,您的账号 ${
-          params.email
-        } 已经注册成功</p>`
+        contents: `<h3>亲爱的用户：</h3><p>您好，感谢使用YApi可视化接口平台,您的账号 ${params.email
+          } 已经注册成功</p>`
       });
     } catch (e) {
       ctx.body = yapi.commons.resReturn(null, 401, e.message);
@@ -384,11 +384,22 @@ class userController extends baseController {
     const userInst = yapi.getInst(userModel);
     try {
       let user = await userInst.listWithPaging(page, limit);
+      let datas = user.map(u=>u.toObject());
+      if (datas) {
+        datas.forEach(u => {
+
+          console.log(u)
+          let usernamePinYin = pinyin(u.username,{
+            style: pinyin.STYLE_NORMAL,
+          });
+          u.usernamePinYin = usernamePinYin.join("");
+        })
+      }
       let count = await userInst.listCount();
       return (ctx.body = yapi.commons.resReturn({
         count: count,
         total: Math.ceil(count / limit),
-        list: user
+        list: datas
       }));
     } catch (e) {
       return (ctx.body = yapi.commons.resReturn(null, 402, e.message));

@@ -1,9 +1,9 @@
-import React, {PureComponent as Component} from 'react';
-import {Select} from 'antd';
-import {axios} from 'common/httpUtil';
+import React, { PureComponent as Component } from 'react';
+import { Select } from 'antd';
+import { axios } from 'common/httpUtil';
 import PropTypes from "prop-types";
 
-const {Option} = Select;
+const { Option } = Select;
 
 class SelectPersonCommon extends Component {
     static propTypes = {
@@ -55,15 +55,31 @@ class SelectPersonCommon extends Component {
 
     user = (item) => {
         return (
-            <Option key={item._id} value={item._id} title={item.username}>{item.username}</Option>
+            <Option data={item} key={item._id} value={item._id} title={item.username}>{item.username}</Option>
         )
+    }
+
+    filter = (user) => {
+        if (!this.state.search || this.state.search.lenngth == 0) {
+            return true;
+        }
+
+        return user.username.indexOf(this.state.search) || user.usernamePinYin.indexOf(this.state.search)
+
     }
 
     render() {
         return (
             <div>
-                <Select showSearch loading={this.state.loading} defaultValue={this.state.value} onChange={this.onChange}
-                        optionFilterProp={'title'}>
+                <Select showSearch loading={this.state.loading} defaultValue={this.state.value} filterOption={(inputValue, option) => {
+                    let user = option.props.data;
+                    if(user == null){
+                        return false;
+                    }
+                    return user.username.indexOf(inputValue) != -1 || user.usernamePinYin.indexOf(inputValue) != -1
+                }}
+                    onChange={this.onChange}
+                    optionFilterProp={'title'}>
                     {
                         this.state.users.map(this.user)
                     }

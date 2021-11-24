@@ -28,7 +28,7 @@ class interfaceModel extends baseModel {
       markdown: String,
       add_time: Number,
       up_time: Number,
-      identityType:{type: Array ,required: false},
+      identityType: { type: Array, required: false },
       type: { type: String, enum: ["static", "var", "ref"], default: "static" },
       ref_id: { type: Number },
       query_path: {
@@ -263,7 +263,7 @@ class interfaceModel extends baseModel {
       .skip((page - 1) * limit)
       .limit(limit)
       .select(
-        "_id title uid path method project_id catid edit_uid api_opened status add_time , up_time , type, index, tag, type, ref_id"
+        "_id title uid api_manager_conn_id path method project_id catid edit_uid api_opened status add_time , up_time , type, index, tag, type, ref_id"
       )
       .exec();
   }
@@ -349,6 +349,31 @@ class interfaceModel extends baseModel {
     );
   }
 
+  myInterfaces(uid, page, limit) {
+    return this.model
+      .find({
+        $or: [
+          { uid: uid },
+          { api_manager_conn_id: uid }
+        ],
+        ref_id: { $exists: false }
+      }).sort({ up_time: -1 }).skip((page - 1) * limit).limit(limit)
+      .select(
+        "title uid api_manager_conn_id path method project_id edit_uid status desc add_time up_time type query_path "
+      )
+  }
+
+  myInterfacesCount(uid) {
+    return this.model
+      .count({
+        $or: [
+          { uid: uid },
+          { api_manager_conn_id: uid }
+        ],
+        ref_id: { $exists: false }
+      })
+  }
+
   search(keyword, page, limit) {
     return this.model
       .find({
@@ -356,7 +381,7 @@ class interfaceModel extends baseModel {
           { 'title': new RegExp(keyword, "ig") },
           { 'path': new RegExp(keyword, "ig") }
         ]
-      }).sort({ up_time: 1 }).skip((page - 1) * limit).limit(limit).select("title path uid method up_time project_id")
+      }).sort({ up_time: -1 }).skip((page - 1) * limit).limit(limit).select("title path uid method add_time up_time project_id")
   }
 
   searchCount(keyword) {

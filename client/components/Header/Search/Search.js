@@ -8,7 +8,7 @@ import { withRouter } from 'react-router';
 import { axios } from 'common/httpUtil';
 import { setCurrGroup, fetchGroupMsg } from '../../../reducer/modules/group';
 import { changeMenuItem } from '../../../reducer/modules/menu';
-
+import { formatTime, safeArray } from "client/common.js";
 import { fetchInterfaceListMenu } from '../../../reducer/modules/interface';
 const Option = AutoComplete.Option;
 
@@ -173,13 +173,15 @@ export default class Srch extends React.Component {
                 header={<div style={{ color: '#34D399', fontSize: '18px', fontWeight: '500' }}>API</div>}
               >
                 {
-                  this.state.interfaceList.map((api) => {
+                  this.state.interfaceList.map((api, index) => {
                     return <List.Item
                     >
 
                       <List.Item.Meta title={<div style={{ fontSize: '14px', cursor: 'pointer' }} onClick={() => {
                         this.jump(api.project_id, api._id)
-                      }}>{api.title}</div>} description={<span>{api.path} </span>}>
+                      }}><span style={{ color: '#8189A1',fontWeight:'700' }}>{index + 1}.</span> {api.title}</div>} description={
+                        <span className='flex'><span>{api.path} </span> <span style={{ marginLeft: '20px' }}>修改时间:{formatTime(api.up_time)}</span></span>
+                      }>
 
                       </List.Item.Meta>
 
@@ -201,11 +203,11 @@ export default class Srch extends React.Component {
           ) : <Empty />}
 
         </Modal >
-          <Icon className="search" style={{ fontSize: 16 }} type="search" onClick={() => {
-            this.setState({
-              visible: true
-            })
-          }} />
+        <Icon className="search" style={{ fontSize: 16 }} type="search" onClick={() => {
+          this.setState({
+            visible: true
+          })
+        }} />
       </div >
     );
   }
