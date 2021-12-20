@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Form, Button, Input, Icon, message } from 'antd';
 import { regActions } from '../../reducer/modules/user';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 const FormItem = Form.Item;
 const formItemStyle = {
   marginBottom: '.16rem'

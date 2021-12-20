@@ -402,7 +402,7 @@ function handleParams(interfaceData, handleValue, requestParams) {
     protocol: urlObj.protocol || 'http',
     host: urlObj.host,
     pathname: urlObj.pathname,
-    query: Object.assign(urlObj.query, paramsToObjectWithEnable(interfaceRunData.req_query))
+    // query: Object.assign(urlObj.query, paramsToObjectWithEnable(interfaceRunData.req_query))
   });
 
   let headers = paramsToObjectUnWithEnable(interfaceRunData.req_headers);
@@ -410,6 +410,7 @@ function handleParams(interfaceData, handleValue, requestParams) {
     url,
     caseId: _id,
     method: interfaceRunData.method,
+    query: Object.assign(urlObj.query, paramsToObjectWithEnable(interfaceRunData.req_query)),
     headers,
     timeout: 82400000
   };

@@ -1,7 +1,7 @@
 import React, { PureComponent as Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { message, Tooltip, Input } from 'antd';
@@ -13,6 +13,7 @@ import {
   fetchCaseList
 } from '../../../../reducer/modules/interfaceCol';
 import { Postman } from '../../../../components';
+import HttpRequest from '../../../../components/Postman/HttpRequest'
 
 import './InterfaceCaseContent.scss';
 
@@ -217,6 +218,7 @@ export default class InterfaceCaseContent extends Component {
         </div>
         <div>
           {Object.keys(currCase).length > 0 && (
+            // <HttpRequest data={data}></HttpRequest>
             <Postman
               data={data}
               type="case"

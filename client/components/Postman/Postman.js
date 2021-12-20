@@ -100,10 +100,10 @@ const ParamsNameComponent = props => {
   return (
     <div>
       {isNull ? (
-        <Input  value={name} className="key" />
+        <Input value={name} className="key" />
       ) : (
         <Tooltip placement="topLeft" title={<TooltipTitle />}>
-          <Input  value={name} className="key" />
+          <Input value={name} className="key" />
         </Tooltip>
       )}
     </div>
@@ -338,6 +338,7 @@ export default class Run extends React.Component {
         time: response.data.time,
         statusText: response.data.statusText,
         runTime: response.runTime,
+        rid:response.data.rid,
       };
     } catch (data) {
       result = {};
@@ -374,6 +375,7 @@ export default class Run extends React.Component {
       resStatusCode: result.status,
       resSize: result.size,
       resTime: result.time,
+      rid: result.rid,
       resStatusText: result.statusText,
       test_res_header: result.headers,
       test_res_body: result.body,
@@ -633,7 +635,8 @@ export default class Run extends React.Component {
                 disabled={!hasPlugin}
                 onClick={this.reqRealInterface}
                 type="primary"
-                style={{ marginLeft: 10 }}
+                style={{ marginLeft: 10,width:'150px' }}
+                disabled={loading}
                 icon={loading ? 'loading' : ''}
               >
                 {loading ? '取消' : '发送[通过服务器]'}
@@ -1269,6 +1272,7 @@ export default class Run extends React.Component {
                     <span >状态:<span style={{ color: '#10b981' }}>{this.state.resStatusCode}</span></span>
                     <span style={{ marginLeft: '20px' }}>时间: <span style={{ color: '#10b981' }}>{this.state.resTime} ms</span></span>
                     <span style={{ marginLeft: '20px' }}>大小: <span style={{ color: '#10b981' }}>{this.state.resSize}</span></span>
+                    <span style={{ marginLeft: '20px' }}>_rid: <span style={{ color: '#10b981' }}>{this.state.rid}</span></span>
                   </div>
                   {/* {this.state.test_valid_msg && (
                     <div style={{ padding: '5px 10px 10px' }}>
@@ -1288,7 +1292,7 @@ export default class Run extends React.Component {
                   <Tabs.TabPane tab="返回结果" key="res">
                     <Spin spinning={this.state.loading}>
 
-                      <div className="body">
+                      <div className="body" style={{marginTop:'10px'}}>
                         <AceEditor
                           readOnly={true}
                           className="pretty-editor-body"

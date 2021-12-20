@@ -28,7 +28,7 @@ import { fetchGroupList } from '../../../../reducer/modules/group.js';
 import { setBreadcrumb } from '../../../../reducer/modules/user';
 import { connect } from 'react-redux';
 const { TextArea } = Input;
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 const RadioButton = Radio.Button;
@@ -133,7 +133,7 @@ class ProjectMessage extends Component {
               this.props.setBreadcrumb([
                 {
                   name: selectGroup.group_name,
-                  href: '/group/' + group_id
+                  href: '/space/group/' + group_id
                 },
                 {
                   name: projectName
@@ -181,7 +181,7 @@ class ProjectMessage extends Component {
           that.props.delProject(that.props.projectId).then(res => {
             if (res.payload.data.errcode == 0) {
               message.success('删除成功!');
-              that.props.history.push('/group/' + that.props.projectMsg.group_id);
+              that.props.history.push('/space/group/' + that.props.projectMsg.group_id);
             }
           });
         }

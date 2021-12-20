@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Modal, Collapse, Row, Col, Input, message, Button, Icon } from 'antd';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import { fetchInterfaceColList } from '../../../../../reducer/modules/interfaceCol';
 
 const { TextArea } = Input;

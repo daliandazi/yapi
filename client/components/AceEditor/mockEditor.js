@@ -2,9 +2,9 @@ var ace = require('brace'),
   Mock = require('mockjs');
 require('brace/mode/javascript');
 require('brace/mode/json');
-require('brace/mode/xml');
-require('brace/mode/html');
-require('brace/theme/xcode');
+// require('brace/mode/xml');
+// require('brace/mode/html');
+require('brace/theme/monokai');
 require('brace/ext/language_tools.js');
 var json5 = require('json5');
 const MockExtra = require('common/mock-extra.js');
@@ -110,7 +110,7 @@ function run(options) {
     editor.setReadOnly(true);
     editor.renderer.$cursorLayer.element.style.display = 'none';
   }
-  editor.setTheme('ace/theme/xcode');
+  editor.setTheme('ace/theme/monokai');
   editor.setOptions({
     enableBasicAutocompletion: true,
     enableSnippets: false,

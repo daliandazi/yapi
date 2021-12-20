@@ -1,6 +1,6 @@
 import React, { PureComponent as Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import {
   fetchInterfaceColList,
@@ -239,26 +239,26 @@ export default class InterfaceColMenu extends Component {
       content: '温馨提示：建议不要删除'
     });
   };
-  caseCopy = async caseId=> {
+  caseCopy = async caseId => {
     let that = this;
     let caseData = await that.props.fetchCaseData(caseId);
     let data = caseData.payload.data.data;
     data = JSON.parse(JSON.stringify(data));
-    data.casename=`${data.casename}_copy`
-    delete data._id 
-    const res = await axios.post('/api/col/add_case',data);
-      if (!res.data.errcode) {
-        message.success('克隆用例成功');
-        let colId = res.data.data.col_id;
-        let projectId=res.data.data.project_id;
-        await this.getList();
-        this.props.history.push('/project/' + projectId + '/interface/col/' + colId);
-        this.setState({
-          visible: false
-        });
-      } else {
-        message.error(res.data.errmsg);
-      }
+    data.casename = `${data.casename}_copy`
+    delete data._id
+    const res = await axios.post('/api/col/add_case', data);
+    if (!res.data.errcode) {
+      message.success('克隆用例成功');
+      let colId = res.data.data.col_id;
+      let projectId = res.data.data.project_id;
+      await this.getList();
+      this.props.history.push('/project/' + projectId + '/interface/col/' + colId);
+      this.setState({
+        visible: false
+      });
+    } else {
+      message.error(res.data.errmsg);
+    }
   };
   showDelCaseConfirm = caseId => {
     let that = this;
@@ -494,8 +494,8 @@ export default class InterfaceColMenu extends Component {
       list = list.filter(item => {
 
         item.caseList = item.caseList.filter(inter => {
-          if (inter.casename.indexOf(this.state.filterValue) === -1 
-          && inter.path.indexOf(this.state.filterValue) === -1
+          if (inter.casename.indexOf(this.state.filterValue) === -1
+            && inter.path.indexOf(this.state.filterValue) === -1
           ) {
             return false;
           }
@@ -515,21 +515,31 @@ export default class InterfaceColMenu extends Component {
     // console.log('currentKey', currentKes)
 
     return (
-      <div>
+      <div
+      style={{
+        height: "100%",
+        overflow: "hidden",
+        borderLeft: "1px solid #D9D9D9",
+        border: "1px solid #D9D9D9",
+        backgroundColor: '#fff'
+      }}
+      >
         <div className="interface-filter">
-          <Input placeholder="搜索测试集合" onChange={this.filterCol} />
-          <Tooltip placement="bottom" title="添加集合">
-            <Button
-              type="primary"
-              style={{ marginLeft: '16px' }}
-              onClick={() => this.showColModal('add')}
-              className="btn-filter"
-            >
-              添加集合
-            </Button>
-          </Tooltip>
+          <div style={{ padding: "8px 10px", borderBottom: "1px solid #D9D9D9", }}>
+            <Tooltip placement="bottom" title="添加集合">
+              <Button
+                type="primary"
+                icon="plus"
+                onClick={() => this.showColModal('add')}
+              >
+                添加集合
+              </Button>
+            </Tooltip>
+          </div>
+          {/* <Input placeholder="搜索测试集合" onChange={this.filterCol} /> */}
+
         </div>
-        <div className="tree-wrapper" style={{ maxHeight: parseInt(document.body.clientHeight) - headHeight + 'px'}}>
+        <div className="tree-wrapper" style={{ maxHeight: parseInt(document.body.clientHeight) - headHeight + 'px' }}>
           <Tree
             className="col-list-tree"
             defaultExpandedKeys={currentKes.expands}

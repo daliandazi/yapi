@@ -20,19 +20,19 @@ export default class Params extends React.Component {
     }
     componentDidMount() {
         this.setState({
-            params: this.props.value.length > 0 ? this.props.value : [{checked:true}]
+            params: this.props.value.length > 0 ? this.props.value : [{ enable: true }]
         })
     }
 
     changeValue(type, value, index) {
         let params = this.state.params;
-        params[index] = params[index] || { key: "", value: '', checked: true }
+        params[index] = params[index] || { name: "", value: '', desc: '', enable: true }
         let param = params[index];
 
         // 如果是最后一行，自动添加一行
-        if (index >= params.length - 1 && (!this.stringNotBlank(param.key) || !this.stringNotBlank(param.value))) {
+        if (index >= params.length - 1 && (!this.stringNotBlank(param.name) || !this.stringNotBlank(param.value))) {
             params[index + 1] = {
-                key: "", value: '', checked: true
+                name: "", value: '', desc: '', enable: true
             }
         }
         param[type] = value;
@@ -43,7 +43,7 @@ export default class Params extends React.Component {
 
     getValueData() {
         let params = this.state.params.filter((param) => {
-            if (param.key && param.checked === true) {
+            if (param.name && param.enable === true) {
                 return true
             }
             return false;
@@ -62,13 +62,13 @@ export default class Params extends React.Component {
         let params = this.state.params || [];
         if (params.length <= 0) {
             params.push({
-                key: "", value: '', checked: true
+                name: "", value: '', enable: true
             })
         } else if (params.length > 0) {
             let lastParam = params[params.length - 1];
-            if ((!this.stringNotBlank(lastParam.key) || !this.stringNotBlank(lastParam.value))) {
+            if ((!this.stringNotBlank(lastParam.name) || !this.stringNotBlank(lastParam.value))) {
                 params.push({
-                    key: "", value: '', checked: true
+                    name: "", value: '', enable: true
                 })
             }
         }
@@ -97,20 +97,26 @@ export default class Params extends React.Component {
         const paramRender = (item, index) => {
             return (<div className="flex params" key={index}>
                 <div className="flex flex-1 params-name">
-                    <Input className="input" placeholder="Key" value={item.key} onChange={(event) => {
+                    <Input className="input" placeholder="Key" value={item.name} onChange={(event) => {
                         let value = event.target.value
-                        this.changeValue('key', value, index)
+                        this.changeValue('name', value, index)
                     }} />
                 </div>
                 <div className="flex flex-1 params-value">
-                    <Input className="input" placeholder="Value" onChange={(event) => {
+                    <Input className="input" placeholder="Value" value={item.value} onChange={(event) => {
                         let value = event.target.value
                         this.changeValue('value', value, index)
                     }} />
                 </div>
+                <div className="flex flex-1 params-value">
+                    <Input className="input" placeholder="Descriotion" value={item.desc} onChange={(event) => {
+                        let value = event.target.desc
+                        this.changeValue('desc', value, index)
+                    }} />
+                </div>
                 <div className="flex params-checked">
-                    <Checkbox checked={item.checked} onChange={(checked) => {
-                        this.changeValue('checked', checked, index)
+                    <Checkbox checked={item.enable} onChange={(enable) => {
+                        this.changeValue('enable', enable, index)
                     }}></Checkbox>
                 </div>
                 <div className="flex params-trash">

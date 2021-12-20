@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Icon, Input, AutoComplete, Modal, List, Button, Empty } from 'antd';
 import './Search.scss';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import { axios } from 'common/httpUtil';
 import { setCurrGroup, fetchGroupMsg } from '../../../reducer/modules/group';
 import { changeMenuItem } from '../../../reducer/modules/menu';

@@ -11,6 +11,11 @@ function exportData(exportDataModule, pid) {
     route: `/api/plugin/export?type=markdown&pid=${pid}`,
     desc: '导出项目接口文档为 markdown 文件'
   }),
+    (exportDataModule.H5 = {
+      name: 'ks-html',
+      route: `/api/plugin/export?type=ks-html&pid=${pid}`,
+      desc: '导出项目接口文档为 html 文件'
+    }),
     (exportDataModule.json = {
       name: 'json',
       route: `/api/plugin/export?type=json&pid=${pid}`,
@@ -23,6 +28,6 @@ function exportData(exportDataModule, pid) {
   // }
 }
 
-module.exports = function() {
+module.exports = function () {
   this.bindHook('export_data', exportData);
 };

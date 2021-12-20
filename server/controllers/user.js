@@ -384,12 +384,10 @@ class userController extends baseController {
     const userInst = yapi.getInst(userModel);
     try {
       let user = await userInst.listWithPaging(page, limit);
-      let datas = user.map(u=>u.toObject());
+      let datas = user.map(u => u.toObject());
       if (datas) {
         datas.forEach(u => {
-
-          console.log(u)
-          let usernamePinYin = pinyin(u.username,{
+          let usernamePinYin = pinyin(u.username, {
             style: pinyin.STYLE_NORMAL,
           });
           u.usernamePinYin = usernamePinYin.join("");

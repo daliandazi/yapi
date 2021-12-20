@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { Icon, Layout, Menu, Dropdown, message, Tooltip, Popover, Tag } from 'antd';
 import { checkLoginState, logoutActions, loginTypeAction } from '../../reducer/modules/user';
 import { changeMenuItem } from '../../reducer/modules/menu';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import Srch from './Search/Search';
 const { Header } = Layout;
 import LogoSVG from '../LogoSVG/index.js';
@@ -302,7 +302,7 @@ export default class HeaderCom extends Component {
     return (
       <Header className="header-box m-header">
         <div className="content g-row">
-          <Link onClick={this.relieveLink} to="/group" className="logo">
+          <Link onClick={this.relieveLink} to="/space/group" className="logo">
             <div className="href">
               <span className="img">
                 <img src={require('@image/logo.png')} width='32' height={32}/>

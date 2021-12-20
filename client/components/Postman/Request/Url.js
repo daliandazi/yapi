@@ -1,7 +1,8 @@
 import React, { PureComponent as Component } from 'react';
-import { Input, Select, Button } from 'antd'
+import { Input, Select, Button,Icon } from 'antd'
 const InputGroup = Input.Group;
 const { Option } = Select;
+import IconFont from "client/components/Icon/MyIcon";
 import './Url.scss'
 
 export default class Url extends React.Component {
@@ -62,9 +63,9 @@ export default class Url extends React.Component {
                     </div>
                 </div>
                 <div className="flex" style={{ margin: '0 4px' }}>
-                    <Button onClick={()=>{
+                    <Button  onClick={()=>{
                         this.send()
-                    }}>发送</Button>
+                    }}><IconFont type="yapi-send"></IconFont>发送</Button>
                 </div>
 
             </div>

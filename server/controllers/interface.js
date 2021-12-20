@@ -604,7 +604,7 @@ class interfaceController extends baseController {
   @Get("/list")
   async list(ctx) {
     let project_id = ctx.params.project_id;
-    let pageNo = ctx.request.query.page || 1,
+    let page = ctx.request.query.page || 1,
       limit = ctx.request.query.limit || 10;
     let project = await this.projectModel.getBaseInfo(project_id);
     if (!project) {

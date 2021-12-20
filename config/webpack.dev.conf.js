@@ -1,7 +1,7 @@
 const webpack = require('webpack');
 const merge = require("webpack-merge");
 const baseWebpackConfig = require("./webpack.base.conf");
-
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin
 const devWebpackConfig = merge(baseWebpackConfig, {
     mode: "development",
     devtool: "eval",
@@ -31,6 +31,9 @@ const devWebpackConfig = merge(baseWebpackConfig, {
     plugins: [
         //热更新
         new webpack.HotModuleReplacementPlugin(),//HMR --hot
+        new BundleAnalyzerPlugin({
+            analyzerMode: 'server',
+        }),
     ],
 });
 

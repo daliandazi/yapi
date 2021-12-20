@@ -1,9 +1,10 @@
 import React, { PureComponent as Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Icon, Modal, Input, message, Spin, Row, Menu, Col, Popover, Tooltip } from 'antd';
+import { Icon, Modal, Input, message, Spin, Row, Menu, Col, Popover, Tooltip, Button } from 'antd';
 import { autobind } from 'core-decorators';
 import axios from 'axios';
+import { Route, Switch, Redirect, Link, useParams } from 'react-router-dom';
 import { withRouter } from 'react-router-dom';
 const { TextArea } = Input;
 const Search = Input.Search;
@@ -83,16 +84,23 @@ export default class GroupList extends Component {
     const groupId = !isNaN(this.props.match.params.groupId)
       ? parseInt(this.props.match.params.groupId)
       : 0;
+    // 获取空间列表
     await this.props.fetchGroupList();
+    // console.log(this.props)
     let currGroup = false;
-    if (this.props.groupList.length && groupId) {
+    // console.log("groupId",groupId)
+    if (!groupId) {
+      // return
+    }
+    return;
+    if (this.props.groupList.length && groupId && groupId > 0) {
       for (let i = 0; i < this.props.groupList.length; i++) {
         if (this.props.groupList[i]._id === groupId) {
           currGroup = this.props.groupList[i];
         }
       }
     } else if (!groupId && this.props.groupList.length) {
-      this.props.history.push(`/group/${this.props.groupList[0]._id}`);
+      this.props.history.push(`/space/group/${this.props.groupList[0]._id}`);
     }
     if (!currGroup) {
       currGroup = this.props.groupList[0] || { group_name: '', group_desc: '' };
@@ -174,12 +182,13 @@ export default class GroupList extends Component {
   @autobind
   selectGroup(e) {
     const groupId = e.key;
-    //const currGroup = this.props.groupList.find((group) => { return +group._id === +groupId });
+    // const currGroup = this.props.groupList.find((group) => { return +group._id === +groupId });
     const currGroup = _.find(this.props.groupList, group => {
       return +group._id === +groupId;
     });
     this.props.setCurrGroup(currGroup);
-    this.props.history.replace(`${currGroup._id}`);
+    this.props.history.push('/space/group/' + `${currGroup._id}`);
+    // this.props.history.replace(`${currGroup._id}`);
     this.props.fetchNewsData(groupId, 'group', 1, 10);
   }
 
@@ -216,71 +225,79 @@ export default class GroupList extends Component {
     const { currGroup } = this.props;
     return (
       <div className="m-group">
-        {!this.props.study ? <div className="study-mask" /> : null}
-        <div className="group-bar">
-          <div className="curr-group">
-            <div className="curr-group-name">
-              <span className="name">{currGroup.group_name}</span>
-              <Tooltip title="添加空间">
-                <a className="editSet">
-                  <Icon className="btn" type="folder-add" onClick={this.showModal} />
-                </a>
-              </Tooltip>
-
-            </div>
-            <div className="curr-group-desc">简介: {currGroup.group_desc}</div>
+        <div className="system-menu" style={{ backgroundColor: '#fff', borderRadius: '4px', overflow: "hidden", boxShadow: '0 0 6px 2px #D9D9D9', marginBottom: '10px' }}>
+          <div style={{ padding: "20px 10px", backgroundColor: '#fff' }}>
+            <span style={{ fontSize: '18px', fontWeight: "500" }}>面板</span>
           </div>
-
-          <div className="group-operate">
-            <div className="search">
-              <Search
-                placeholder="搜索空间"
-                onChange={this.searchGroup}
-                onSearch={v => this.searchGroup(null, v)}
-              />
-            </div>
-          </div>
-          {this.state.groupList.length === 0 && <Spin style={{
-            marginTop: 20,
-            display: 'flex',
-            justifyContent: 'center'
-          }} />}
-          <div style={{height:'calc(100vh - 258px)',backgroundColor:'#fff',overflowY:'auto'}}>
+          <div>
             <Menu
               mode="inline"
-              onClick={this.selectGroup}
-              selectedKeys={[`${currGroup._id}`]}
             >
-              {this.state.groupList.map(group => {
-                if (group.type === 'private') {
-                  return (
-                    <Menu.Item
-                      key={`${group._id}`}
-                      className="group-item"
-                      style={{ zIndex: this.props.studyTip === 0 ? 3 : 1 }}
-                    >
-                      <Icon type="user" />
-                      <Popover
-                        overlayClassName="popover-index"
-                        content={<GuideBtns />}
-                        title={tip}
-                        placement="right"
-                        visible={this.props.studyTip === 0 && !this.props.study}
-                      >
-                        {group.group_name}
-                      </Popover>
-                    </Menu.Item>
-                  );
-                } else {
-                  return (
-                    <Menu.Item key={`${group._id}`} className="group-item">
-                      <Icon type="folder-open" />
-                      {group.group_name}
-                    </Menu.Item>
-                  );
-                }
-              })}
+              <Menu.Item>
+                <Link to="/space/home">
+                  <Icon type="home" /> 首页
+                </Link>
+              </Menu.Item>
+              <Menu.Item>
+                <Icon type="dashboard" /> Dashboard
+              </Menu.Item>
+              <Menu.Item>
+                <Icon type="star" /> 收藏
+              </Menu.Item>
             </Menu>
+          </div>
+        </div>
+        {!this.props.study ? <div className="study-mask" /> : null}
+        <div className="group-bar">
+          <div style={{ borderRadius: "4px", overflow: "hidden" }}>
+            <div style={{ padding: "20px 10px", backgroundColor: '#fff' }}>
+              <span style={{ fontSize: '18px', fontWeight: "500" }}>空间</span>
+            </div>
+            <div style={{ padding: '5px' }}>
+              <Button size="small" icon="plus" onClick={this.showModal}>创建空间</Button>
+            </div>
+            {this.state.groupList.length === 0 && <Spin style={{
+              marginTop: 20,
+              display: 'flex',
+              justifyContent: 'center'
+            }} />}
+            <div className="group-menu">
+              <Menu
+                mode="inline"
+                onClick={this.selectGroup}
+                selectedKeys={[`${currGroup._id}`]}
+              >
+                {this.state.groupList.map(group => {
+                  if (group.type === 'private') {
+                    return (
+                      <Menu.Item
+                        key={`${group._id}`}
+                        className="group-item"
+                        style={{ zIndex: this.props.studyTip === 0 ? 3 : 1 }}
+                      >
+                        <Icon type="user" />
+                        <Popover
+                          overlayClassName="popover-index"
+                          content={<GuideBtns />}
+                          title={tip}
+                          placement="right"
+                          visible={this.props.studyTip === 0 && !this.props.study}
+                        >
+                          {group.group_name}
+                        </Popover>
+                      </Menu.Item>
+                    );
+                  } else {
+                    return (
+                      <Menu.Item key={`${group._id}`} className="group-item">
+                        <Icon type="folder-open" />
+                        {group.group_name}
+                      </Menu.Item>
+                    );
+                  }
+                })}
+              </Menu>
+            </div>
           </div>
         </div>
         {this.state.addGroupModalVisible ? (

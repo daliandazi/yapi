@@ -72,7 +72,7 @@ export default class Project extends Component {
     this.props.setBreadcrumb([
       {
         name: this.props.currGroup.group_name,
-        href: '/group/' + this.props.currGroup._id,
+        href: '/space/group/' + this.props.currGroup._id,
       },
       {
         name: this.props.curProject.name,
@@ -89,7 +89,7 @@ export default class Project extends Component {
       this.props.setBreadcrumb([
         {
           name: this.props.currGroup.group_name,
-          href: '/group/' + this.props.currGroup._id,
+          href: '/space/group/' + this.props.currGroup._id,
         },
         {
           name: this.props.curProject.name,

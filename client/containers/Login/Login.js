@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Form, Button, Input, Icon, message, Radio } from 'antd';
 import { loginActions, loginLdapActions } from '../../reducer/modules/user';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 const FormItem = Form.Item;
 const RadioGroup = Radio.Group;
 
@@ -54,14 +54,14 @@ class Login extends Component {
         if (this.props.isLDAP && this.state.loginType === 'ldap') {
           this.props.loginLdapActions(values).then(res => {
             if (res.payload.data.errcode == 0) {
-              this.props.history.replace('/group');
+              this.props.history.replace('/space/home');
               message.success('登录成功! ');
             }
           });
         } else {
           this.props.loginActions(values).then(res => {
             if (res.payload.data.errcode == 0) {
-              this.props.history.replace('/group');
+              this.props.history.replace('/space/home');
               message.success('登录成功! ');
             }
           });

@@ -42,6 +42,7 @@ module.exports = {
     purple: '#7265e6'
   },
   PROJECT_ICON: [
+    'car',
     'code-o',
     'swap',
     'clock-circle-o',

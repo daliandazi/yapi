@@ -4,7 +4,7 @@ import { Card, Icon, Tooltip, Modal, Alert, Input, message } from 'antd';
 import { connect } from 'react-redux';
 import { delFollow, addFollow } from '../../reducer/modules/follow';
 import PropTypes from 'prop-types';
-import { withRouter } from 'react-router';
+import { withRouter } from 'react-router-dom';
 import { debounce } from '../../common';
 import constants from '../../constants/variable.js';
 import produce from 'immer';

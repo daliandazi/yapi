@@ -11,7 +11,7 @@ export default class Request extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            params: [],
+            params: this.props.params || [],
             headers: []
         }
     }

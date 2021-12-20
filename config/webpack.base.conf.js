@@ -185,11 +185,13 @@ module.exports = {
         extensions: [".js", ".css", "scss", ".json", ".string", ".tpl"],
         alias: {
             common: resolve("common"),
-            client: resolve("client"),
+            "client": resolve("client"),
+            "@client": resolve("client"),
             "@server": resolve("server"),
             "@models": resolve("server/models"),
-            exts: resolve("exts"),
+            "exts": resolve("exts"),
             "@reducer": resolve("client/reducer"),
+            "@containers": resolve("client/containers"),
             "@components": resolve("client/components"),
             "@svg": resolve("client/assets/icons"),
             "@image": resolve("client/assets/image")

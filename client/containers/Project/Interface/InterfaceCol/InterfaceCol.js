@@ -87,9 +87,12 @@ class InterfaceCol extends Component {
         const activeKey = action === 'api' ? 'api' : 'colOrCase';
 
         return (
-            <Layout style={{ height: 'calc(100vh - 80px)' }}>
-                <Sider style={{ height: '100%', overflow: 'hidden' }} width={300}>
-                    <div className="left-menu">
+            <Layout style={{ height: 'calc(100vh - 80px)',overflow:'hidden' }}>
+                <Sider style={{ height: '100%', overflow: 'hidden', backgroundColor: '#fff' }} width={300}>
+                    <div
+                        className="left-menu"
+                        style={{ height: parseInt(document.body.clientHeight) - 80 + "px" }}
+                    >
                         <InterfaceColMenu
                             router={matchPath(this.props.location.pathname, contentRouter)}
                             projectId={this.props.match.params.id}
@@ -99,11 +102,12 @@ class InterfaceCol extends Component {
                 <Layout>
                     <Content
                         style={{
-                            height: '100%',
-                            margin: '0 24px 0 16px',
-                            overflow: 'initial',
-                            backgroundColor: '#fff'
-                        }}
+                            height: "100%",
+                            overflow: "hidden",
+                            border: "1px solid #D9D9D9",
+                            borderLeft: "0px solid #D9D9D9",
+                            backgroundColor: "#fff",
+                          }}
                     >
                         <div className="right-content">
                             <Switch>
