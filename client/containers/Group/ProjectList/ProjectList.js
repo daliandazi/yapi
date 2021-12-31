@@ -82,7 +82,13 @@ class ProjectList extends Component {
   receiveRes = () => {
     this.props.fetchProjectList(this.props.currGroup._id, this.props.currPage);
   };
-
+  async componentDidMount() {
+    let groupId = this.props.groupId;
+    if(groupId && groupId>0){
+      this.props.fetchProjectList(groupId, this.props.currPage);
+    }
+    console.log(this.props)
+  }
 
   componentWillReceiveProps(nextProps) {
     this.props.setBreadcrumb([{ name: '' + (nextProps.currGroup.group_name || '') }]);

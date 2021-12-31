@@ -19,7 +19,7 @@ import './Run.scss';
   curUid: state.user.uid
 }))
 @withRouter
-export default class Run extends Component {
+export default class Run extends React.Component {
   static propTypes = {
     currProject: PropTypes.object,
     currInterface: PropTypes.object,

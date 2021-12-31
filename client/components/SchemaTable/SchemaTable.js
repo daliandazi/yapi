@@ -29,7 +29,7 @@ const columns = [
     title: '名称',
     dataIndex: 'name',
     key: 'name',
-    width: 200
+    width: 300
   },
   {
     title: '类型',
@@ -78,7 +78,7 @@ const columns = [
     title: '其他信息',
     dataIndex: 'sub',
     key: 'sub',
-    width: 180,
+    width: 200,
     render: (text, record) => {
       let result = text || record;
 
@@ -120,6 +120,7 @@ class SchemaTable extends Component {
       return null;
     }
     let data = schemaTransformToTable(product);
+    console.log(JSON.stringify(data))
     data = _.isArray(data) ? data : [];
     return <Table bordered size="small" defaultExpandAllRows pagination={false} dataSource={data} columns={columns} />;
   }

@@ -23,7 +23,7 @@ const TabPane = Tabs.TabPane;
     fetchInterfaceData
   }
 )
-class Content extends Component {
+class Content extends React.Component {
   static propTypes = {
     match: PropTypes.object,
     list: PropTypes.array,

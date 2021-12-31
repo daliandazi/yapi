@@ -5,16 +5,13 @@ import PropTypes from "prop-types";
 import {
   Table,
   Icon,
-  Row,
-  Col,
   Tooltip,
   message,
   Tag,
   Divider,
-  Button,
-  Popover
+  Popover,
+  Tabs
 } from "antd";
-import { Link } from "react-router-dom";
 import AceEditor from "client/components/AceEditor/AceEditor";
 import { formatTime, safeArray } from "../../../../common.js";
 import ErrMsg from "../../../../components/ErrMsg/ErrMsg.js";
@@ -23,7 +20,13 @@ import constants from "../../../../constants/variable.js";
 import copy from "copy-to-clipboard";
 import SchemaTable from "../../../../components/SchemaTable/SchemaTable.js";
 import IconFont from "client/components/Icon/MyIcon";
+import {
+  parse,
+  stringify,
+  assign
+} from 'comment-json'
 
+const TabPane = Tabs.TabPane
 const HTTP_METHOD = constants.HTTP_METHOD;
 
 @connect((state) => {
@@ -526,14 +529,14 @@ class View extends Component {
           <div style={{ fontSize: "16px", marginTop: "6px" }}>{title}</div>
 
           <div style={{ marginTop: "20px", color: "#8189A1" }}>
-          <span style={{ marginRight: "30px" }}><span className="h4">负责人: </span>{this.props.curData.connUsername} </span>
+            <span style={{ marginRight: "30px" }}><span className="h4">负责人: </span>{this.props.curData.connUsername} </span>
             <span style={{ marginRight: "30px" }}><span className="h4">创建人:</span> {username} </span>
             <span style={{ marginRight: "30px" }}>
               <span className="h4">更新时间:</span> {formatTime(up_time)}{" "}
             </span>
           </div>
-          <div style={{ height: '40px', marginTop:'10px'}}>
-            <span className="h4">访问权限：</span>{this.props.curData.identityType && this.props.curData.identityType.length>0 ? this.props.curData.identityType.map(this.identityTypeHandler):"未设置"}
+          <div style={{ height: '40px', marginTop: '10px' }}>
+            <span className="h4">访问权限：</span>{this.props.curData.identityType && this.props.curData.identityType.length > 0 ? this.props.curData.identityType.map(this.identityTypeHandler) : "未设置"}
           </div>
         </div>
         <Divider />
@@ -725,11 +728,26 @@ class View extends Component {
             返回参数{" "}
             <Tag color="#303445">{this.props.curData.res_body_type}</Tag>
           </h3>
-          {this.res_body(
-            this.props.curData.res_body_type,
-            this.props.curData.res_body,
-            this.props.curData.res_body_is_json_schema
-          )}
+          <Tabs defaultActiveKey="1" >
+            <TabPane tab="表格" key="1">
+              {this.res_body(
+                this.props.curData.res_body_type,
+                this.props.curData.res_body,
+                this.props.curData.res_body_is_json_schema
+              )}
+            </TabPane>
+            <TabPane tab={<span>JSON <Tag color="geekblue">beta</Tag></span>} key="2">
+              <div className="colBody">
+                <AceEditor
+                  data={this.props.curData.res_body_json}
+                  readOnly={true}
+                  style={{ minHeight: 600 }}
+                />
+              </div>
+              {/* { this.props.curData.res_body_json} */}
+            </TabPane>
+          </Tabs>
+
         </div>
         <div>
           <Divider />

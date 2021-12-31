@@ -1,5 +1,5 @@
 import React, { PureComponent as Component } from 'react';
-import { Row, Col, Button, Tooltip, Table, Input, Select } from 'antd';
+import { Row, Col, Button, Tooltip, Table, Input, Select, Icon } from 'antd';
 import { Link } from "react-router-dom";
 import { axios } from 'common/httpUtil';
 import { formatTime, safeArray } from "client/common.js";
@@ -9,12 +9,13 @@ export default class Home extends Component {
         this.state = {
             myInterfaceList: [],
             loading: false,
+            path: "",
             myInterface: {
                 list: [],
                 count: 0,
                 total: 0,
                 pageNo: 1,
-                limit: 10
+                limit: 15
             }
         };
     }
@@ -24,7 +25,8 @@ export default class Home extends Component {
         })
         axios.get('/api/interface/my', {
             params: {
-                page: this.state.myInterface.pageNo || 1
+                page: this.state.myInterface.pageNo || 1,
+                path: this.state.path
             }
         }).then(response => {
 
@@ -126,14 +128,18 @@ export default class Home extends Component {
                 <div style={{ margin: '2px 2px 20px 2px' }}>
                     <h3 className="owner-type">我的接口</h3>
                     <div className="flex flex-1">
-                        <div className="flex"><Input placeholder="接口名称或者路径" width={100}></Input></div>
-                        <div className="flex-1">
-                            <Select style={{ width: '200px' }} placeholder="负责人">
-                                <Select.Option key={1}>张文杰</Select.Option>
-                            </Select>
+                        <div className="flex">
+                            <Input key="search_path" value={this.state.path} placeholder="接口名称或者路径" width={200} allowClear onChange={(e) => {
+                                this.setState({
+                                    path: e.target.value
+                                })
+                            }}></Input>
+                            <Button style={{ marginLeft: '4px' }} onClick={() => {
+                                this.myInterfaces();
+                            }}>搜索</Button>
                         </div>
                     </div>
-                    <Table loading={this.state.loading} style={{ marginTop: '10px' }} bordered columns={columns} dataSource={this.state.myInterfaceList} size="small" pagination={pageConfig}>
+                    <Table loading={this.state.loading} rowKey="_id" style={{ marginTop: '10px' }} bordered columns={columns} dataSource={this.state.myInterfaceList} size="small" pagination={pageConfig}>
 
                     </Table>
                 </div>
@@ -141,7 +147,7 @@ export default class Home extends Component {
         }
         return (
             <div style={{ paddingTop: '24px' }} className="m-panel card-panel card-panel-s project-list">
-                <MyInterface></MyInterface>
+                <MyInterface key="my"></MyInterface>
             </div>
         )
     }

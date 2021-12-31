@@ -357,6 +357,8 @@ class InterfaceList extends Component {
         width: 20,
         render: (text, record) => {
           const key = record.key;
+          let status = variable.INTERFACE_STATUS[text];
+
           return (
             <Select
               value={key + "-" + text}
@@ -364,7 +366,7 @@ class InterfaceList extends Component {
               onChange={this.changeInterfaceStatus}
             >
               <Option value={key + "-done"}>
-                <span className="tag-status done">已完成</span>
+                <span className="tag-status done">{status.label}</span>
               </Option>
               <Option value={key + "-undone"}>
                 <span className="tag-status undone">未完成</span>
@@ -481,8 +483,8 @@ class InterfaceList extends Component {
       onChange: this.changePage,
     };
 
-    const isDisabled = this.props.catList.length === 0;
-
+    const isDisabled = this.props.match.params.actionId?true:false
+    console.log(this.props.catList)
     // console.log(this.props.curProject.tag)
 
     return (
@@ -511,6 +513,16 @@ class InterfaceList extends Component {
             onClick={() => this.setState({ add_fork_modal_visible: true })}
           >
             关联接口
+          </Button>
+
+          <Button
+            style={{ marginLeft: "10px" }}
+            icon="plus"
+            disabled={isDisabled}
+            type="primary"
+            onClick={() => this.handleRequest(this.props)}
+          >
+            刷新
           </Button>
         </div>
         {/* <h2 className="interface-title" style={{ display: 'inline-block', margin: 0 }}>

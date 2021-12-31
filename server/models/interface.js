@@ -334,6 +334,19 @@ class interfaceModel extends baseModel {
       .exec();
   }
 
+  /**
+   * 项目下是否已经存在关联接口
+   * @param {*} project_id 
+   * @param {*} ref_id 
+   * @returns 
+   */
+  existRef(project_id, ref_id) {
+    return this.model
+      .count({
+        project_id: project_id,
+        ref_id: ref_id,
+      });
+  }
   listCount(option) {
     return this.model.countDocuments(option);
   }
@@ -349,29 +362,37 @@ class interfaceModel extends baseModel {
     );
   }
 
-  myInterfaces(uid, page, limit) {
+  myInterfaces(path, uid, page, limit) {
+    let query = {};
+    query["$or"] = [
+      { uid: uid },
+      { api_manager_conn_id: uid }
+    ];
+    query["ref_id"] = { $exists: false }
+    if (path && path.trim().length > 0) {
+      query["path"] = new RegExp(path, "ig")
+    }
+
     return this.model
-      .find({
-        $or: [
-          { uid: uid },
-          { api_manager_conn_id: uid }
-        ],
-        ref_id: { $exists: false }
-      }).sort({ up_time: -1 }).skip((page - 1) * limit).limit(limit)
+      .find(query).sort({ up_time: -1 }).skip((page - 1) * limit).limit(limit)
       .select(
         "title uid api_manager_conn_id path method project_id edit_uid status desc add_time up_time type query_path "
       )
   }
 
-  myInterfacesCount(uid) {
+  myInterfacesCount(path, uid) {
+    let query = {};
+    query["$or"] = [
+      { uid: uid },
+      { api_manager_conn_id: uid }
+    ];
+    query["ref_id"] = { $exists: false }
+    if (path && path.trim().length > 0) {
+      query["path"] = new RegExp(path, "ig")
+    }
+
     return this.model
-      .count({
-        $or: [
-          { uid: uid },
-          { api_manager_conn_id: uid }
-        ],
-        ref_id: { $exists: false }
-      })
+      .count(query)
   }
 
   search(keyword, page, limit) {

@@ -14,7 +14,6 @@ import {
   Switch,
   Row,
   Col,
-  Alert,
 } from 'antd';
 import constants from '../../constants/variable.js';
 import AceEditor from 'client/components/AceEditor/AceEditor';
@@ -178,7 +177,8 @@ export default class Run extends React.Component {
     return req_header;
   };
 
-  selectDomain = value => {
+  selectDomain = (value) => {
+    console.log(value)
     let headers = this.handleReqHeader(value, this.state.env);
     this.setState({
       case_env: value,
@@ -338,7 +338,7 @@ export default class Run extends React.Component {
         time: response.data.time,
         statusText: response.data.statusText,
         runTime: response.runTime,
-        rid:response.data.rid,
+        rid: response.data.rid,
       };
     } catch (data) {
       result = {};
@@ -556,11 +556,10 @@ export default class Run extends React.Component {
       req_body_type,
       req_body_form = [],
       loading,
-      case_env,
       inputValue,
       hasPlugin,
     } = this.state;
-    // console.log(env);
+    console.log(this.state.case_env);
     return (
       <div className="interface-test postman">
         {this.state.modalVisible && (
@@ -594,23 +593,27 @@ export default class Run extends React.Component {
           <ReflexElement>
             <div className="url">
               <InputGroup compact style={{ display: 'flex' }}>
-                <Select disabled value={method} style={{ flexBasis: 60 }}>
-                  {Object.keys(HTTP_METHOD).map(name => {
-                    <Option value={name.toUpperCase()}>
-                      {name.toUpperCase()}
-                    </Option>;
+                <Select value={method} style={{ flexBasis: 100 }}>
+                  {Object.keys(HTTP_METHOD).map((name, index) => {
+                    return (
+                      <Option value={name.toUpperCase()} key={index}>
+                        {name.toUpperCase()}
+                      </Option>
+                    )
                   })}
                 </Select>
                 <Select
-                  value={case_env}
+                  value={this.state.case_env}
                   style={{ flexBasis: 180, flexGrow: 1 }}
-                  onSelect={this.selectDomain}
+                  onChange={this.selectDomain}
                 >
-                  {env.map((item, index) => (
-                    <Option value={item.name} key={index}>
-                      {item.name + '：' + item.domain}
-                    </Option>
-                  ))}
+                  {env.map((item, index) => {
+                    return (
+                      <Option value={item.name} key={index} >
+                        {item.name + '：' + item.domain}
+                      </Option>
+                    )
+                  })}
                   <Option
                     value="环境配置"
                     disabled
@@ -635,7 +638,7 @@ export default class Run extends React.Component {
                 disabled={!hasPlugin}
                 onClick={this.reqRealInterface}
                 type="primary"
-                style={{ marginLeft: 10,width:'150px' }}
+                style={{ marginLeft: 10, width: '150px' }}
                 disabled={loading}
                 icon={loading ? 'loading' : ''}
               >
@@ -1292,7 +1295,7 @@ export default class Run extends React.Component {
                   <Tabs.TabPane tab="返回结果" key="res">
                     <Spin spinning={this.state.loading}>
 
-                      <div className="body" style={{marginTop:'10px'}}>
+                      <div className="body" style={{ marginTop: '10px' }}>
                         <AceEditor
                           readOnly={true}
                           className="pretty-editor-body"

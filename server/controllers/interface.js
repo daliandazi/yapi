@@ -17,6 +17,8 @@ const { groupBy } = require("../utils/commons");
 const fs = require("fs-extra");
 const path = require("path");
 const { Controller, Get, Post } = require('../router/decorator');
+const schema = require('../../common/schema-transformTo-table.js');
+const parsedJson = require('../../common/json5Comment');
 
 // const annotatedCss = require("jsondiffpatch/public/formatters-styles/annotated.css");
 // const htmlCss = require("jsondiffpatch/public/formatters-styles/html.css");
@@ -239,6 +241,15 @@ class interfaceController extends baseController {
           "缺少参数 ref_id"
         ));
       }
+      // 判断是否已经存在
+      const exist = await this.Model.existRef(params.project_id, params.ref_id);
+      if (exist && exist > 0) {
+        return (ctx.body = yapi.commons.resReturn(
+          null,
+          0,
+          "接口已经存在"
+        ));
+      }
       let data = Object.assign(params, {
         uid: this.getUid(),
         add_time: yapi.commons.time(),
@@ -409,6 +420,7 @@ class interfaceController extends baseController {
       ));
     }
 
+    // 根据路径查找接口
     let result = await this.Model.getByPath(
       params.project_id,
       params.path,
@@ -581,6 +593,11 @@ class interfaceController extends baseController {
 
       // yapi.emitHook('interface_get', result).then();
       // result = result.toObject();
+      if (result.res_body_type === 'json') {
+        let res_body_json = schema.schemaTransformToTable(JSON.parse(result.res_body));
+        res_body_json = parsedJson(res_body_json);
+        result.res_body_json = res_body_json;
+      }
 
       ctx.body = yapi.commons.resReturn(result);
       ctx.set("Server-Timing", " authTime;dur=" + authTime);
@@ -692,10 +709,10 @@ class interfaceController extends baseController {
   @Get('/my')
   async myInterfaceList(ctx) {
     let uid = this.getUid();
-    let { page, limit } = ctx.params;
+    let { page, limit, path } = ctx.params;
     page = page || 1;
-    limit = limit || 15;
-    let interfaces = await this.Model.myInterfaces(uid, page, limit);
+    limit = limit || 10;
+    let interfaces = await this.Model.myInterfaces(path, uid, page, limit);
 
     let data = [];
     interfaces.forEach(api => {
@@ -731,7 +748,7 @@ class interfaceController extends baseController {
         console.log(e)
       }
     }
-    let interfaceCount = await this.Model.myInterfacesCount(uid);
+    let interfaceCount = await this.Model.myInterfacesCount(path, uid);
     ctx.body = yapi.commons.resReturn({
       list: data,
       total: Math.ceil(interfaceCount / limit),
