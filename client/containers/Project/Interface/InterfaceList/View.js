@@ -738,11 +738,11 @@ class View extends Component {
             </TabPane>
             <TabPane tab={<span>JSON <Tag color="geekblue">beta</Tag></span>} key="2">
               <div className="colBody">
-                <AceEditor
+                {/* <AceEditor
                   data={this.props.curData.res_body_json}
                   readOnly={true}
                   style={{ minHeight: 600 }}
-                />
+                /> */}
               </div>
               {/* { this.props.curData.res_body_json} */}
             </TabPane>

@@ -593,7 +593,7 @@ class interfaceController extends baseController {
 
       // yapi.emitHook('interface_get', result).then();
       // result = result.toObject();
-      if (result.res_body_type === 'json') {
+      if (result.res_body_type === 'json' && result.res_body != null && result.res_body.length > 2) {
         let res_body_json = schema.schemaTransformToTable(JSON.parse(result.res_body));
         res_body_json = parsedJson(res_body_json);
         result.res_body_json = res_body_json;
