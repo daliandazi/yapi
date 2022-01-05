@@ -483,8 +483,8 @@ class InterfaceList extends Component {
       onChange: this.changePage,
     };
 
-    const isDisabled = this.props.match.params.actionId?true:false
-    console.log(this.props.catList)
+    const isDisabled = false;// this.props.match.params.actionId?true:false
+    // console.log(this.props.catList)
     // console.log(this.props.curProject.tag)
 
     return (
