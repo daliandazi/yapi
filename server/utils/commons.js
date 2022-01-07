@@ -59,6 +59,19 @@ exports.schemaToJson = function (schema, options = {}) {
   return result;
 };
 
+
+function isJson(json) {
+  if (!json) return false;
+  try {
+    json = JSON.parse(json);
+    return json;
+  } catch (e) {
+    return false;
+  }
+}
+
+exports.isJson = isJson;
+
 exports.resReturn = (data, num, errmsg) => {
   num = num || 0;
 
