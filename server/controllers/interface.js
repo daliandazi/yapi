@@ -13,7 +13,7 @@ const jsondiffpatch = require("jsondiffpatch");
 const formattersHtml = jsondiffpatch.formatters.html;
 const showDiffMsg = require("../../common/diff-view.js");
 const mergeJsonSchema = require("../../common/mergeJsonSchema");
-const { groupBy } = require("../utils/commons");
+const { groupBy, isJson } = require("../utils/commons");
 const fs = require("fs-extra");
 const path = require("path");
 const { Controller, Get, Post } = require('../router/decorator');
@@ -593,10 +593,14 @@ class interfaceController extends baseController {
 
       // yapi.emitHook('interface_get', result).then();
       // result = result.toObject();
-      if (result.res_body_type === 'json' && result.res_body != null && result.res_body.length > 2) {
-        let res_body_json = schema.schemaTransformToTable(JSON.parse(result.res_body));
-        res_body_json = parsedJson(res_body_json);
-        result.res_body_json = res_body_json;
+      if (result.res_body_type === 'json' && result.res_body != null && result.res_body.length > 2 && isJson(result.res_body)) {
+        try {
+          let res_body_json = schema.schemaTransformToTable(JSON.parse(result.res_body));
+          res_body_json = parsedJson(res_body_json);
+          result.res_body_json = res_body_json;
+        } catch (e) {
+          console.error(e)
+        }
       }
 
       ctx.body = yapi.commons.resReturn(result);
