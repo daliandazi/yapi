@@ -366,7 +366,7 @@ class InterfaceList extends Component {
               onChange={this.changeInterfaceStatus}
             >
               <Option value={key + "-done"}>
-                <span className="tag-status done">{status.label}</span>
+                <span className="tag-status done">完成</span>
               </Option>
               <Option value={key + "-undone"}>
                 <span className="tag-status undone">未完成</span>

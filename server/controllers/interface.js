@@ -699,7 +699,7 @@ class interfaceController extends baseController {
       await datas.forEach(a => {
         if (a.api_manager_conn_id) {
           let username = managerMap[a.api_manager_conn_id] || "";
-          a.managerName = username;
+          a.connUsername = username;
         }
       })
 
