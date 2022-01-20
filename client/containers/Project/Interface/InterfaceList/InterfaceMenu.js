@@ -127,7 +127,6 @@ class InterfaceMenu extends Component {
     }
 
     onSelect = selectedKeys => {
-        console.log(selectedKeys)
         // return null;
         const { history, match } = this.props;
         let curkey = selectedKeys[0];
@@ -141,7 +140,6 @@ class InterfaceMenu extends Component {
         } else {
             history.push(basepath + '/' + curkey);
         }
-        console.log(this.state.expands)
         // this.setState({
         //   expands: null
         // });
@@ -480,11 +478,7 @@ class InterfaceMenu extends Component {
                         catdata={this.state.curCatdata}
                         onCancel={() => this.changeModal('add_fork_modal_visible', false)}
                         onSubmit={(data) => {
-                            console.log(data)
                             if (data && data.length > 0) {
-                                console.log(this.state.curCatdata)
-                                console.log(this.state.curCatid)
-
                                 for (let i in data) {
                                     let d = data[i];
 
@@ -497,7 +491,6 @@ class InterfaceMenu extends Component {
                                             "type": "ref",
                                             "ref_id": d.key
                                         }
-                                        console.log(api)
                                         axios.post('/api/interface/add', api).then(res => {
                                             if (res.data.errcode !== 0) {
                                                 return message.error(`${res.data.errmsg}, 关联接口出现异常`);

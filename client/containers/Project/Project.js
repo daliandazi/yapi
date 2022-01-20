@@ -106,7 +106,7 @@ export default class Project extends Component {
       interface: {
         name: 'API',
         icon: 'api',
-        path: '/project/:id/interface/:action',
+        path: '/project/:id/interface/api',
         component: Interface,
         count: 0,
       },
