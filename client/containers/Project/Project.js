@@ -15,6 +15,8 @@ import ProjectMember from './Setting/ProjectMember/ProjectMember.js';
 import ProjectData from './Setting/ProjectData/ProjectData.js';
 import InterfaceCol from './Interface/InterfaceCol/InterfaceCol.js';
 import StatusCode from './StatusCode/StatusCode';
+import DataStructure from './DataStructure/DataStructure.js';
+
 import Lake from './Lake/Lake';
 
 const plugin = require('client/plugin.js');
@@ -120,6 +122,12 @@ export default class Project extends Component {
         path: '/project/:id/statusCode',
         component: StatusCode,
       },
+      dataStructure: {
+        name: '模板',
+        icon: 'database',
+        path: '/project/:projectId/dataStructure',
+        component: DataStructure,
+      },
       // lake: { name: '语雀文档', icon: 'car', path: '/project/:id/lake', component: Lake },
       activity: {
         name: '动态',
@@ -172,6 +180,12 @@ export default class Project extends Component {
           icon: item.icon,
           count:
             this.state.project != null ? this.state.project.interface_count : 0,
+        };
+      } if (key === 'dataStructure') {
+        value = {
+          name: item.name,
+          path: item.path.replace(/\:projectId/gi, match.params.id),
+          icon: item.icon,
         };
       } else {
         value = {

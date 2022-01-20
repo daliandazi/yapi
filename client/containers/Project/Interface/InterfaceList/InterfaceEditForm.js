@@ -6,7 +6,7 @@ import constants from '../../../../constants/variable.js';
 import { handlePath, nameLengthLimit } from '../../../../common.js';
 import { changeEditStatus } from '../../../../reducer/modules/interface.js';
 import json5 from 'json5';
-import { message, Affix, Tabs, Modal } from 'antd';
+import { message, Affix, Tabs, Modal, Popover } from 'antd';
 import EasyDragSort from '../../../../components/EasyDragSort/EasyDragSort.js';
 import mockEditor from 'client/components/AceEditor/mockEditor';
 import AceEditor from 'client/components/AceEditor/AceEditor';
@@ -959,25 +959,26 @@ class InterfaceEditForm extends Component {
                         </FormItem>
                         <FormItem className="interface-edit-item" {...formItemLayout} label={<span>
                             访问权限
-                            <Tooltip
-                                        title={
-                                            <div>
-                                                <p>
-                                                    1.未登录：没有登录也可以访问该接口
-                                                </p>
-                                                <p>
-                                                    2.游客账户：游客账户也可以访问该接口，例如某些游客账户也记录数据到云端
-                                                </p>
-                                                <p>
-                                                    3.正式账户：正式账户
-                                                </p>
-                                            </div>
-                                        }
-                                    >
-                                        <Icon type="question-circle-o" style={{ width: '10px' }} />
-                                    </Tooltip>
+                            <Popover
+                                content={
+                                    <div>
+                                        <p style={{ fontWeight: 500, color: '#000' }}>针对APP访问接口权限，不是接口文档的权限</p>
+                                        <p>
+                                            1.未登录：没有登录也可以访问该接口
+                                        </p>
+                                        <p>
+                                            2.游客账户：游客账户也可以访问该接口，例如某些游客账户也记录数据到云端
+                                        </p>
+                                        <p>
+                                            3.正式账户：正式账户
+                                        </p>
+                                    </div>
+                                }
+                            >
+                                <Icon type="question-circle-o" style={{ width: '10px' }} />
+                            </Popover>
                         </span>}>
-                            {getFieldDecorator('identityType', { initialValue: this.state.identityType,rules: [{ required: true, message: '请选择访问权限' }] })(
+                            {getFieldDecorator('identityType', { initialValue: this.state.identityType, rules: [{ required: true, message: '请选择访问权限' }] })(
                                 <Select placeholder="请选择访问权限" mode="multiple" defaultValue='none'>
                                     <Option value="none" style={{ cursor: 'pointer', color: '#2395f1' }}>
                                         未登录

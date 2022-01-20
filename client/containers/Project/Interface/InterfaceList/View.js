@@ -20,11 +20,6 @@ import constants from "../../../../constants/variable.js";
 import copy from "copy-to-clipboard";
 import SchemaTable from "../../../../components/SchemaTable/SchemaTable.js";
 import IconFont from "client/components/Icon/MyIcon";
-import {
-  parse,
-  stringify,
-  assign
-} from 'comment-json'
 
 const TabPane = Tabs.TabPane
 const HTTP_METHOD = constants.HTTP_METHOD;
@@ -536,125 +531,30 @@ class View extends Component {
             </span>
           </div>
           <div style={{ height: '40px', marginTop: '10px' }}>
-            <span className="h4">访问权限：</span>{this.props.curData.identityType && this.props.curData.identityType.length > 0 ? this.props.curData.identityType.map(this.identityTypeHandler) : "未设置"}
+            <span className="h4">
+              <Popover
+                content={
+                  <div>
+                    <p style={{ fontWeight: 500, color: '#000' }}>针对APP访问接口权限，不是接口文档的权限</p>
+                    <p>
+                      1.未登录：没有登录也可以访问该接口
+                    </p>
+                    <p>
+                      2.游客账户：游客账户也可以访问该接口，例如某些游客账户也记录数据到云端
+                    </p>
+                    <p>
+                      3.正式账户：正式账户
+                    </p>
+                  </div>
+                }
+              >
+                访问权限
+                <Icon type="question-circle-o" style={{ width: '10px' }} />
+              </Popover> ：
+            </span>{this.props.curData.identityType && this.props.curData.identityType.length > 0 ? this.props.curData.identityType.map(this.identityTypeHandler) : "未设置"}
           </div>
         </div>
         <Divider />
-        {/* <h3 className="interface-title" style={{ marginTop: '10px' }}>
-          基本信息
-        </h3>
-        <div className="panel-view">
-          <Row className="row">
-            <Col span={4} className="colKey">
-              接口名称：
-            </Col>
-            <Col span={8} className="colName">
-              {title}
-            </Col>
-            <Col span={4} className="colKey">
-              创&ensp;建&ensp;人：
-            </Col>
-            <Col span={8} className="colValue">
-              <Link className="user-name" to={'/user/profile/' + uid}>
-                <img src={'/api/user/avatar?uid=' + uid} className="user-img" />
-                {username}
-              </Link>
-            </Col>
-          </Row>
-          <Row className="row">
-            <Col span={4} className="colKey">
-              状&emsp;&emsp;态：
-            </Col>
-            <Col span={8} className={'tag-status ' + this.props.curData.status}>
-              {status[this.props.curData.status]}
-            </Col>
-            <Col span={4} className="colKey">
-              更新时间：
-            </Col>
-            <Col span={8}>{formatTime(up_time)}</Col>
-          </Row>
-          {safeArray(tag) &&
-            safeArray(tag).length > 0 && (
-              <Row className="row remark">
-                <Col span={4} className="colKey">
-                  Tag ：
-                </Col>
-                <Col span={18} className="colValue">
-                  {tag.join(' , ')}
-                </Col>
-              </Row>
-            )}
-          <Row className="row">
-            <Col span={4} className="colKey">
-              接口路径：
-            </Col>
-            <Col
-              span={18}
-              className="colValue"
-              onMouseEnter={this.enterItem}
-              onMouseLeave={this.leaveItem}
-            >
-              <span
-                style={{ color: methodColor.color, backgroundColor: methodColor.bac }}
-                className="colValue tag-method"
-              >
-                {this.props.curData.method}
-              </span>
-              <span className="colValue">
-                {this.props.currProject.basepath}
-                {this.props.curData.path}
-              </span>
-              <Tooltip title="复制路径">
-                <Icon
-                  type="copy"
-                  className="interface-url-icon"
-                  onClick={() => this.copyUrl(this.props.currProject.basepath + this.props.curData.path)}
-                  style={{ display: this.state.enter ? 'inline-block' : 'none' }}
-                />
-              </Tooltip>
-            </Col>
-          </Row>
-          <Row className="row">
-            <Col span={4} className="colKey">
-              Mock地址：
-            </Col>
-            <Col span={18} className="colValue">
-              {this.flagMsg(this.props.currProject.is_mock_open, this.props.currProject.strice)}
-              <span
-                className="href"
-                onClick={() =>
-                  window.open(
-                    location.protocol +
-                    '//' +
-                    location.hostname +
-                    (location.port !== '' ? ':' + location.port : '') +
-                    `/mock/${this.props.currProject._id}${this.props.currProject.basepath}${this.props.curData.path
-                    }`,
-                    '_blank'
-                  )
-                }
-              >
-                {location.protocol +
-                  '//' +
-                  location.hostname +
-                  (location.port !== '' ? ':' + location.port : '') +
-                  `/mock/${this.props.currProject._id}${this.props.currProject.basepath}${this.props.curData.path
-                  }`}
-              </span>
-            </Col>
-          </Row>
-          {this.props.curData.custom_field_value &&
-            this.props.custom_field.enable && (
-              <Row className="row remark">
-                <Col span={4} className="colKey">
-                  {this.props.custom_field.name}：
-                </Col>
-                <Col span={18} className="colValue">
-                  {this.props.curData.custom_field_value}
-                </Col>
-              </Row>
-            )}
-        </div> */}
 
         <h3
           className="interface-title"
@@ -711,16 +611,31 @@ class View extends Component {
           <h3 style={{ display: bodyShow ? "" : "none" }} className="col-title">
             Body: <Tag color="#303445">{this.props.curData.req_body_type}</Tag>
           </h3>
-          {this.props.curData.req_body_type === "form"
-            ? this.req_body_form(
-              this.props.curData.req_body_type,
-              this.props.curData.req_body_form
-            )
-            : this.req_body(
-              this.props.curData.req_body_type,
-              this.props.curData.req_body_other,
-              this.props.curData.req_body_is_json_schema
-            )}
+
+          <Tabs defaultActiveKey="req-1" >
+            <TabPane tab="表格" key="req-1">
+              {this.props.curData.req_body_type === "form"
+                ? this.req_body_form(
+                  this.props.curData.req_body_type,
+                  this.props.curData.req_body_form
+                )
+                : this.req_body(
+                  this.props.curData.req_body_type,
+                  this.props.curData.req_body_other,
+                  this.props.curData.req_body_is_json_schema
+                )}
+            </TabPane>
+            <TabPane tab={<span>JSON <Tag color="geekblue">beta</Tag></span>} key="req-2">
+              <div className="colBody">
+                <AceEditor
+                  data={this.props.curData.req_body_other_json ? this.props.curData.req_body_other_json : ""}
+                  readOnly={true}
+                  style={{ minHeight: 200 }}
+                />
+              </div>
+
+            </TabPane>
+          </Tabs>
         </div>
 
         <div>
@@ -739,7 +654,7 @@ class View extends Component {
             <TabPane tab={<span>JSON <Tag color="geekblue">beta</Tag></span>} key="2">
               <div className="colBody">
                 <AceEditor
-                  data={this.props.curData.res_body_json ?this.props.curData.res_body_json:""}
+                  data={this.props.curData.res_body_json ? this.props.curData.res_body_json : ""}
                   readOnly={true}
                   style={{ minHeight: 600 }}
                 />

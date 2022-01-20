@@ -1,18 +1,21 @@
 const baseController = require('./base.js');
 const yapi = require('../yapi.js');
-const statusCodeModel = require('../models/statusCode');
-const statusCodeGroupModel = require('../models/statusCodeGroup');
-const { Controller, Get, Post } = require('../router/decorator');
+const { Controller, Post, Get } = require('../router/decorator');
+const dataStructureModel = require('../models/dataStructure');
+const dataStructureGroupModel = require('../models/dataStructureGroup');
+const schema = require('../../common/schema-transformTo-table.js');
+const parsedJson = require('../../common/json5Comment');
 
-@Controller("/api/statusCode")
-class statusCodeController extends baseController {
-
+/**
+ * 接口定义模板/通用数据结构
+ */
+@Controller('/api/dataStructure')
+class DataStructureController extends baseController {
     constructor(ctx) {
         super(ctx);
-        this.Model = yapi.getInst(statusCodeModel);
-        this.groupModel = yapi.getInst(statusCodeGroupModel);
+        this.Model = yapi.getInst(dataStructureModel);
+        this.groupModel = yapi.getInst(dataStructureGroupModel);
     }
-
 
     @Post("/group/save")
     async groupSave(ctx) {
@@ -81,12 +84,38 @@ class statusCodeController extends baseController {
 
         let datas = [];
         if (params.groupId) {
-            datas = await yapi.getInst(statusCodeModel).listByGroup(params.groupId);
+            datas = await yapi.getInst(dataStructureModel).listByGroup(params.groupId);
         } else {
-            datas = await yapi.getInst(statusCodeModel).listByProject(params.projectId);
+            datas = await yapi.getInst(dataStructureModel).listByProject(params.projectId);
         }
 
         return (ctx.body = yapi.commons.resReturn(datas));
+    }
+
+    @Get({ path: '/all' })
+    async getAll(ctx) {
+        try {
+            let params = ctx.params;
+            console.log(params)
+            if (!params.projectId) {
+                return (ctx.body = yapi.commons.resReturn(null, 400, '没有项目参数?'));
+            }
+            let datas = await this.groupModel.listByProject(params.projectId);
+            let groupList = datas;
+            let result = [];
+            for (let index in groupList) {
+                let group = groupList[index];
+                group = group.toObject();
+                let list = await this.Model.listByGroup(group._id);
+                group.children = list;
+                result.push(group);
+            }
+            return (ctx.body = yapi.commons.resReturn(result));
+        } catch (e) {
+            console.error(e)
+            return (ctx.body = yapi.commons.resReturn(null, 400, e));
+        }
+
     }
 
     @Get('/getById')
@@ -95,7 +124,15 @@ class statusCodeController extends baseController {
         if (!id) {
             return (ctx.body = yapi.commons.resReturn(null, 400, '缺少id'));
         }
-        let result = await yapi.getInst(statusCodeModel).get(id);
+        let result = await yapi.getInst(dataStructureModel).get(id);
+        if (result) {
+            result = result.toObject();
+            if (result.structure) {
+                let structure_json = schema.schemaTransformToTable(JSON.parse(result.structure));
+                structure_json = parsedJson(structure_json);
+                result.structure_json = structure_json;
+            }
+        }
         return (ctx.body = yapi.commons.resReturn(result));
     }
 
@@ -105,7 +142,7 @@ class statusCodeController extends baseController {
         if (!id) {
             return (ctx.body = yapi.commons.resReturn(null, 400, '缺少id'));
         }
-        let result = await yapi.getInst(statusCodeModel).del(id);
+        let result = await yapi.getInst(dataStructureModel).del(id);
         return (ctx.body = yapi.commons.resReturn(result));
     }
 
@@ -139,4 +176,4 @@ class statusCodeController extends baseController {
     }
 }
 
-module.exports = statusCodeController;
+module.exports = DataStructureController;

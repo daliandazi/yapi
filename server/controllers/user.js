@@ -11,7 +11,9 @@ const projectModel = require('../models/project.js');
 const avatarModel = require('../models/avatar.js');
 
 const jwt = require('jsonwebtoken');
+const { Controller, Post, Get } = require('../router/decorator');
 
+@Controller('/api/user')
 class userController extends baseController {
   constructor(ctx) {
     super(ctx);
@@ -315,6 +317,11 @@ class userController extends baseController {
       return (ctx.body = yapi.commons.resReturn(null, 400, '邮箱不能为空'));
     }
 
+    let regEpx = /^\w+@ksjgs.com$/
+    if (!regEpx.test(params.email)) {
+      return (ctx.body = yapi.commons.resReturn(null, 400, '必须使用公司邮箱'));
+    }
+
     if (!params.password) {
       return (ctx.body = yapi.commons.resReturn(null, 400, '密码不能为空'));
     }
@@ -521,6 +528,15 @@ class userController extends baseController {
         return (ctx.body = yapi.commons.resReturn(null, 400, 'uid不存在'));
       }
 
+      if (!params.email) {
+        return (ctx.body = yapi.commons.resReturn(null, 401, '邮箱必填'));
+      }
+
+      let regEpx = /^\w+@ksjgs.com$/
+      if (!regEpx.test(params.email)) {
+        return (ctx.body = yapi.commons.resReturn(null, 400, '必须使用公司邮箱'));
+      }
+
       let data = {
         up_time: yapi.commons.time()
       };
@@ -534,6 +550,8 @@ class userController extends baseController {
           return (ctx.body = yapi.commons.resReturn(null, 401, '该email已经注册'));
         }
       }
+
+
 
       let member = {
         uid: id,
@@ -550,6 +568,40 @@ class userController extends baseController {
     } catch (e) {
       ctx.body = yapi.commons.resReturn(null, 402, e.message);
     }
+  }
+
+  /**
+   * 禁用账户
+   * @param {} ctx 
+   */
+  @Post("/disable")
+  async disable(ctx) {
+
+    try {
+      // if (this.getRole() !== 'admin') {
+      //   return (ctx.body = yapi.commons.resReturn(null, 402, 'Without permission.'));
+      // }
+      let id = ctx.request.body.id;
+      console.log(id)
+      if (!id) {
+        console.log("缺少参数")
+        return (ctx.body = yapi.commons.resReturn(null, 400, '缺少参数'));
+      }
+      let userData = await yapi.getInst(userModel).findById(id);
+      if (!userData) {
+        console.log("账户不存在")
+        return (ctx.body = yapi.commons.resReturn(null, 400, '账户不存在'));
+      }
+      let data = userData.toObject();
+      data.status = 0;
+      console.log(data)
+      let result = await yapi.getInst(userModel).update(id, data);
+      return (ctx.body = yapi.commons.resReturn(result));
+    } catch (e) {
+      console.log(e)
+      ctx.body = yapi.commons.resReturn(null, 402, e.message);
+    }
+
   }
 
   /**
@@ -668,6 +720,8 @@ class userController extends baseController {
 
     return (ctx.body = yapi.commons.resReturn(filteredRes, 0, 'ok'));
   }
+
+
 
   /**
    * 根据路由id初始化项目数据

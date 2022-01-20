@@ -5,7 +5,7 @@ import { setBreadcrumb } from '../../reducer/modules/user';
 //import PropTypes from 'prop-types'
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Table, Popconfirm, message, Input } from 'antd';
+import { Table, Popconfirm, message, Input, Tag } from 'antd';
 import axios from 'axios';
 
 const Search = Input.Search;
@@ -94,6 +94,24 @@ class List extends Component {
       );
   };
 
+  disable = uid => {
+    axios.post('/api/user/disable', {
+      id: uid
+    }).then(
+      res => {
+        if (res.data.errcode === 0) {
+          message.success('已禁用此用户');
+          this.getUserList();
+        } else {
+          message.error(res.data.errmsg);
+        }
+      },
+      err => {
+        message.error(err.message);
+      }
+    );
+  };
+
   async componentWillMount() {
     this.props.setBreadcrumb([{ name: '用户管理' }]);
   }
@@ -155,6 +173,15 @@ class List extends Component {
         width: 150
       },
       {
+        title: '状态',
+        dataIndex: 'status',
+        key: 'status',
+        width: 150,
+        render: (status, item) => {
+          return status === 1 ? <Tag color="#2db7f5">正常</Tag> : <Tag color="#8189A1">禁用</Tag>
+        }
+      },
+      {
         title: '更新日期',
         dataIndex: 'up_time',
         key: 'up_time',
@@ -163,7 +190,7 @@ class List extends Component {
       {
         title: '功能',
         key: 'action',
-        width: '90px',
+        width: '150px',
         render: item => {
           return (
             <span>
@@ -180,7 +207,17 @@ class List extends Component {
                   删除
                 </a>
               </Popconfirm>
-            </span>
+              <Popconfirm
+                title="确认禁用此用户?"
+                onConfirm={() => {
+                  this.disable(item._id);
+                }}
+                okText="确定"
+                cancelText="取消"
+              >
+                <a>禁用</a>
+              </Popconfirm>
+            </span >
           );
         }
       }

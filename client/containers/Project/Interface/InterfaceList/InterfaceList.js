@@ -428,15 +428,18 @@ class InterfaceList extends Component {
               >
                 {record.ref_id ? "移除" : "删除"}
               </Button>
+                {record.ref_id?(
+null
 
-              <Button
-                type="link"
-                onClick={() => {
-                  this.copyInterface(record._id);
-                }}
-              >
-                复制
-              </Button>
+                ):(<Button
+                  type="link"
+                  onClick={() => {
+                    this.copyInterface(record._id);
+                  }}
+                >
+                  复制
+                </Button>)}
+              
             </div>
           );
         },
@@ -517,8 +520,7 @@ class InterfaceList extends Component {
 
           <Button
             style={{ marginLeft: "10px" }}
-            icon="plus"
-            disabled={isDisabled}
+            icon="reload"
             type="primary"
             onClick={() => this.handleRequest(this.props)}
           >

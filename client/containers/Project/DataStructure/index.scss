@@ -1,0 +1,21 @@
+.popup {
+    div {
+        line-height: 24px;
+        height: 32px;
+        cursor: default;
+        color: #6d6e72;
+        width: 100%;
+        padding: 2px 8px;
+        border-radius: 4px;
+        margin: 2px 0;
+
+        &:hover {
+            // color: #303445;
+            background-color: #E7F5FE;
+        }
+
+        &:active {
+            color: #303445;
+        }
+    }
+}

@@ -10,13 +10,20 @@ const Mock = require('mockjs');
 function parsedJson(json) {
     let result = interfaceJsonHandler(json)
     result = "{\n" + result + "\n}"
-    return stringify(parse(result), null, 4)
+    try {
+        return stringify(parse(result), null, 4)
+    } catch (e) {
+        console.error(e, result)
+    }
+    return "{}";
 }
 
 function interfaceJsonHandler(json, container) {
     container = container || ""
     json.map((data) => {
-
+        if (data.desc) {
+            data.desc = data.desc.replaceAll("\n", "。")
+        }
         if (data.children) {
             let child = "";
             child = interfaceJsonHandler(data.children, child)
@@ -59,7 +66,7 @@ function customMock(field, type) {
         return 0;
     }
     if (type === 'number') {
-        return Mock.Random.integer( 0, 100 )
+        return Mock.Random.integer(0, 100)
     }
     return Mock.mock("@" + type)
 }

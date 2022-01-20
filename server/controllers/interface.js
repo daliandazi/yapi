@@ -603,6 +603,16 @@ class interfaceController extends baseController {
         }
       }
 
+      if (result.req_body_type === 'json' && result.req_body_other && isJson(result.req_body_other)) {
+        try {
+          let req_body_other_json = schema.schemaTransformToTable(JSON.parse(result.req_body_other));
+          req_body_other_json = parsedJson(req_body_other_json);
+          result.req_body_other_json = req_body_other_json;
+        } catch (e) {
+          console.error(e)
+        }
+      }
+
       ctx.body = yapi.commons.resReturn(result);
       ctx.set("Server-Timing", " authTime;dur=" + authTime);
     } catch (e) {

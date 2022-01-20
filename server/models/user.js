@@ -21,6 +21,10 @@ class userModel extends baseModel {
       },
       passsalt: String,
       study: { type: Boolean, default: false },
+      status: {
+        type: Number,
+        enum: [0, 1], default: '1' // 0-禁用 ， 1-启用
+      },
       role: String,
       add_time: Number,
       up_time: Number,
@@ -63,7 +67,7 @@ class userModel extends baseModel {
       .sort({ _id: -1 })
       .skip((page - 1) * limit)
       .limit(limit)
-      .select('_id username email role type  add_time up_time study')
+      .select('_id username email role type  add_time up_time study status')
       .exec();
   }
 

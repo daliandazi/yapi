@@ -1,9 +1,9 @@
-const { Controller, Get, Post } = require('../router/decorator');
+const { Controller, Post } = require('../router/decorator');
 const yapi = require('../yapi.js');
 const interfaceModel = require('../models/interface.js');
 const baseController = require('./base.js');
 @Controller('/api/search')
-class SearchController extends baseController{
+class SearchController extends baseController {
     constructor(ctx) {
         super(ctx);
     }
