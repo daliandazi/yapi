@@ -21,8 +21,8 @@ function parsedJson(json) {
 function interfaceJsonHandler(json, container) {
     container = container || ""
     json.map((data) => {
-        if (data.desc && data.desc.replaceAll) {
-            data.desc = data.desc.replaceAll("\n", "。")
+        if (data.desc && data.desc.replace) {
+            data.desc = data.desc.replace("\n", "。")
         }
         if (data.children) {
             let child = "";

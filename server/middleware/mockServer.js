@@ -277,7 +277,7 @@ module.exports = async (ctx, next) => {
         // console.log(temp)
         interfaceData.res_body = temp.res_body;
         interfaceData.res_body_type = temp.res_body_type;
-        interfaceData.res_body_is_json_schema = temp.interfaceData;
+        interfaceData.res_body_is_json_schema = temp.res_body_is_json_schema;
       }
 
     }
@@ -304,7 +304,7 @@ module.exports = async (ctx, next) => {
           res = yapi.commons.schemaToJson(schema, {
             alwaysFakeOptionals: true
           });
-          console.log(schema)
+          // console.log(schema)
         } else {
           // console.log('header', ctx.request.header['content-type'].indexOf('multipart/form-data'))
           // 处理 format-data
@@ -327,6 +327,7 @@ module.exports = async (ctx, next) => {
 
         try {
           res = Mock.mock(res);
+          console.log(res)
         } catch (e) {
           console.log('err', e.message);
           yapi.commons.log(e, 'error');
