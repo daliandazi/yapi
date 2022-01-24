@@ -2,7 +2,8 @@ import React, { PureComponent as Component } from 'react';
 import PropTypes from 'prop-types';
 import { axios } from "common/httpUtil";
 import { Form, Modal, Button, Tag, Input, Icon, message } from 'antd';
-import jSchema from 'json-schema-editor-visual';
+// import jSchema from 'json-schema-editor-visual';
+import jSchema from "@components/jsEditor/index.js"
 import json5 from 'json5';
 import { MOCK_SOURCE } from '../../../constants/variable.js';
 const ResBodySchema = jSchema({ lang: 'zh_CN', mock: MOCK_SOURCE });

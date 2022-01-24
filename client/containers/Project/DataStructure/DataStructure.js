@@ -179,25 +179,26 @@ class DataStructure extends Component {
                         />
                     ) : ""
                     }
+                    <div style={{ padding: "10px 10px", borderBottom: "1px solid #D9D9D9", }}>
+                        <Button
+                            icon="plus"
+                            type="primary"
+                            size="small"
+                            onClick={() => {
+                                this.setState({
+                                    editGroupId: null,
+                                    add_group_modal_visible: true,
+                                });
+                            }}
+                        >
+                            添加分组
+                        </Button>
+                    </div>
+
                     <div
                         className="left-menu"
-                        style={{ height: parseInt(document.body.clientHeight) - 80 + "px" }}
+                        style={{ height: parseInt(document.body.clientHeight) - 120 + "px", overflowY: 'auto' }}
                     >
-                        <div style={{ padding: "10px 10px", borderBottom: "1px solid #D9D9D9", }}>
-                            <Button
-                                icon="plus"
-                                type="primary"
-                                size="small"
-                                onClick={() => {
-                                    this.setState({
-                                        editGroupId: null,
-                                        add_group_modal_visible: true,
-                                    });
-                                }}
-                            >
-                                添加分组
-                            </Button>
-                        </div>
 
                         {
                             this.state.statusCodeGroupList.length <= 0 ? (<Empty description="还没有模板哦~"></Empty>) : ("")

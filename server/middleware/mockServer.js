@@ -41,7 +41,7 @@ function matchApi(apiPath, apiRule) {
       apiRules[i].indexOf('}') > -1
     ) {
       let params = [];
-      apiRules[i] = apiRules[i].replace(/\{(.+?)\}/g, function(src, match) {
+      apiRules[i] = apiRules[i].replace(/\{(.+?)\}/g, function (src, match) {
         params.push(match);
         return '([^\\/\\s]+)';
       });
@@ -58,7 +58,7 @@ function matchApi(apiPath, apiRule) {
     } else {
       if (apiRules[i] !== apiPaths[i]) {
         return false;
-      }else{
+      } else {
         pathParams.__weight++;
       }
     }
@@ -122,7 +122,7 @@ function mockValidator(interfaceData, ctx) {
   }
   let validResult;
   // json schema 判断
-  if (variable.HTTP_METHOD[method].request_body  && interfaceData.req_body_type === 'json' && interfaceData.req_body_is_json_schema === true) {
+  if (variable.HTTP_METHOD[method].request_body && interfaceData.req_body_type === 'json' && interfaceData.req_body_is_json_schema === true) {
     const schema = yapi.commons.json_parse(interfaceData.req_body_other);
     const params = yapi.commons.json_parse(ctx.request.body);
     validResult = schemaValidator(schema, params);
@@ -147,7 +147,7 @@ module.exports = async (ctx, next) => {
   // let config = yapi.WEBCONFIG;
   let path = ctx.path;
   let header = ctx.request.header;
-
+  console.log(path)
   if (path.indexOf('/mock/') !== 0) {
     if (next) await next();
     return true;
@@ -229,9 +229,17 @@ module.exports = async (ctx, next) => {
       let findInterface;
       let weight = 0;
       _.each(newData, item => {
+
+        // if (item.ref_id) {
+        //   let ref =  this.interfaceInst.get(item.ref_id);
+        //   if (ref) {
+        //     item = ref.toObject();
+        //   }
+        // }
+
         let m = matchApi(newpath, item.path);
         if (m !== false) {
-          if(m.__weight >= weight){
+          if (m.__weight >= weight) {
             findInterface = item;
           }
           delete m.__weight;
@@ -248,10 +256,9 @@ module.exports = async (ctx, next) => {
         }
 
         return (ctx.body = yapi.commons.resReturn(
-          null,
+          {},
           404,
-          `不存在的api, 当前请求path为 ${newpath}， 请求方法为 ${
-            ctx.method
+          `不存在的api, 当前请求path为 ${newpath}， 请求方法为 ${ctx.method
           } ，请确认是否定义此请求。`
         ));
       }
@@ -263,7 +270,17 @@ module.exports = async (ctx, next) => {
     } else {
       interfaceData = interfaceData[0];
     }
+    // console.log(interfaceData.toObject())
+    if (interfaceData.ref_id) {
+      let temp = await interfaceInst.get(interfaceData.ref_id);
+      if (temp) {
+        // console.log(temp)
+        interfaceData.res_body = temp.res_body;
+        interfaceData.res_body_type = temp.res_body_type;
+        interfaceData.res_body_is_json_schema = temp.interfaceData;
+      }
 
+    }
     // 必填字段是否填写好
     if (project.strice) {
       const validResult = mockValidator(interfaceData, ctx);
@@ -287,6 +304,7 @@ module.exports = async (ctx, next) => {
           res = yapi.commons.schemaToJson(schema, {
             alwaysFakeOptionals: true
           });
+          console.log(schema)
         } else {
           // console.log('header', ctx.request.header['content-type'].indexOf('multipart/form-data'))
           // 处理 format-data
@@ -370,7 +388,7 @@ module.exports = async (ctx, next) => {
 
       ctx.status = context.httpCode;
       ctx.body = context.mockJson;
-      return;  
+      return;
     } catch (e) {
       yapi.commons.log(e, 'error');
       return (ctx.body = {

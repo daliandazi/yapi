@@ -142,7 +142,7 @@ class StatusCode extends Component {
                                 <AceEditor
                                     data={this.state.data ? this.state.data.structure_json : ""}
                                     readOnly={true}
-                                    style={{ minHeight: 200 }}
+                                    style={{ minHeight: 700 }}
                                 />
                             </div>
                         </div>) : (<div>没有数据</div>)

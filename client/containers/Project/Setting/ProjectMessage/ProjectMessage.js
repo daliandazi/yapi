@@ -17,6 +17,7 @@ import {
   Popover
 } from 'antd';
 import PropTypes from 'prop-types';
+import { axios } from "common/httpUtil";
 import {
   updateProject,
   delProject,
@@ -141,7 +142,7 @@ class ProjectMessage extends Component {
               ]);
             }
           })
-          .catch(() => {});
+          .catch(() => { });
         form.resetFields();
       }
     });
@@ -149,6 +150,12 @@ class ProjectMessage extends Component {
 
   tagSubmit = tag => {
     this.tag = tag;
+  };
+
+  cleanData() {
+    axios.get("/api/interface/clean?projectId=" + this.props.projectId, (response) => {
+      console.log(response)
+    })
   };
 
   showConfirm = () => {
@@ -187,7 +194,7 @@ class ProjectMessage extends Component {
         }
       },
       iconType: 'delete',
-      onCancel() {}
+      onCancel() { }
     });
   };
 
@@ -287,6 +294,9 @@ class ProjectMessage extends Component {
     return (
       <div>
         <div className="m-panel">
+          <div>
+            <Button onClick={this.cleanData.bind(this)}>清理数据</Button>
+          </div>
           <Row className="project-setting">
             <Col xs={6} lg={{ offset: 1, span: 3 }} className="setting-logo">
               <Popover
@@ -310,7 +320,7 @@ class ProjectMessage extends Component {
               <h2 className="ui-title">
                 {(currGroup.group_name || '') + ' / ' + (projectMsg.name || '')}
               </h2>
-              {/* <p className="ui-desc">{projectMsg.desc}</p> */}
+              <p className="ui-desc">{projectMsg.desc}</p>
             </Col>
           </Row>
           <hr className="breakline" />
@@ -377,7 +387,7 @@ class ProjectMessage extends Component {
                 </span>
               }
             >
-              <Input disabled value={mockUrl} onChange={() => {}} />
+              <Input disabled value={mockUrl} onChange={() => { }} />
             </FormItem>
 
             <FormItem {...formItemLayout} label="描述">
@@ -463,7 +473,7 @@ class ProjectMessage extends Component {
                     <Icon type="unlock" />公开<br />
                     <span className="radio-desc">任何人都可以索引并查看项目信息</span>
                   </Radio>}
-                  
+
                 </RadioGroup>
               )}
             </FormItem>

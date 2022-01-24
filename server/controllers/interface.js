@@ -621,6 +621,42 @@ class interfaceController extends baseController {
   }
 
   /**
+   * 清洗数据
+   * @param {} ctx 
+   */
+  @Get("/clean")
+  async cleanData(ctx) {
+    let project_id = ctx.params.projectId;
+    if (project_id == null) {
+      return (ctx.body = yapi.commons.resReturn(null, 400, "项目id不能为空"));
+    }
+
+    // 1 清洗关联数据
+    let allInterface = await this.Model.list(project_id);
+    for (let i in allInterface) {
+      let interfaceData = allInterface[i];
+      interfaceData = interfaceData.toObject();
+      if (interfaceData.ref_id) {
+        let ref = await this.Model.get(interfaceData.ref_id);
+        if (!ref) {
+          console.log(`已经不存在接口: %s`, interfaceData);
+          await this.Model.del(interfaceData._id)
+        } else {
+          // if (interfaceData.path != ref.path) {
+          interfaceData.path = ref.path;
+          interfaceData.title = ref.title;
+          interfaceData.method = ref.method;
+          await this.Model.up(interfaceData._id, interfaceData);
+          // }
+        }
+      }
+    }
+    console.log('清理完成')
+    ctx.body = yapi.commons.resReturn({ msg: "成功" });
+
+  }
+
+  /**
    * 接口列表
    * @interface /interface/list
    * @method GET

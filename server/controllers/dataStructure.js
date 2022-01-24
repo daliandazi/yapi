@@ -3,7 +3,7 @@ const yapi = require('../yapi.js');
 const { Controller, Post, Get } = require('../router/decorator');
 const dataStructureModel = require('../models/dataStructure');
 const dataStructureGroupModel = require('../models/dataStructureGroup');
-const schema = require('../../common/schema-transformTo-table.js');
+const schema = require('../utils/schema-transformTo-table.js');
 const parsedJson = require('../../common/json5Comment');
 
 /**
@@ -127,11 +127,16 @@ class DataStructureController extends baseController {
         let result = await yapi.getInst(dataStructureModel).get(id);
         if (result) {
             result = result.toObject();
-            if (result.structure) {
-                let structure_json = schema.schemaTransformToTable(JSON.parse(result.structure));
-                structure_json = parsedJson(structure_json);
-                result.structure_json = structure_json;
+            try {
+                if (result.structure) {
+                    let structure_json = schema.schemaTransformToTable(JSON.parse(result.structure));
+                    structure_json = parsedJson(structure_json);
+                    result.structure_json = structure_json;
+                }
+            } catch (e) {
+                console.error(e)
             }
+
         }
         return (ctx.body = yapi.commons.resReturn(result));
     }
