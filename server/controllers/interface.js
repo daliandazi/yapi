@@ -1273,9 +1273,34 @@ class interfaceController extends baseController {
 
     yapi.emitHook('interface_update', id).then();
     await this.autoAddTag(params);
+    try {
+      this.refreshRef(id);
+    } catch (e) {
+      yapi.commons.log(e, "error")
+    }
 
     ctx.body = yapi.commons.resReturn(result);
     return 1;
+  }
+
+  /**
+   * 刷新关联的数据
+   * @param {}} id 
+   */
+  async refreshRef(id) {
+    const source = await this.Model.get(id);
+    // 1 清洗关联数据
+    let refInterfaceData = await this.Model.listByRefId(id);
+    for (let i in refInterfaceData) {
+      let interfaceData = allInterface[i];
+      interfaceData = interfaceData.toObject();
+      if (interfaceData.ref_id && source._id == interfaceData.ref_id) {
+        interfaceData.path = source.path;
+        interfaceData.title = source.title;
+        interfaceData.method = source.method;
+        await this.Model.up(interfaceData._id, interfaceData);
+      }
+    }
   }
 
   diffHTML(html) {

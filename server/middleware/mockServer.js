@@ -302,9 +302,10 @@ module.exports = async (ctx, next) => {
           //json-schema
           const schema = yapi.commons.json_parse(interfaceData.res_body);
           res = yapi.commons.schemaToJson(schema, {
-            alwaysFakeOptionals: true
+            alwaysFakeOptionals: true,
+            minItems:1,
+            minLength:1
           });
-          // console.log(schema)
         } else {
           // console.log('header', ctx.request.header['content-type'].indexOf('multipart/form-data'))
           // 处理 format-data
@@ -327,7 +328,6 @@ module.exports = async (ctx, next) => {
 
         try {
           res = Mock.mock(res);
-          console.log(res)
         } catch (e) {
           console.log('err', e.message);
           yapi.commons.log(e, 'error');

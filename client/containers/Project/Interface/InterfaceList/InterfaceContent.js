@@ -74,6 +74,13 @@ class Content extends React.Component {
     });
   };
 
+  rollback = () => {
+    console.log(this.props.curdata.catid, this.props.curdata.project_id)
+    this.props.history.push(
+      '/project/' + this.props.curdata.project_id + '/interface/api/cat_' + this.props.curdata.catid
+    );
+  }
+
   onChange = key => {
     if (this.state.curtab === 'edit' && this.props.editStatus) {
       this.showModal();
@@ -160,6 +167,7 @@ class Content extends React.Component {
             return '离开页面会丢失当前编辑的内容，确定要离开吗？';
           }}
         />
+        <Button style={{ marginLeft: '4px', marginTop: '8px' }} size="small" type="link" icon="rollback" onClick={this.rollback.bind(this)} >返回</Button>
         {tabs}
         {tabContent}
         {this.state.visible && (

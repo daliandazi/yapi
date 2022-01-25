@@ -252,6 +252,15 @@ class interfaceModel extends baseModel {
       .exec();
   }
 
+  listByRefId(refId) {
+    return this.model
+      .find({
+        ref_id: refId,
+      })
+      .sort({ index: 1 })
+      .exec();
+  }
+
   listByCatidWithPage(catid, page, limit) {
     page = parseInt(page);
     limit = parseInt(limit);

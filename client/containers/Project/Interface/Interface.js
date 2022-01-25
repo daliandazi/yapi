@@ -1,7 +1,7 @@
 import React, { PureComponent as Component, useState, useRef, MutableRefObject, Dispatch, SetStateAction } from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { Tabs, Layout, Menu, Icon } from 'antd';
+import { Tabs, Layout, Menu, Icon, Button } from 'antd';
 import { Route, Switch, matchPath } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { ReflexContainer, ReflexSplitter, ReflexElement } from 'react-reflex';
@@ -125,7 +125,7 @@ class Interface extends Component {
 
     // 移动的距离
     let spaceW = e.clientX - this.state.mouseX;
-    
+
 
     // 计算移动后的宽度
     let w = this.state.beforeWidth + spaceW;
@@ -240,7 +240,7 @@ class Interface extends Component {
     }
 
     return (
-      <ReflexContainer style={{ height: 'calc(100vh - 80px)' ,backgroundColor:'#fff'}} orientation="vertical">
+      <ReflexContainer style={{ height: 'calc(100vh - 80px)', backgroundColor: '#fff' }} orientation="vertical">
         <ReflexElement style={{ height: '100%', overflow: 'hidden', borderLeft: '1px solid #D9D9D9', border: '1px solid #D9D9D9', borderRight: '0px' }} id={'interface-sider'} size={200}>
           <div className="left-menu" style={{ height: parseInt(document.body.clientHeight) - headHeight + 'px' }}>
             <InterfaceMenu
@@ -249,23 +249,23 @@ class Interface extends Component {
             />
           </div>
         </ReflexElement>
-        <ReflexSplitter/>
-          <ReflexElement
-            style={{
-              height: '100%',
-              overflow: 'hidden',
-              border: '1px solid #D9D9D9',
-              borderLeft: '0px solid #D9D9D9',
-              backgroundColor: '#fff'
-            }}
-          >
-            <div className="right-content">
-              <Switch>
-                <Route exact path="/project/:id/interface/:action" component={InterfaceRoute} />
-                <Route {...contentRouter} component={InterfaceRoute} />
-              </Switch>
-            </div>
-          </ReflexElement>
+        <ReflexSplitter />
+        <ReflexElement
+          style={{
+            height: '100%',
+            overflow: 'hidden',
+            border: '1px solid #D9D9D9',
+            borderLeft: '0px solid #D9D9D9',
+            backgroundColor: '#fff'
+          }}
+        >
+          <div className="right-content">
+            <Switch>
+              <Route exact path="/project/:id/interface/:action" component={InterfaceRoute} />
+              <Route {...contentRouter} component={InterfaceRoute} />
+            </Switch>
+          </div>
+        </ReflexElement>
       </ReflexContainer>
     );
   }
