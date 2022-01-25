@@ -121,11 +121,11 @@ class statusCodeController extends baseController {
             return (ctx.body = yapi.commons.resReturn(null, 400, '所属项目必填'));
         }
 
-        let count = await this.Model.getCountByCode(params.code, params._id);
-        console.log(count)
-        if (count > 0) {
-            return (ctx.body = yapi.commons.resReturn(null, 400, '状态码已经存在'));
-        }
+        // let count = await this.Model.getCountByCode(params.code, params._id);
+        // console.log(count)
+        // if (count > 0) {
+        //     return (ctx.body = yapi.commons.resReturn(null, 400, '状态码已经存在'));
+        // }
         if (!params.parentId) {
             params.parentId = 0;
         }
