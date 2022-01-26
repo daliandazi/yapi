@@ -5,7 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0" />
      <!-- 引入样式 -->
-     <link rel="stylesheet" href="https://cdn.bootcss.com/element-ui/2.15.3/theme-chalk/index.css">
+     <link rel="stylesheet" href="https://kaishustory-files.oss-cn-beijing.aliyuncs.com/css/element-ui.css">
       <!-- 引入组件库 -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script src="https://cdn.bootcdn.net/ajax/libs/element-ui/2.15.3/index.js"></script>
@@ -274,6 +274,27 @@
                                 v-if="selectInteface.data.req_body_form && selectInteface.data.req_body_form.length > 0">
                                 <h4>Body</h4>
                                 <el-table :data="selectInteface.data.req_body_form" size="small" 
+                                    style="width: 100%;margin-bottom: 20px;" row-key="key" border default-expand-all
+                                    :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
+                                    <el-table-column prop="name" label="名称" sortable width="250">
+                                    </el-table-column>
+                                    <el-table-column prop="required" label="是否必传" sortable width="180">
+                                        <template slot-scope="scope">
+                                            <span style="color:#FF274F" v-if="scope.row.required == 1">是</span>
+                                            <span v-else>否</span>
+                                        </template>
+                                    </el-table-column>
+                                    <el-table-column prop="type" label="类型" sortable width="180">
+                                    </el-table-column>
+                                    <el-table-column prop="desc" label="描述">
+                                    </el-table-column>
+                                </el-table>
+                            </div>
+
+                            <div
+                                v-if="selectInteface.data.req_body_other && selectInteface.data.req_body_other.length > 0">
+                                <h4>Body</h4>
+                                <el-table :data="selectInteface.data.req_body_other" size="small" 
                                     style="width: 100%;margin-bottom: 20px;" row-key="key" border default-expand-all
                                     :tree-props="{children: 'children', hasChildren: 'hasChildren'}">
                                     <el-table-column prop="name" label="名称" sortable width="250">

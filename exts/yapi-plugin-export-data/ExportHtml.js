@@ -40,7 +40,9 @@ async function exportHtml(curProject, wikiData, datas) {
                     path: intefaceObj.path,
                     req_query: intefaceObj.req_query,
                     req_body_form: intefaceObj.req_body_form,
+                    req_body_other: intefaceObj.req_body_other,
                     desc: intefaceObj.desc
+
                 }
             }
             if (intefaceObj.res_body && intefaceObj.res_body_type == 'json') {
@@ -48,6 +50,15 @@ async function exportHtml(curProject, wikiData, datas) {
                 // console.log(dataSource)
                 if (dataSource) {
                     api.data.res_body = dataSource
+                    // console.log(api)
+                }
+            }
+
+            if(intefaceObj.req_body_other){
+                let dataSource = schema.schemaTransformToTable(JSON.parse(intefaceObj.req_body_other));
+                // console.log(dataSource)
+                if (dataSource) {
+                    api.data.req_body_other = dataSource
                     // console.log(api)
                 }
             }
