@@ -254,7 +254,8 @@ module.exports = function () {
           console.log(response.data)
           context.mockJson = response.data;
           context.httpCode = response.status;
-          context.resHeader = response.header
+          context.resHeader = response.header;
+          context.resHeader['from'] = 'server'
           return true;
         } catch (err) {
           // console.log(err.response.status)
