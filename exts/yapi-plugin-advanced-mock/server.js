@@ -263,7 +263,8 @@ module.exports = function () {
           // if (response.status === 404) {
           context.mockJson = response.data;
           context.httpCode = response.status;
-          context.resHeader = response.header
+          context.resHeader = response.header;
+          context.resHeader['from'] = 'server'
           // }
           return true;
         }
