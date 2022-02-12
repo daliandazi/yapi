@@ -379,7 +379,6 @@ class InterfaceMenu extends Component {
                     <div style={{ maxHeight: '54px', padding: '8px 10px',borderBottom: '1px solid #D9D9D9', }}>
                         <Button
                             icon="plus"
-                            type="primary"
                             onClick={() => this.changeModal('add_cat_modal_visible', true)}
                             className="btn-filter"
                         >

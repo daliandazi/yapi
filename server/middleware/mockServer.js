@@ -160,6 +160,7 @@ module.exports = async (ctx, next) => {
 
   ctx.set('Access-Control-Allow-Origin', header.origin);
   ctx.set('Access-Control-Allow-Credentials', true);
+  ctx.set('from', "mock");
 
   // ctx.set('Access-Control-Allow-Origin', '*');
 

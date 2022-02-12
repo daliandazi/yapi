@@ -6,16 +6,40 @@
   box-shadow: 0 0 .04rem rgba(0, 0, 0, .08);
   font-size: .14rem;
   border: none;
+
   .ant-menu {
     font-size: unset;
-   }
+  }
+
   .m-subnav-menu {
     border: none;
     padding: 0 .24rem;
+
     .item {
       line-height: .54rem;
       padding: 0 .36rem;
       font-weight: normal;
     }
+  }
+}
+
+.subnav-left-menu {
+  li {
+    cursor: pointer;
+    padding: 10px 0px;
+    font-size: 12px;
+    line-height: 18px;
+    // color: #000000cc;
+    height: 60px;
+    margin: 5px 2px;
+    margin-left: 20px;
+    text-align: center;
+    width: 60%;
+  }
+
+  li.active {
+    border-radius: 4px;
+    background-color: #303445;
+    color: #fff;
   }
 }

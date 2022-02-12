@@ -120,7 +120,7 @@ class ProjectMessage extends Component {
         const selectGroup = _.find(groupList, item => {
           return item._id == group_id;
         });
-
+        console.log(assignValue)
         updateProject(assignValue)
           .then(res => {
             if (res.payload.data.errcode == 0) {
@@ -243,6 +243,7 @@ class ProjectMessage extends Component {
     const {
       name,
       basepath,
+      test_host,
       desc,
       project_type,
       group_id,
@@ -254,6 +255,7 @@ class ProjectMessage extends Component {
     initFormValues = {
       name,
       basepath,
+      test_host,
       desc,
       project_type,
       group_id,
@@ -371,6 +373,27 @@ class ProjectMessage extends Component {
                   {
                     required: false,
                     message: '请输入基本路径! '
+                  }
+                ]
+              })(<Input />)}
+            </FormItem>
+            <FormItem
+              {...formItemLayout}
+              label={
+                <span>
+                  测试环境host&nbsp;
+                  <Tooltip title="用于自动切换测试环境mock接口和真实接口">
+                    <Icon type="question-circle-o" />
+                  </Tooltip>
+                </span>
+              }
+            >
+              {getFieldDecorator('test_host', {
+                initialValue: initFormValues.test_host,
+                rules: [
+                  {
+                    required: false,
+                    message: '请输入测试环境host! '
                   }
                 ]
               })(<Input />)}

@@ -8,6 +8,33 @@ const path = require('path');
 const lib = require(path.resolve(yapi.WEBROOT, 'common/lib.js'));
 const Mock = require('mockjs');
 const mockExtra = require(path.resolve(yapi.WEBROOT, 'common/mock-extra.js'));
+const axios = require('axios');
+
+const service = axios.create({
+  timeout: 9000 // 请求超时时间
+})
+
+service.interceptors.response.use(function (response) {
+  // 对响应数据做点什么
+  if (response.status !== 200) {
+
+  }
+  console.log(response.data)
+  return response;
+}, function (error) {
+  // 对响应错误做点什么
+  console.log(error.response)
+  return Promise.reject(error);
+});
+
+service.interceptors.request.use(function (config) {
+  // 在发送请求之前做些什么
+  return config;
+}, function (error) {
+  // 对请求错误做些什么
+  return Promise.reject(error);
+});
+
 
 function arrToObj(arr) {
   let obj = { 'Set-Cookie': [] };
@@ -19,8 +46,8 @@ function arrToObj(arr) {
   return obj;
 }
 
-module.exports = function() {
-  yapi.connect.then(function() {
+module.exports = function () {
+  yapi.connect.then(function () {
     let Col = mongoose.connection.db.collection('adv_mock');
     Col.createIndex({
       interface_id: 1
@@ -95,7 +122,7 @@ module.exports = function() {
     return result;
   }
 
-  this.bindHook('add_router', function(addRouter) {
+  this.bindHook('add_router', function (addRouter) {
     addRouter({
       controller: controller,
       method: 'get',
@@ -155,11 +182,11 @@ module.exports = function() {
       action: 'hideCase'
     });
   });
-  this.bindHook('interface_del', async function(id) {
+  this.bindHook('interface_del', async function (id) {
     let inst = yapi.getInst(advModel);
     await inst.delByInterfaceId(id);
   });
-  this.bindHook('project_del', async function(id) {
+  this.bindHook('project_del', async function (id) {
     let inst = yapi.getInst(advModel);
     await inst.delByProjectId(id);
   });
@@ -171,10 +198,9 @@ module.exports = function() {
       mockJson: res 
     } 
    */
-  this.bindHook('mock_after', async function(context) {
+  this.bindHook('mock_after', async function (context) {
     let interfaceId = context.interfaceData._id;
     let caseData = await checkCase(context.ctx, interfaceId);
-
     // 只有开启高级mock才可用
     if (caseData && caseData.case_enable) {
       // 匹配到高级mock
@@ -197,6 +223,50 @@ module.exports = function() {
       context.httpCode = data.code;
       context.delay = data.delay;
       return true;
+    } else {
+
+      // console.log(context.ctx.request.header)
+      // console.log(context.ctx.request.method)
+      // console.log(context.ctx.request.url)
+      // console.log(context.ctx.request)
+
+
+      const interfaceData = context.interfaceData;
+      const path = interfaceData.path
+      const host = context.projectData.test_host;
+      if (host && interfaceData) {
+        const url = context.ctx.request.url
+
+        let l = url.substr(url.indexOf(path));
+
+        let config = {
+          timeout: 10000,
+          method: context.ctx.request.method,
+          url: "http://" + host + l,
+          headers: context.ctx.request.header
+        };
+
+        config.headers['host'] = host;
+
+        try {
+          let response = await axios(config);
+          console.log(response.data)
+          context.mockJson = response.data;
+          context.httpCode = response.status;
+          context.resHeader = response.header
+          return true;
+        } catch (err) {
+          // console.log(err.response.status)
+          // console.log(err.response.data)
+          const response = err.response
+          // if (response.status === 404) {
+          context.mockJson = response.data;
+          context.httpCode = response.status;
+          context.resHeader = response.header
+          // }
+          return true;
+        }
+      }
     }
     let inst = yapi.getInst(advModel);
     let data = await inst.get(interfaceId);
