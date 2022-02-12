@@ -251,11 +251,11 @@ module.exports = function () {
         // delete config.headers.x - mock - server
         try {
           let response = await axios(config);
-          console.log(response.data)
+          // console.log(response.data)
           context.mockJson = response.data;
           context.httpCode = response.status;
-          context.resHeader = response.header;
-          context.resHeader['from'] = 'server';
+          context.resHeader = response.header || {};
+          context.resHeader.from = 'server';
           return true;
         } catch (err) {
           // console.log(err.response.status)
@@ -265,8 +265,8 @@ module.exports = function () {
           if (response) {
             context.mockJson = response.data;
             context.httpCode = response.status;
-            context.resHeader = response.header;
-            context.resHeader['from'] = 'server'
+            context.resHeader = response.header || {};
+            context.resHeader.from = 'server'
           } else {
             console.log(err)
           }
