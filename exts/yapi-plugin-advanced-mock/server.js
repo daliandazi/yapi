@@ -255,17 +255,22 @@ module.exports = function () {
           context.mockJson = response.data;
           context.httpCode = response.status;
           context.resHeader = response.header;
-          context.resHeader['from'] = 'server'
+          context.resHeader['from'] = 'server';
           return true;
         } catch (err) {
           // console.log(err.response.status)
           // console.log(err.response.data)
           const response = err.response
           // if (response.status === 404) {
-          context.mockJson = response.data;
-          context.httpCode = response.status;
-          context.resHeader = response.header;
-          context.resHeader['from'] = 'server'
+          if (response) {
+            context.mockJson = response.data;
+            context.httpCode = response.status;
+            context.resHeader = response.header;
+            context.resHeader['from'] = 'server'
+          } else {
+            console.log(err)
+          }
+
           // }
           return true;
         }

@@ -394,9 +394,9 @@ module.exports = async (ctx, next) => {
     } catch (e) {
       yapi.commons.log(e, 'error');
       return (ctx.body = {
-        errcode: 400,
-        errmsg: '解析出错，请检查。Error: ' + e.message,
-        data: null
+        code: 400,
+        message: '解析出错，请检查。Error: ' + e.message,
+        data: {}
       });
     }
   } catch (e) {
