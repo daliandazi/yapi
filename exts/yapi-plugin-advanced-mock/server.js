@@ -247,7 +247,8 @@ module.exports = function () {
         };
 
         config.headers['host'] = host;
-
+        config.headers['x-mock-server'] = null
+        // delete config.headers.x - mock - server
         try {
           let response = await axios(config);
           console.log(response.data)
