@@ -172,7 +172,10 @@ class DataStructureList extends Component {
                         <Menu selectedKeys={this.state.selectedDataKey}>
                             {
                                 this.state.statusCodeList.map((data) => {
-                                    return (<Menu.Item key={data._id}>{data.name}</Menu.Item>)
+                                    return (<Menu.Item key={data._id}>
+                                        <p>{data.name}</p>
+                                        <p>{data.code}</p>
+                                    </Menu.Item>)
                                 })
                             }
                         </Menu>

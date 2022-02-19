@@ -794,8 +794,8 @@ export default class Run extends React.Component {
                         }}
                       >
                         添加Header
-                      </Button> */}
-                    {/* </div> */}
+                      </Button> 
+                       </div> */}
                   </TabPane>
                   {HTTP_METHOD[method].request_body &&
                     ((req_body_type === 'form' && req_body_form.length > 0) ||

@@ -269,9 +269,12 @@ class DataStructure extends Component {
                                     >
                                         {
                                             item.children.map((s, j) => {
-                                                return (<Menu.Item key={s._id} >
-                                                    <div>
-                                                        {s.name}
+                                                return (<Menu.Item key={s._id} style={{height:'60px',overflow:'auto'}}>
+                                                    <div >
+                                                        <div>
+                                                        <span>{j+1}.</span><span style={{color:'#222831'}}>{s.name}</span>
+                                                        <div style={{color:'#8189A1',height:'20px',lineHeight:'15px',fontSize:'12px'}}>编号：{s.code}</div>
+                                                        </div>
                                                         <div style={{ position: 'absolute', right: '0px', top: '50%', transform: "translateY(-60%)", height: '30px', width: '30px', color: '000' }}>
                                                             <Popover
                                                                 placement="leftTop"
