@@ -3,9 +3,9 @@
   "adminAccount": "admin@admin.com",
   "timeout": 5200,
   "db": {
-    "servername": "dds-2ze9ae5d121b99a42.mongodb.rds.aliyuncs.com",
+    "servername": "10.50.54.98",
     "DATABASE": "yapi",
-    "port": "3717",
+    "port": "8635",
     "user": "yapi",
     "pass": "Kaishu2099",
     "reconnectTries": 1000,
