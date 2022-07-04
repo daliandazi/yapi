@@ -3,11 +3,11 @@
   "adminAccount": "admin@admin.com",
   "timeout": 5200,
   "db": {
-    "servername": "10.18.71.244",
+    "servername": "10.50.54.98",
     "DATABASE": "yapi",
     "port": "8635",
     "user": "yapi",
-    "pass": "Kaishu2099=",
+    "pass": "Kaishu2099",
     "reconnectTries": 1000,
     "reconnectInterval": 3000,
     "wTimeoutMS": 3000,
