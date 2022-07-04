@@ -550,6 +550,7 @@ class interfaceController extends baseController {
         let ref = await this.Model.get(result.ref_id);
         let refObj = {
           project_id: ref.project_id,
+          id:ref._id
         };
         let data = Object.assign(ref, {
           catid: result.catid,

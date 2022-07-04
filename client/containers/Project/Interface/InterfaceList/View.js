@@ -1,6 +1,7 @@
 import "./View.scss";
 import React, { PureComponent as Component } from "react";
 import { connect } from "react-redux";
+import { withRouter } from 'react-router-dom';
 import PropTypes from "prop-types";
 import {
   Table,
@@ -20,7 +21,7 @@ import constants from "../../../../constants/variable.js";
 import copy from "copy-to-clipboard";
 import SchemaTable from "../../../../components/SchemaTable/SchemaTable.js";
 import IconFont from "client/components/Icon/MyIcon";
-
+import { fetchInterfaceListMenu } from '../../../../reducer/modules/interface';
 const TabPane = Tabs.TabPane
 const HTTP_METHOD = constants.HTTP_METHOD;
 
@@ -30,7 +31,10 @@ const HTTP_METHOD = constants.HTTP_METHOD;
     custom_field: state.group.field,
     currProject: state.project.currProject,
   };
+}, {
+  fetchInterfaceListMenu
 })
+@withRouter
 class View extends Component {
   constructor(props) {
     super(props);
@@ -44,6 +48,8 @@ class View extends Component {
     curData: PropTypes.object,
     currProject: PropTypes.object,
     custom_field: PropTypes.object,
+    history: PropTypes.object,
+    fetchInterfaceListMenu: PropTypes.func,
   };
 
   req_body_form(req_body_type, req_body_form) {
@@ -238,6 +244,13 @@ class View extends Component {
         columns={columns}
         dataSource={dataSource}
       />
+    );
+  }
+
+  jump = async (projectId, id) => {
+    await this.props.fetchInterfaceListMenu(projectId);
+    this.props.history.push(
+      '/project/' + projectId + '/interface/api/' + id
     );
   }
 
@@ -482,16 +495,23 @@ class View extends Component {
                   }}
                 />
               </Popover>
-              <Popover content={"编辑"}>
-                <IconFont
-                  type={"yapi-icon_edit_edit"}
-                  height={"40"}
-                  style={{ fontSize: "24px", marginLeft: "10px" }}
-                  onClick={() => {
-                    console.log("==");
-                  }}
-                />
-              </Popover>
+              {
+                this.props.curData.ref ? (
+                  <Popover content={"编辑"}>
+                    <IconFont
+                      type={"yapi-icon_edit_edit"}
+                      height={"40"}
+                      style={{ fontSize: "24px", marginLeft: "10px" }}
+                      onClick={() => {
+                        let project_id = this.props.curData.ref.project_id;
+                        let id = this.props.curData.ref.id;
+                        this.jump(project_id, id)
+                      }}
+                    />
+                  </Popover>
+                ):("")
+              }
+
             </div>
           </div>
 
