@@ -19,7 +19,7 @@ import "./Edit.scss";
 import Label from "@components/Label/Label.js";
 import { formatTime, safeArray } from "client/common.js";
 import AddForkDocForm from "./AddForkDocForm";
-
+import { Alignment, AnchorButton, ButtonGroup, Classes, H5, Intent, Switch } from "@blueprintjs/core";
 const confirm = Modal.confirm;
 const Option = Select.Option;
 const limit = 20;
@@ -499,7 +499,7 @@ null
             padding: "8px 10px",
           }}
         >
-          <Button
+          {/* <Button
             icon="plus"
             disabled={isDisabled}
             type="primary"
@@ -516,7 +516,7 @@ null
             onClick={() => this.setState({ add_fork_modal_visible: true })}
           >
             关联接口
-          </Button>
+          </Button> */}
 
           <Button
             style={{ marginLeft: "10px" }}

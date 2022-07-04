@@ -179,8 +179,8 @@ export default class Srch extends React.Component {
 
                       <List.Item.Meta title={<div style={{ fontSize: '14px', cursor: 'pointer' }} onClick={() => {
                         this.jump(api.project_id, api._id)
-                      }}><span style={{ color: '#8189A1',fontWeight:'700' }}>{index + 1}.</span> {api.title}</div>} description={
-                        <span className='flex'><span>{api.path} </span> <span style={{ marginLeft: '20px' }}>修改时间:{formatTime(api.up_time)}</span></span>
+                      }}><span style={{ color: '#8189A1',fontWeight:'700' }}>{index + 1}.</span> {api.title} </div>} description={
+                        <span className=''><div>接口:{api.path} </div> <div>项目:{api.project_name}</div> <div style={{ marginLeft: '0px' }}>修改时间:{formatTime(api.up_time)}</div></span>
                       }>
 
                       </List.Item.Meta>

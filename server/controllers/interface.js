@@ -1293,7 +1293,7 @@ class interfaceController extends baseController {
     // 1 清洗关联数据
     let refInterfaceData = await this.Model.listByRefId(id);
     for (let i in refInterfaceData) {
-      let interfaceData = allInterface[i];
+      let interfaceData = refInterfaceData[i];
       interfaceData = interfaceData.toObject();
       if (interfaceData.ref_id && source._id == interfaceData.ref_id) {
         interfaceData.path = source.path;

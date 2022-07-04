@@ -136,6 +136,12 @@ class InterfaceEditForm extends Component {
 
     initState(curdata) {
         this.startTime = new Date().getTime();
+        
+        if(!curdata || curdata == undefined){
+            return;
+        }
+        console.log(curdata)
+        
         if (curdata.req_query && curdata.req_query.length === 0) {
             delete curdata.req_query;
         }
@@ -162,7 +168,6 @@ class InterfaceEditForm extends Component {
                 headers: 'hide'
             }
         };
-        console.log(curdata)
         if (curdata.method) {
             curdata['hideTabs']['req'][HTTP_METHOD[curdata.method].default_tab] = '';
         }

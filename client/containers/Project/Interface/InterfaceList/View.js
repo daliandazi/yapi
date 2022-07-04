@@ -11,7 +11,7 @@ import {
   Tag,
   Divider,
   Popover,
-  Tabs
+  Tabs, Modal,
 } from "antd";
 import AceEditor from "client/components/AceEditor/AceEditor";
 import { formatTime, safeArray } from "../../../../common.js";
@@ -22,6 +22,8 @@ import copy from "copy-to-clipboard";
 import SchemaTable from "../../../../components/SchemaTable/SchemaTable.js";
 import IconFont from "client/components/Icon/MyIcon";
 import { fetchInterfaceListMenu } from '../../../../reducer/modules/interface';
+import InterfaceEditForm from './InterfaceEditForm.js';
+
 const TabPane = Tabs.TabPane
 const HTTP_METHOD = constants.HTTP_METHOD;
 
@@ -41,6 +43,7 @@ class View extends Component {
     this.state = {
       init: true,
       enter: false,
+      showEdit: false
     };
   }
 
@@ -436,7 +439,7 @@ class View extends Component {
     }
 
     const { tag, up_time, title, uid, username } = this.props.curData;
-
+    const { cat, basepath, switch_notice } = this.props.currProject;
     let res = (
       <div
         className="caseContainer"
@@ -497,19 +500,33 @@ class View extends Component {
               </Popover>
               {
                 this.props.curData.ref ? (
-                  <Popover content={"编辑"}>
-                    <IconFont
-                      type={"yapi-icon_edit_edit"}
-                      height={"40"}
-                      style={{ fontSize: "24px", marginLeft: "10px" }}
-                      onClick={() => {
-                        let project_id = this.props.curData.ref.project_id;
-                        let id = this.props.curData.ref.id;
-                        this.jump(project_id, id)
-                      }}
-                    />
-                  </Popover>
-                ):("")
+                  <span>
+                    {/* <Popover content={"编辑"}>
+                      <IconFont
+                        type={"yapi-icon_edit_edit"}
+                        height={"40"}
+                        style={{ fontSize: "24px", marginLeft: "10px" }}
+                        onClick={() => {
+                          let project_id = this.props.curData.ref.project_id;
+                          let id = this.props.curData.ref.id;
+                          // this.jump(project_id, id)
+                          console.log(cat)
+                          // this.setState({
+                          //   showEdit:true
+                          // })
+                        }}
+                      />
+                    </Popover> */}
+                    {/* <Modal visible={this.state.showEdit} width="1500px" height="800px">
+                      <InterfaceEditForm
+                        cat={cat}
+                        noticed={switch_notice}
+                        basepath={basepath}
+                        curdata={this.props.curData}
+                      ></InterfaceEditForm>
+                    </Modal> */}
+                  </span>
+                ) : ("")
               }
 
             </div>

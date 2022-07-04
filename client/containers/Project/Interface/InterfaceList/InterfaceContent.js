@@ -145,7 +145,7 @@ class Content extends React.Component {
           if (key == 'edit' && this.props.curdata.type && this.props.curdata.type == 'ref') {
             return false;
           }
-          return true;
+          return false;
         }).map(key => {
           let item = InterfaceTabs[key];
           return <TabPane tab={item.name} key={key} />;
