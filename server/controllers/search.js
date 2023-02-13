@@ -1,6 +1,7 @@
 const { Controller, Post } = require('../router/decorator');
 const yapi = require('../yapi.js');
 const interfaceModel = require('../models/interface.js');
+const projectModel = require('../models/project.js');
 const baseController = require('./base.js');
 @Controller('/api/search')
 class SearchController extends baseController {
@@ -17,6 +18,19 @@ class SearchController extends baseController {
         let total = await yapi.getInst(interfaceModel).searchCount(keyWord);
         let interfaceList = await yapi.getInst(interfaceModel).search(keyWord, page, limit);
 
+        let resultList = [];
+        for (let i in interfaceList) {
+            let interfaceObj = interfaceList[i];
+            let project = await yapi.getInst(projectModel).get(interfaceObj.project_id);
+            let iObj = interfaceObj.toObject()
+            if(project){
+                console.log(project.toObject().name)
+                iObj.project_name = project.toObject().name
+            }
+            resultList.push(iObj)
+        }
+
+
         let index = ((page - 1) * limit + limit)
         let hasMore = false;
         if (index >= total) {
@@ -27,7 +41,7 @@ class SearchController extends baseController {
 
         return (ctx.body = yapi.commons.resReturn({
             interfaceData: {
-                list: interfaceList,
+                list: resultList,
                 total: total,
                 hasMore: hasMore,
                 page: page,

@@ -23,28 +23,29 @@ export default class Notify extends Component {
   }
 
   render() {
-    const isShow = this.state.newVersion !== this.state.version;
+    const isShow = true//this.state.newVersion !== this.state.version;
     return (
       <div>
-        {/* {isShow && (
+        {isShow && (
           <Alert
-            message={
+          description={
               <div>
-                当前版本是：{this.state.version}&nbsp;&nbsp;可升级到: {this.state.newVersion}
+                YAPI 即将下线并关闭，相关文档不能编辑，请尽快迁移到eolinker来管理接口文档。
                 &nbsp;&nbsp;&nbsp;
                 <a
                   target="view_window"
-                  href="https://github.com/YMFE/yapi/blob/master/CHANGELOG.md"
+                  href="https://kaishu.feishu.cn/wiki/wikcnFqf7WeXCQd8AwfYK7KTn0e"
                 >
-                  版本详情
+                  YAPI 迁移到 EOLINKER 说明文档
                 </a>
               </div>
             }
             banner
-            closable
-            type="info"
+            showIcon
+            // closable
+            type="error"
           />
-        )} */}
+        )}
       </div>
     );
   }

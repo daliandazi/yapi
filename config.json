@@ -2,6 +2,7 @@
   "port": "3000",
   "adminAccount": "admin@admin.com",
   "timeout": 5200,
+  "closeRegister": true,
   "db": {
     "servername": "10.50.54.98",
     "DATABASE": "yapi",
@@ -12,6 +13,14 @@
     "reconnectInterval": 3000,
     "wTimeoutMS": 3000,
     "socketTimeoutMS": 3000,
-    "keepAlive":120
+    "keepAlive": 120
+  },
+  "ldapLogin": {
+    "enable": true,
+    "server": "ldap://10.7.168.196:1389",
+    "baseDn": "cn=admin,dc=kaishujia,dc=com",
+    "bindPassword": "Kaishu2099",
+    "searchDn": "ou=people,dc=kaishujia,dc=com",
+    "searchStandard": "mail"
   }
 }

@@ -95,7 +95,7 @@ export default class App extends Component {
         <Router getUserConfirmation={this.showConfirm}>
           <div className="g-main">
             <div className="router-main">
-              {this.props.curUserRole === 'admin' && <Notify />}
+            <Notify />
               {this.props.loginState !== 1 ? <Header /> : null}
               <div className="router-container">
                 {/* <RouterConfig></RouterConfig> */}
